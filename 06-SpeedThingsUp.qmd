@@ -1,0 +1,1242 @@
+# Extraction Speed Considerations {#sec-EE}
+
+```{r Chap6_setup, echo = FALSE, results = "hide"}
+library(knitr)
+knitr::opts_chunk$set(
+  echo = TRUE,
+  cache = TRUE,
+  comment = NA,
+  message = FALSE,
+  warning = FALSE,
+  tidy = FALSE,
+  cache.lazy = FALSE
+)
+```
+
+```{r}
+#| include: false
+#| cache: false
+#--- load packages ---#
+library(data.table)
+library(exactextractr)
+library(prism)
+library(sf)
+library(stars)
+library(terra)
+library(raster)
+library(dplyr)
+library(tictoc)
+library(future.apply)
+library(ggplot2)
+library(parallel)
+library(stringr)
+```
+
+## Before you start {-}
+
+:::{.callout-note title="Objectives"}
++ Compare extraction speed of `terra::extract()`, `stars::extract()`, `exactextractr::exact_extract()`, and `aggregate.stars()` under different conditions:
+  + Varying raster data size (number of cells)
+  + Different numbers of points and polygons for which raster values are extracted
+  + Whether the raster data is cropped to the area of interest first or not 
++ Learn how to parallelize the extraction process
+:::
+
+In this chapter, we will examine the speed of raster value extraction for vector data under various conditions and using different functions. Repeated raster value extraction is often necessary, such as when calculating county-level daily evapotranspiration for the past 30 years using PRISM data. In such cases, choosing the right strategy for minimizing extraction time can significantly impact performance.
+
+To optimize extraction speed, we will explore parallelizing raster data extraction for polygon data. Parallelization for point data extraction will not be covered, as point extractions are typically very fast and unlikely to become a bottleneck in most workflows. We will start by discussing parallel extraction for single-layer raster data before progressing to multi-layer raster data.
+
+There are several ways to parallelize the extraction process, and we will evaluate different approaches in terms of speed and memory usage. You'll learn that the method of parallelization is crucial—naive parallelization can sometimes increase extraction time, while a more efficient approach can save hours or even days, depending on the scale of the task.
+
+We will use the `future.apply` and `parallel` packages for parallelization. A basic understanding of these packages is assumed. If you are unfamiliar with looping via `lapply()` or parallelization methods like `mclapply()` (for Mac and Linux users) or `future.apply::future_lapply()` (for Windows and others), refer to @sec-par-comp for an introduction.
+
+### Direction for replication {-}
+
+**Datasets**
+
+All the datasets that you need to import are available [here](https://www.dropbox.com/sh/gkprbgp8sg5362f/AABLLEUjsGkelCK2aUxaUI72a?dl=0). In this chapter, the path to files is set relative to my own working directory (which is hidden). To run the codes without having to mess with paths to the files, follow these steps:
+
++ set a folder (any folder) as the working directory using `setwd()`  
++ create a folder called "Data" inside the folder designated as the working directory (if you have created a "Data" folder previously, skip this step)
++ download the pertinent datasets from [here](https://www.dropbox.com/sh/gkprbgp8sg5362f/AABLLEUjsGkelCK2aUxaUI72a?dl=0) 
++ place all the files in the downloaded folder in the "Data" folder
+
+Warning: the folder includes a series of daily PRISM datasets stored by month for 10 years. They amount to $12.75$ GB of data.
+
+**Packages**
+
+Run the following code to install or load (if already installed) the `pacman` package, and then install or load (if already installed) the listed package inside the `pacman::p_load()` function.
+
+```{r Chap6_packages}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  parallel, # for parallelization
+  future.apply, # for parallelization
+  terra, # handle raster data
+  raster, # handle raster data
+  stars, # handle raster data 
+  exactextractr, # fast extractions
+  sf, # vector data operations
+  dplyr, # data wrangling
+  data.table, # data wrangling
+  prism, # download PRISM data
+  ggplot2, # mapping
+  tictoc # timing codes
+)
+```
+
+## Data preparation
+
+We use the following datasets in the first part of this Chapter:
+
+**Wells (points) in Kansas**
+
+```{r import_KS_wells}
+#--- read in the KS points data ---#
+(
+KS_wells <- readRDS("Data/Chap_5_wells_KS.rds")
+)
+```
+
+**Daily PRISM tmax (January, 2009) as `stars` and `SpatRaster`**
+
+```{r tmax_read}
+tmax_m8_y09_stars <- 
+  stars::read_stars("Data/PRISM_tmax_y2009_m1.tif") %>%
+  #--- change the attribute name ---#
+  setNames("tmax")
+(
+tmax_m8_y09_sr <- as(tmax_m8_y09_stars, "SpatRaster")
+)
+```
+
+**Kansas county borders**
+
+```{r county-KS}
+(
+KS_county_sf <-
+  tigris::counties(state = "Kansas", cb = TRUE, progress_bar = FALSE) %>%
+  dplyr::select(geometry) %>%
+  #--- transform using the CRS of the PRISM stars data  ---#
+  sf::st_transform(sf::st_crs(tmax_m8_y09_stars)) %>%
+  #--- generate unique id ---#
+  dplyr::mutate(id = 1:nrow(.))
+)
+```
+
+**Daily PRISM tmax (January, 2009) cropped to Kansas as `stars` and `SpatRaster`**
+
+```{r}
+(
+tmax_m8_y09_KS_stars <- sf::st_crop(tmax_m8_y09_stars, sf::st_bbox(KS_county_sf)) 
+)
+
+tmax_m8_y09_KS_sr <- as(tmax_m8_y09_KS_stars, "SpatRaster")
+```
+
+## Should we crop first? {#sec-crop-first}
+
+### Extract for points
+
+```{r}
+#| label: mb-crop-or-not
+#| eval: false
+#| echo: false
+
+mb <-
+  microbenchmark::microbenchmark(
+    "terra-no-crop" = {
+      extracted_values <- terra::extract(tmax_m8_y09_sr, KS_wells)
+    },
+    "terra-crop" = {
+      temp <- terra::extract(terra::crop(tmax_m8_y09_sr, KS_wells), KS_wells)
+    },
+    "stars-no-crop" = {
+      extracted_values <- stars::st_extract(tmax_m8_y09_stars, KS_wells)
+    },
+    "stars-crop" = {
+      extracted_values <- stars::st_extract(sf::st_crop(tmax_m8_y09_stars, sf::st_bbox(KS_wells)), KS_wells)
+    },
+    times = 100
+  )
+
+saveRDS(mb, "Data/mb_point_comp.rds")
+```
+
+::: {.column-margin}
+
+Here is the results of benchmarking:
+
+```{r}
+#| label: mb-crop-or-not-show
+#| eval: false
+#| code-fold: true
+microbenchmark::microbenchmark(
+  "terra-no-crop" = {
+    extracted_values <- terra::extract(tmax_m8_y09_sr, KS_wells)
+  },
+  "terra-crop" = {
+    temp <- terra::extract(terra::crop(tmax_m8_y09_sr, KS_wells), KS_wells)
+  },
+  "stars-no-crop" = {
+    extracted_values <- stars::st_extract(tmax_m8_y09_stars, KS_wells)
+  },
+  "stars-crop" = {
+    extracted_values <- stars::st_extract(sf::st_crop(tmax_m8_y09_stars, sf::st_bbox(KS_wells)), KS_wells)
+  },
+  times = 100
+)
+
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+library(microbenchmark)
+readRDS("Data/mb_point_comp.rds")
+```
+:::
+<!--end of column-margin-->
+
+#### **`terra::extract()`**
+
+**without cropping**
+```{r}
+tic()
+extracted_values <- terra::extract(tmax_m8_y09_sr, KS_wells, FUN = mean)
+toc()
+```
+
+**with cropping**
+```{r}
+tic()
+extracted_values <- terra::extract(terra::crop(tmax_m8_y09_sr, KS_wells), KS_wells, FUN = mean)
+toc()
+```
+
+As you can see, the difference in computation time is not large.
+
+#### **`stars::extract()`**
+
+**without cropping**
+
+```{r}
+tic()
+extracted_values <- 
+  stars::st_extract(
+    tmax_m8_y09_stars, 
+    KS_wells, 
+    FUN = mean
+  )
+toc()
+```
+
+**with cropping**^[Remember, if you crop to `KS_wells` instead of `sf::st_bbox(KS_wells)`, it would take a lot longer (see @sec-stars-crop).]
+
+```{r}
+tic()
+extracted_values <- 
+  stars::st_extract(
+    sf::st_crop(tmax_m8_y09_stars, sf::st_bbox(KS_wells)), KS_wells,
+    FUN = mean
+  )
+toc()
+```
+
+As you can see, the difference in computation time is not large either here.
+
+### Extract for polygons
+
+When extracting for polygons, it typically pays off to first crop the raster data to the extent of the polygons data first before extraction.
+
+**aggregate.stars()**
+
+Here, the raster dataset is `tmax_m8_y09_stars` which covers the entire contiguous U.S. even though you are extracting values for Kansas (`KS_county_sf`).
+
+```{r without-cropping-ag, eval = F}
+tic()
+extracted_values <- aggregate(tmax_m8_y09_stars, KS_county_sf, FUN = mean)
+toc()
+```
+
+```{r without-cropping-ag-run, echo = F, eval = F}
+tic.clearlog()
+tic()
+extracted_values <- aggregate(tmax_m8_y09_stars, KS_county_sf, FUN = mean)
+toc(log = TRUE, quiet = TRUE)
+log_txt <- tic.log(format = FALSE)
+saveRDS(log_txt, "./Data/extracted_tmax_wo_cropping.rds")
+```
+
+```{r without-cropping-ag-show, echo = F}
+log_txt <- readRDS("./Data/extracted_tmax_wo_cropping.rds")
+(
+time_elapsed_woc <- log_txt[[1]]$toc - log_txt[[1]]$tic
+)
+```
+
+This one first crops the raster data to the extent of Kansas and then extract.
+
+```{r with-cropping-ag}
+tic()
+extracted_values <- 
+  tmax_m8_y09_KS_stars %>% 
+  sf::st_crop(sf::st_bbox(KS_county_sf)) %>% 
+  aggregate(KS_county_sf, FUN = mean)
+toc() 
+```
+
+You can see a noticeable improvement.
+
+**exactextractr::exact_extract()**
+
+Without cropping,
+
+```{r without-cropping-ee}
+tic()
+extracted_values <- exactextractr::exact_extract(as(tmax_m8_y09_stars, "SpatRaster"), KS_county_sf, "mean", progress = FALSE)
+toc()
+```
+
+With cropping,
+
+```{r with-cropping-ee}
+tic()
+results <- tmax_m8_y09_KS_stars %>% 
+  st_crop(st_bbox(KS_county_sf)) %>% 
+  as("SpatRaster") %>% 
+  exactextractr::exact_extract(KS_county_sf, "mean", progress = FALSE)
+toc() 
+```
+
+So, it is still worthwhile to crop first, but the benefit of doing so is not as large as `aggregate.stars()` experienced. This is because `exactextractr::exact_extract` does chunk-by-chunk operations where the unnecessary parts of the data are hardly relevant in the entire process.
+
+**terra::extract()**
+
+```{r}
+tic()
+extracted_values <- terra::extract(tmax_m8_y09_sr, KS_county_sf, fun = mean)
+toc()
+```
+
+```{r}
+tic()
+extracted_values <- terra::extract(terra::crop(tmax_m8_y09_sr, KS_county_sf), KS_county_sf, fun = mean)
+toc()
+```
+
+Virtually no time difference between the two.
+
+---
+
+Given, how fast `terra::extract()` is, you might wonder if you should convert the `stars` object to a `SpatRaster` object, and then extract with `terra::extract()` instead of `aggregate.stars()`.
+
+```{r}
+#--- terra::extract() with internal conversion to "SpatRaster" ---#
+tic()
+extracted_values <- terra::extract(as(tmax_m8_y09_sr, "SpatRaster"), KS_county_sf, fun = mean)
+toc()
+
+#--- aggregate.stars() with cropping ---#
+tic()
+extracted_values <-
+  tmax_m8_y09_KS_stars %>%
+  sf::st_crop(sf::st_bbox(KS_county_sf)) %>%
+  aggregate(KS_county_sf, FUN = mean)
+toc()
+```
+
+Well, the winner is clear here. Even if you mainly use `stars` to handle raster data, you might want to consider using `terra::extract()` if you need to repeat raster value extraction many many times given how simple it is to convert a `stars` object to a `SpatRaster` with `as(stars, "SpatRaster")`.
+
+## The number of raster cells and vector geometries {#sec-num-cells-geometries}
+
+### Base line
+
+Let's start with the example we used above in @sec-extraction-stars-polygons using `KS_county_sf` as the polygons data and `tmax_m8_y09_KS_stars` and `tmax_m8_y09_KS_sr` (they are already cropped to Kansas) as the raster data.
+
+**terra::extract()**
+```{r }
+tic()
+extracted_values <- terra::extract(tmax_m8_y09_KS_sr, KS_county_sf, FUN = mean)
+toc()
+```
+
+**aggregate.stars()**
+
+```{r }
+tic()
+extracted_values <- aggregate(sf::st_crop(tmax_m8_y09_KS_stars, KS_county_sf), KS_county_sf, FUN = mean) %>%
+  st_as_sf()
+toc()
+```
+
+**exactextractr::exact_extract()**
+
+```{r }
+tic()
+extracted_values <- exactextractr::exact_extract(tmax_m8_y09_KS_sr, KS_county_sf, "mean", progress = FALSE)
+toc()
+```
+
+All of them are quite fast, but `terra::extract` and `exactextractr::exact_extract()` are clearly faster than `aggregate.stars()`.
+
+### Large number of polygons
+
+Now, let's increase the number of polygons without changing the spatial extent of the polygons data. This is done by creating lots of regular grids over Kansas.
+
+```{r create-grids-KS}
+(
+grids_in_KS <- 
+  sf::st_make_grid(KS_county_sf, n = c(200, 200)) %>%
+  st_as_sf()
+)
+```
+
+In total, `grids_in_KS` has 40,000 polygons (@fig-grids-ks shows what the grids look like).
+
+::: {.column-margin}
+```{r , fig.cap = }
+#| label: fig-grids-ks
+#| fig-cap: "40,000 regular grids over tmax data for Kansas"
+#| code-fold: true
+
+ggplot() +
+  geom_stars(data = tmax_m8_y09_KS_stars[,,,1]) +
+  scale_fill_viridis_c() +
+  geom_sf(data = grids_in_KS, fill = NA) +
+  theme_void() 
+```
+:::
+<!--end of column-margin-->
+
+Now, let's compare the three approaches.
+
+**terra::extract()**
+
+```{r more-grids-te}
+tic()
+extracted_values <- terra::extract(tmax_m8_y09_KS_sr, grids_in_KS, FUN = mean)
+toc()
+```
+
+**aggregate()**
+
+```{r more-grids-se}
+tic()
+extracted_values <- aggregate(tmax_m8_y09_KS_stars, grids_in_KS, FUN = mean) %>% 
+  st_as_sf
+toc()
+```
+
+**exact_extract()**
+
+```{r more-grids-ee}
+tic()
+extracted_values <- exactextractr::exact_extract(tmax_m8_y09_KS_sr, grids_in_KS, "mean", progress = FALSE)
+toc()
+``` 
+
+Interestingly, `exactextractr::exact_extract()` is affected by an increase in the number of polygons more than `aggregate()`.
+
+### Large number of raster cells
+
+Now, let's make `tmax_m8_y09_KS_sr` much larger by disaggregating it by a factor of 10 (100 times more cells).
+
+```{r}
+(
+tmax_m8_y09_KS_sr_large <- terra::disagg(tmax_m8_y09_KS_sr, fact = 10)
+)
+
+#--- stars version ---#
+tmax_m8_y09_KS_stars_large <- st_as_stars(tmax_m8_y09_KS_sr_large)
+```
+
+**terra::extract()**
+
+```{r te_dips, eval = F}
+tic()
+extracted_values <- terra::extract(tmax_m8_y09_KS_sr_large, grids_in_KS, FUN = mean)
+toc()
+```
+
+```{r te_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+extracted_values <- terra::extract(tmax_m8_y09_KS_sr_large, grids_in_KS, FUN = mean)
+toc(log = TRUE, quiet = TRUE)
+log_txt <- tic.log(format = FALSE)
+saveRDS(log_txt, "./Data/extracted_tmax_terra.rds")
+```
+
+```{r te_show, echo = F}
+log_txt <- readRDS("./Data/extracted_tmax_terra.rds")
+(
+time_elapsed_ag <- log_txt[[1]]$toc - log_txt[[1]]$tic
+)
+```
+
+**aggregate()**
+
+```{r ag_dips, eval = F}
+tic()
+extracted_values <- aggregate(tmax_m8_y09_KS_stars_large, grids_in_KS, FUN = mean)
+toc()
+```
+
+```{r ag_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+extracted_values <- aggregate(tmax_m8_y09_KS_stars_large, grids_in_KS, FUN = mean)
+toc(log = TRUE, quiet = TRUE)
+log_txt <- tic.log(format = FALSE)
+saveRDS(log_txt, "./Data/extracted_tmax_ag.rds")
+```
+
+```{r ag_show, echo = F}
+log_txt <- readRDS("./Data/extracted_tmax_ag.rds")
+(
+time_elapsed_ag <- log_txt[[1]]$toc - log_txt[[1]]$tic
+)
+```
+
+**exact_extract()**
+
+```{r ee-disp, eval = F}
+tic()
+extracted_values <- exactextractr::exact_extract(tmax_m8_y09_KS_sr_large, grids_in_KS, "mean", progress = FALSE)
+toc()
+```
+
+```{r ee-run, echo = F, eval = F}
+tic.clearlog()
+tic()
+extracted_values <- exactextractr::exact_extract(tmax_m8_y09_KS_sr_large, grids_in_KS, "mean", progress = FALSE)
+toc(log = TRUE, quiet = TRUE)
+log_txt <- tic.log(format = FALSE)
+saveRDS(log_txt, "./Data/extracted_tmax_ee_poly.rds")
+```
+
+```{r ee-show, echo = F}
+log_txt <- readRDS("./Data/extracted_tmax_ee_poly.rds")
+(
+time_elapsed_ee <- log_txt[[1]]$toc - log_txt[[1]]$tic
+)
+```
+
+Here, `exactextractr::exact_extract()` outperforms `terra::extract()`, both of which outperform significantly `aggregate.stars()`. Indeed, `aggregate.stars()` is painfully slow.
+
+## Parallelization on a single raster layer
+
+Let's prepare for parallel processing for the rest of the section.
+
+```{r future_plan, cache = F}
+#--- get the number of logical cores to use ---#
+(
+  num_cores <- parallel::detectCores() - 2
+)
+```
+
+### Datasets
+
+We will use the following datasets:
+
++ **raster**: Iowa Cropland Data Layer (CDL) data in 2015  
++ **polygons**: Regular polygon grids over Iowa 
+
+**Iowa CDL data in 2015** (@fig-land)
+
+```{r data_prep_par}
+#| cache: false
+#--- Iowa CDL in 2015 ---#
+(
+IA_cdl_15 <- terra::rast("Data/IA_cdl_2015.tif")
+)
+```
+
+::: {.column-margin}
+```{r}
+#| label: fig-land
+#| fig-cap: "Land use type in Iowa in 2105"
+#| cache: true
+#| code-fold: true
+
+plot(IA_cdl_15)
+```
+:::
+<!--end of column-margin-->
+
+Values recorded in the raster data are integers representing land use type.
+
+**Regularly-sized grids over Iowa** (@fig-IA-grids)
+
+```{r IA_grids}
+#--- regular grids over Iowa ---#
+IA_grids <-
+  tigris::counties(state = "IA", cb = TRUE) %>%
+  #--- create regularly-sized grids ---#
+  sf::st_make_grid(n = c(100, 100)) %>%
+  sf::st_as_sf() %>%
+  dplyr::rename(geometry = x) %>%
+  #--- project to the CRS of the CDL data ---#
+  st_transform(terra::crs(IA_cdl_15))
+```
+
+::: {.column-margin}
+```{r}
+#| label: fig-IA-grids
+#| fig-cap: "Regular grids over Iowas as sf"
+#| cache: true
+#| code-fold: true
+
+ggplot(IA_grids) +
+  geom_sf(fill = NA) +
+  theme_void()
+```
+:::
+<!--end of column-margin-->
+
+### Parallelization
+
+Here is how long it takes to extract raster data values for the polygon grids using `exactextractr::exact_extract()` (`terra::extract()` takes too much time and is not practical for this set of datasets). 
+
+```{r time_ee_disp, eval = F}
+tic()
+temp <-
+  exactextractr::exact_extract(IA_cdl_15, IA_grids) %>% 
+  data.table::rbindlist()
+toc()
+```
+
+```{r time_ee_run, echo = F}
+#| cache: false
+tic.clearlog()
+tic()
+temp <- 
+  exactextractr::exact_extract(IA_cdl_15, IA_grids, progress = FALSE) %>%
+  data.table::rbindlist()
+toc(log = TRUE, quiet = TRUE)
+log_txt <- tic.log(format = FALSE)
+time_elapsed_nonpar <- log_txt[[1]]$toc - log_txt[[1]]$tic
+time_elapsed_nonpar
+```
+
+---
+
+One way to parallelize this process is to let each core work on one polygon at a time. Let's first define the function to extract values for one polygon and then run it for all the polygons parallelized.
+
+```{r par_one_poly, eval = F}
+#--- function to extract raster values for a single polygon ---#
+get_values_i <- function(i) {
+  temp <- 
+    exactextractr::exact_extract(IA_cdl_15, IA_grids[i, ]) %>%
+    data.table::rbindlist()
+
+  return(temp)
+}
+
+#--- parallelized ---#
+tic()
+temp <- parallel::mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)
+toc()
+```
+
+```{r par_one_poly_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+temp <- parallel::mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)
+toc(log = TRUE, quiet = TRUE)
+log_one_poly <- tic.log(format = FALSE)
+saveRDS(log_one_poly, "Data/log_one_poly.rds")
+```
+
+```{r par_one_poly_show, echo = F, cache = TRUE}
+log_one_poly <- readRDS("Data/log_one_poly.rds")
+time_elapsed_nonpar <- log_one_poly[[1]]$toc - log_one_poly[[1]]$tic
+time_elapsed_nonpar
+```
+
+As you can see, this is not a good way to parallelize the computation process. To see why, let's look at the computation time of extracting from one polygon, two polygons, and up to five polygons. 
+
+```{r mb_poly, eval = F}
+mb <- 
+  microbenchmark::microbenchmark(
+    "p_1" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1, ])
+    },
+    "p_2" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:2, ])
+    },
+    "p_3" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:3, ])
+    },
+    "p_4" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:4, ])
+    },
+    "p_5" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:5, ])
+    },
+    times = 100
+  )
+```
+
+```{r mb_poly_run, echo = F, eval = F}
+mb <- 
+  microbenchmark::microbenchmark(
+    "p_1" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1, ], progress = F)
+    },
+    "p_2" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:2, ], progress = F)
+    },
+    "p_3" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:3, ], progress = F)
+    },
+    "p_4" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:4, ], progress = F)
+    },
+    "p_5" = {
+      temp <- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:5, ], progress = F)
+    },
+    times = 100
+  )
+
+saveRDS(mb, "Data/mb_poly_run.rds")
+```
+
+```{r read-mb, echo = F, cache = TRUE}
+mb <- readRDS("Data/mb_poly_run.rds")
+```
+
+@fig-comp-polygons shows the results of the benchmarking.
+
+```{r}
+#| label: fig-comp-polygons
+#| fig-cap: "Comparison of the computation time of raster data extractions"
+#| code-fold: true
+#| cache: true
+mb %>%
+  data.table() %>%
+  .[, expr := gsub("p_", "", expr)] %>%
+  ggplot(.) +
+  geom_boxplot(aes(y = time / 1e9, x = expr)) +
+  ylim(0, NA) +
+  ylab("seconds") +
+  xlab("number of polygons to process")
+```
+
+```{r overhead, echo = F, cache = TRUE}
+mb_dt <- data.table(mb)
+overhead <- ((mb_dt[expr == "p_1", mean(time)] - (mb_dt[expr == "p_2", mean(time)] - mb_dt[expr == "p_1", mean(time)])) / 1e9) %>% round(digits = 2)
+num_polygons_per_core <- floor(nrow(IA_grids) / num_cores)
+```
+
+As you can see, there is a significant overhead (about `r overhead` seconds) regardless of the number of polygons being processed for data extraction. Once the process is initiated and ready to begin extracting values for the polygons, the additional time required to process extra units is minimal. This serves as a prime example of how not to parallelize a task. Since each core processes approximately `r num_polygons_per_core` polygons, simple math suggests that you would spend at least `r round(overhead * num_polygons_per_core, digits = 2)` seconds (calculated as `r overhead` $\times$ `r num_polygons_per_core`) just in preparing the extraction jobs.
+
+---
+
+We can minimize this overhead as much as possible by having each core use `exactextract::exact_extract()` only once in which multiple polygons are processed in the single call. Specifically, we will split the collection of the polygons into `r num_cores` groups and have each core extract for one group. 
+
+```{r group_par_code_disp, eval = F}
+#--- number of polygons in a group ---#
+num_in_group <- floor(nrow(IA_grids) / num_cores)
+
+#--- assign group id to polygons ---#
+IA_grids <- 
+  IA_grids %>%
+  dplyr::mutate(
+    #--- create grid id ---#
+    grid_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = grid_id %/% num_in_group + 1
+  )
+
+tic()
+#--- parallelized processing by group ---#
+temp <- 
+  parallel::mclapply(
+    1:num_cores,
+    \(x) {
+      exactextractr::exact_extract(IA_cdl_15, dplyr::filter(IA_grids, group_id == x)) %>%
+      data.table::rbindlist()
+    },
+    mc.cores = num_cores
+  )
+toc()
+```
+
+```{r group_par_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+#--- number of polygons in a group ---#
+num_in_group <- floor(nrow(IA_grids) / num_cores)
+
+#--- define group id ---#
+IA_grids <- IA_grids %>%
+  mutate(
+    #--- create grid id ---#
+    grid_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = grid_id %/% num_in_group + 1
+  )
+
+#--- parallelized processing by group ---#
+temp <- 
+  parallel::mclapply(
+    1:num_cores,
+    \(x) {
+      exactextractr::exact_extract(IA_cdl_15, dplyr::filter(IA_grids, group_id == x)) %>%
+      data.table::rbindlist()
+    },
+    mc.cores = num_cores
+  )
+
+toc(log = TRUE, quiet = TRUE)
+log_group_par_run <- tic.log(format = FALSE)
+
+saveRDS(log_group_par_run, "Data/log_group_par_run.rds")
+```
+
+```{r group_par_show, echo = F, cache = TRUE}
+log_group_par_run <- readRDS("Data/log_group_par_run.rds")
+time_elapsed_gropu_par <- log_group_par_run[[1]]$toc - log_group_par_run[[1]]$tic
+time_elapsed_gropu_par
+```
+
+Okay, this is much better.
+
+---
+
+Now, we can further reduce the processing time by reducing the size of the object that is returned from each core to be collated into one. In the code above, each core returns a list of `data.frame`s where each grid of the same group has multiple values from the intersecting raster cells.
+
+```{r include = F, cache = TRUE}
+temp <-
+  parallel::mclapply(
+    1:num_cores,
+    \(x) {
+      exactextractr::exact_extract(
+        IA_cdl_15, 
+        dplyr::filter(IA_grids, group_id == x)
+      ) %>%
+      data.table::rbindlist()
+    },
+    mc.cores = num_cores
+  )
+```
+
+```{r size_list, cache = TRUE}
+#--- the size of the list of data returned by the first core ---#
+object.size(temp[[1]]) %>% format(units = "GB")
+```
+
+In total, about 2.3GB of data has to be collated into one list from `r num_cores` cores. It turns out, this process is costly. To see this, take a look at the following example where the same `exactextractr::exact_extrct()` processes are run, yet nothing is returned by each core.
+
+```{r nothing_returned, eval = F}
+#--- define the function to extract values by block of polygons ---#
+extract_by_group <- function(i) {
+  temp <- 
+    exactextractr::exact_extract(IA_cdl_15, filter(IA_grids, group_id == i)) %>%
+    data.table::rbindlist()
+
+  #--- returns nothing! ---#
+  return(NULL)
+}
+
+#--- parallelized processing by group ---#
+tic()
+temp <- parallel::mclapply(
+  1:num_cores,
+  function(i) extract_by_group(i),
+  mc.cores = num_cores
+)
+toc()
+```
+
+```{r nothing_returned_run, echo = F, eval = F}
+#--- define function ---#
+extract_by_group <- function(i) {
+  temp <-
+    exactextractr::exact_extract(IA_cdl_15, filter(IA_grids, group_id == i)) %>%
+    data.table::rbindlist()
+
+  return(NULL)
+}
+
+tic.clearlog()
+tic()
+#--- parallelized processing by group ---#
+temp <- parallel::mclapply(
+  1:num_cores,
+  function(i) extract_by_group(i),
+  mc.cores = num_cores
+)
+toc(log = TRUE, quiet = TRUE)
+log_no_return <- tic.log(format = FALSE)
+
+saveRDS(log_no_return, "Data/log_no_return.rds")
+```
+
+```{r nothing_returned_show, echo = F, cache = TRUE}
+log_no_return <- readRDS("Data/log_no_return.rds")
+time_elapsed_group_none <- log_no_return[[1]]$toc - log_no_return[[1]]$tic
+time_elapsed_group_none
+```
+
+Approximately `r time_elapsed_gropu_par - time_elapsed_group_none` seconds were used just to collect the 2.3GB worth of data from the cores into one.
+
+In most cases, we do not have to carry around all the individual cell values of land use types for our subsequent analysis. For example, in Demonstration 3 (@sec-demo3) we just need a summary (count) of each unique land use type by polygon. So, let's get the summary before we have the computer collect the objects returned from each core as follows: 
+
+```{r return_reduced_group, eval = F}
+extract_by_group_reduced <- function(i) {
+  temp_return <- 
+    exactextractr::exact_extract(
+      IA_cdl_15,
+      filter(IA_grids, group_id == i)
+    ) %>%
+    #--- combine the list of data.frames into one with polygon id ---#
+    data.table::rbindlist(idcol = "id_within_group") %>%
+    #--- find the count of land use type values by polygon ---#
+    .[, .(num_value = .N), by = .(value, id_within_group)]
+
+  return(temp_return)
+}
+
+tic()
+#--- parallelized processing by group ---#
+temp <- parallel::mclapply(
+  1:num_cores,
+  function(i) extract_by_group_reduced(i),
+  mc.cores = num_cores
+)
+toc()
+```
+
+```{r return_reduced_group_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+
+extract_by_group_reduced <- function(i) {
+  temp_return <- 
+    exactextractr::exact_extract(
+      IA_cdl_15,
+      dplyr::filter(IA_grids, group_id == i)
+    ) %>%
+    #--- combine the list of data.frames into one with polygon id ---#
+    rbindlist(idcol = "id_within_group") %>%
+    #--- find the count of land use type values by polygon ---#
+    .[, .(num_value = .N), by = .(value, id_within_group)]
+  return(temp_return)
+}
+
+#--- parallelized processing by group ---#
+temp <- parallel::mclapply(
+  1:num_cores,
+  function(i) extract_by_group_reduced(i),
+  mc.cores = num_cores
+)
+toc(log = TRUE, quiet = TRUE)
+log_reduced <- tic.log(format = FALSE)
+
+saveRDS(log_reduced, "Data/log_reduced.rds")
+```
+
+```{r return_reduced_group_show, echo = F, cache = TRUE}
+log_reduced <- readRDS("Data/log_reduced.rds")
+time_elapsed_group_reduced <- log_reduced[[1]]$toc - log_reduced[[1]]$tic
+time_elapsed_group_reduced
+```
+
+It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.
+
+---
+
+As you can see, the computation time of the fastest approach is now significantly reduced, but you only saved `r round(time_elapsed_nonpar - time_elapsed_group_reduced, digits = 2)` seconds. How much time did I spend writing the code to implement the parallelized group processing? About three minutes. What truly matters is the total time you spend (coding time plus processing time) to get the desired outcome. The maximum time you could save with clever coding is `r round(time_elapsed_nonpar, digits = 2)` seconds. If writing code to make it faster takes more time than that, it’s simply not worth the effort. So, don't try to optimize your code if the processing time is already short. Before you dive into parallelization, think through the coding steps in your head and assess whether it's really worth the time investment.
+
+However, imagine processing CDL data for all U.S. states from 2009 to 2020. The entire process would take approximately `r round(51*12*time_elapsed_nonpar/60/60, digits = 2)` hours (calculated as $51 \times 12 \times `r time_elapsed_nonpar`/60/60$). A rough estimate suggests that with parallelization, using the best approach we discussed, the process could be completed in about `r round(51*12*time_elapsed_group_reduced/60/60, digits = 2)` hours. While `r round(51*12*time_elapsed_nonpar/60/60, digits = 2)` hours is still manageable (you could start the process before bed and have the results ready by the next afternoon), it becomes worthwhile to parallelize the process, especially considering the time savings from parallelization, even after accounting for the time spent coding it.
+
+:::{.callout-note title="Summary"}
++ Do not let each core runs small tasks over and over again (e.g., extracting raster values for one polygon at a time), or you will suffer from significant overhead.
++ Blocking is one way to avoid the problem above.
++ Reduce the size of the outcome of each core as much as possible to spend less time to simply collating them into one.
++ Do not forget about the time you would spend on coding parallelized processes.
++ If you are extracting from a single layer, it is likely that you should not parallelize.
+:::
+
+
+## Many multi-layer raster files {#sec-many-multi-layer}
+
+In this section, we discuss various methods to parallelize the process of extracting values from many multi-layer raster files.
+
+### Datasets
+
+We will use the following datasets:
+
++ **raster**: daily PRISM data 2010 through 2019 stacked by month
++ **polygons**: US County polygons 
+
+**daily PRISM precipitation 2010 through 2019**
+
+You can download all the prism files from [here](https://www.dropbox.com/sh/gkprbgp8sg5362f/AABLLEUjsGkelCK2aUxaUI72a?dl=0). For those who are interested in learning how to generate the series of daily PRISM data files stored by month, see @sec-download-prism for the code.
+
+Let's retrieve the U.S. counties data (see @fig-us-counties for the map).
+
+```{r US_county, cache = TRUE}
+(
+  US_county <-
+    tigris::counties(cb = TRUE, progress_bar = FALSE) %>%
+    #--- only keep geometry ---#
+    dplyr::select(geometry) %>%
+    #--- project to the CRS of the CDL data ---#
+    sf::st_transform(terra::crs(terra::rast("Data/PRISM_ppt_y2009_m1.tif")))
+)
+```
+
+::: {.column-margin}
+```{r}
+#| label: fig-us-counties 
+#| fig-cap: "U.S. counties"
+#| code-fold: true
+
+ggplot(US_county) +
+  geom_sf() +
+  theme_void()
+```
+:::
+<!--end of column-margin-->
+
+### Non-parallelized extraction {#sec-non-par-ext-multi}
+
+As we learned in @sec-extract-speed, extracting values from stacked raster layers (multi-layer `SpatRaster`) is faster than extracting from multiple single-layer raster datasets one at a time. In this case, daily precipitation datasets are stacked by year and month and saved as multi-layer GeoTIFF files. For example, **PRISM_ppt_y2009_m1.tif** contains the daily precipitation data for January 2009. Below is an example of how long it takes to extract values for U.S. counties from a month of daily PRISM precipitation data.
+
+```{r prism_import_one_month_disp, eval = F}
+tic()
+temp <- 
+  exactextractr::exact_extract(
+    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),
+    US_county,
+    "mean",
+    progress = F
+  )
+toc()
+```
+
+```{r prism_import_one_month_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+temp <- 
+  exactextractr::exact_extract(
+    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),
+    US_county,
+    progress = F
+  )
+toc(log = TRUE, quiet = TRUE)
+log_prism_import_one_month_run <- tic.log(format = FALSE)
+
+saveRDS(log_prism_import_one_month_run, "Data/log_prism_import_one_month_run.rds")
+```
+
+```{r prism_import_one_month_show, echo = F, cache = TRUE}
+log_prism_import_one_month_run <- readRDS("Data/log_prism_import_one_month_run.rds")
+time_elapsed_prism_import_one_month <- log_prism_import_one_month_run[[1]]$toc - log_prism_import_one_month_run[[1]]$tic
+time_elapsed_prism_import_one_month
+```
+
+Now, to process all the precipitation data from 2009-2018, we consider two approaches in this section are:
+
+1. parallelize over polygons (blocked) and do regular loop over year-month
+2. parallelize over year-month
+
+### Approach 1: parallelize over polygons and do regular loop over year-month
+
+For this approach, let's measure the time spent on processing one year-month PRISM dataset and then guess how long it would take to process 120 year-month PRISM datasets.
+
+```{r by_state_block, eval = F}
+#--- number of polygons in a group ---#
+num_in_group <- floor(nrow(US_county) / num_cores)
+
+#--- define group id ---#
+US_county <- US_county %>%
+  mutate(
+    #--- create grid id ---#
+    poly_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = poly_id %/% num_in_group + 1
+  )
+
+extract_by_group <- function(i) {
+  temp_return <- exactextractr::exact_extract(
+    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),
+    dplyr::filter(US_county, group_id == i)
+  ) %>%
+    #--- combine the list of data.frames into one with polygon id ---#
+    data.table::rbindlist(idcol = "id_within_group") %>%
+    #--- find the count of land use type values by polygon ---#
+    data.table::melt(id.var = c("id_within_group", "coverage_fraction")) %>%
+    .[, sum(value * coverage_fraction) / sum(coverage_fraction), by = .(id_within_group, variable)]
+
+  return(temp_return)
+}
+
+tic()
+temp <- parallel::mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)
+toc()
+```
+
+```{r by_state_block_run, echo = F, eval = F}
+#--- number of polygons in a group ---#
+num_in_group <- floor(nrow(US_county) / num_cores)
+
+#--- define group id ---#
+US_county <- US_county %>%
+  mutate(
+    #--- create grid id ---#
+    poly_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = poly_id %/% num_in_group + 1
+  )
+
+extract_by_group <- function(i) {
+  temp_return <- exactextractr::exact_extract(
+    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),
+    dplyr::filter(US_county, group_id == i),
+    "mean"
+  )
+
+  return(temp_return)
+}
+
+
+tic.clearlog()
+tic()
+temp <- parallel::mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)
+toc(log = TRUE, quiet = TRUE)
+log_txt_state_block <- tic.log(format = FALSE)
+
+saveRDS(log_txt_state_block, "Data/Ch6_log_txt_state_block.rds")
+```
+
+```{r by_state_block_how, echo = F}
+log_txt_state_block <- readRDS("Data/Ch6_log_txt_state_block.rds")
+
+(
+  log_txt_state_block_elapsed <- log_txt_state_block[[1]]$toc - log_txt_state_block[[1]]$tic
+)
+```
+
+Okay, this approach is not bad at all. If we are to process 10 years of daily PRISM data, then it would take roughly `r round(120 * log_txt_state_block_elapsed / 60, digits = 2)` minutes. 
+
+### Approach 2: parallelize over the temporal dimension (year-month)
+
+Instead of parallelize over polygons, let's parallelize over time (year-month). To do so, we first create a `data.frame` that has all the year-month combinations we will work on.
+
+```{r month-year, eval = F}
+(
+  month_year_data <- data.table::CJ(month = 1:12, year = 2009:2018)
+)
+```
+
+The following function extract data from a single year-month case:
+
+```{r get-prism-function-year-month}
+get_prism_by_month <- function(i, vector) {
+  temp_month <- month_year_data[i, month] # month to work on
+  temp_year <- month_year_data[i, year] # year to work on
+
+  #--- import raster data ---#
+  temp_raster <- terra::rast(paste0("Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif"))
+
+  temp <- exactextractr::exact_extract(temp_raster, vector, "mean")
+
+  return(temp)
+
+  gc()
+}
+```
+
+We then loop over the rows of `month_year_data` in parallel. 
+
+```{r loop_over_time, eval = F}
+tic()
+temp <-
+   parallel::mclapply(
+     1:nrow(month_year_data),
+     \(x) get_prism_by_month(x, US_county),
+     mc.cores = num_cores
+   )
+toc()
+```
+
+
+```{r loop_over_time_run, echo = F, eval = F}
+month_year_data <- data.table::CJ(month = 1:12, year = 2009:2018)
+
+get_prism_by_month <- function(i, vector) {
+  temp_month <- month_year_data[i, month]
+  temp_year <- month_year_data[i, year]
+
+  temp_raster <- terra::rast(paste0("Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif"))
+
+  temp <- exactextractr::exact_extract(temp_raster, vector, "mean")
+  
+  return(temp)
+
+  gc()
+}
+
+tic.clearlog()
+tic()
+temp <- parallel::mclapply(1:nrow(month_year_data), function(x) get_prism_by_month(x, US_county), mc.cores = num_cores)
+toc(log = TRUE, quiet = TRUE)
+log_txt_all_by_month_par <- tic.log(format = FALSE)
+
+(
+  log_txt_all_by_month_par_elapsed <- log_txt_all_by_month_par[[1]]$toc - log_txt_all_by_month_par[[1]]$tic
+)
+
+saveRDS(log_txt_all_by_month_par, "Data/ch6_log_txt_all_by_month_par.rds")
+```
+
+```{r loop_over_time_show, echo = F}
+log_txt_all_by_month_par <- readRDS("Data/ch6_log_txt_all_by_month_par.rds")
+
+(
+  log_txt_all_by_month_par_elapsed <- log_txt_all_by_month_par[[1]]$toc - log_txt_all_by_month_par[[1]]$tic
+)
+```
+
+It took `r round(log_txt_all_by_month_par_elapsed/60, digits = 2)` minutes. So, Approach 2 is the clear winner. 
+
+
+### Memory consideration
+
+So far, we have not addressed the memory footprint of the parallelized processes, but it becomes crucial when working with many large datasets. Approaches 1 and 2 differ significantly in their memory usage.
+
++ **Approach 1**: divides the polygons into groups and parallelizes over these groups when extracting raster values.
++ **Approach 2**: extracts and holds raster values for r num_cores of the entire U.S. polygons at once.
+
+Clearly, Approach 1 has a smaller memory footprint. Approach 2, on the other hand, used about 40 GB of memory, nearly maxing out my computer's 64 GB of RAM (with other processes also consuming memory). As long as you stay within the memory limits, Approach 2 is more efficient. However, if I had only 32 GB of RAM, Approach 2 would have experienced a significant performance drop, while Approach 1 would not. Similarly, if the raster data had twice as many cells within the same spatial extent, Approach 2 would suffer, whereas Approach 1 would not.
+
+It's easy to imagine situations where Approach 1 is preferable. For example, if you have multiple 10-GB raster layers and only 16 GB of RAM, Approach 2 would clearly be impractical, making Approach 1 the better, and perhaps only, choice—far better than not parallelizing at all.
+
+In summary, while processing larger datasets with each core can improve performance, you must be cautious not to exceed your computer’s RAM limits.
+
+:::{.callout-note title="Summary"}
++ Parallelize over time rathe than space as long as your RAM memory allows it
++ Parallelizing over space is still better than not parallelizing at all
+:::
+
+<!-- ```{r by_year, eval = F}
+save_tif <- function(y) {
+  temp_ml <- terra::rast(stack(paste0("Data/PRISM/PRISM_ppt_y", y, "_m", 1:12, ".tif")))
+  writeRaster(temp_ml, paste0("Data/PRISM/PRISM_ppt_y", y, ".tif"), overwrite = T)
+}
+
+mclapply(2009:2018, save_tif, mc.cores = 10)
+
+temp_ml <- stack(paste0("Data/PRISM/PRISM_ppt_y2009.tif"))
+
+tic()
+temp <- exactextractr::exact_extract(temp_ml, US_county)
+toc()
+```-->
+

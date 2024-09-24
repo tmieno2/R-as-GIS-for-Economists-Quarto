@@ -1,0 +1,4 @@
+- source: project
+  quarto-pub:
+    - id: c4f2d4e9-2f73-461c-b841-0faaf2df79ea
+      url: 'https://taro-mieno-pf.quarto.pub/r-as-gis-for-empiricists'

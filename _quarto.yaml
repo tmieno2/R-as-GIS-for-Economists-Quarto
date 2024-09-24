@@ -1,0 +1,74 @@
+project:
+  type: book
+  output-dir: docs
+  
+book:
+  title: "R as GIS for Economists"
+  author: "Taro Mieno"
+  site-url: https://tmieno2.github.io/R-as-GIS-for-Economists/
+  repo-url: https://github.com/tmieno2/R-as-GIS-for-Economists
+  repo-branch: master
+  repo-actions: [edit]
+  sharing: [twitter, facebook, linkedin]
+  chapters:
+    - index.qmd
+    - preface.qmd
+    - text: "---"
+    - part: "Demonstrations"
+      chapters:
+        - 01-Demonstration.qmd
+    - text: "---"
+    - part: "Foundations"
+      chapters:
+        - 02-VectorDataBasics.qmd
+        - 03-SpatialInteractionVectorVector.qmd
+        - 04-RasterDataBasics.qmd
+        - 05-SpatialInteractionVectorRaster.qmd
+    - text: "---"
+    - part: "Extensions"
+      chapters:
+        - 07-stars.qmd
+        - 08-CreateMaps-ggplot.qmd
+        - 09-DownloadSpatialData.qmd
+    - text: "---"
+    - part: "(slightly) Advanced Topics"
+      chapters:
+        - 06-SpeedThingsUp.qmd
+    - text: "---"
+  appendices:
+    - A1-ParallelComputing.qmd
+    - A2-ggplot2-appendix.qmd
+
+bibliography: RGIS.bib
+reference-location: margin
+footnotes-hover: true
+
+format:
+  html: 
+    include-in-header:
+      - analytics.html
+    css: style.css
+    toc: true
+    toc-depth: 3
+    grid:
+      sidebar-width: 400px
+      body-width: 900px
+      margin-width: 520px
+      gutter-width: 1rem
+    number-sections: true
+    number-depth: 4
+    code-link: true
+    callout-icon: false
+    fig-align: center
+    # fig-cap-location: top
+    code-tools: true
+
+execute:
+  warning: false
+  cache: true
+  cache-lazy: false
+  message: false
+  fig-align: center
+
+theme: 
+  light: cosmo

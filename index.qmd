@@ -1,0 +1,36 @@
+# Welcome {-}
+
+This book is specifically aimed at spatial data processing for empirical statistical projects, where spatial variables become part of the analysis dataset. Over the years, I have seen many students and researchers spend excessive time just processing spatial data, often by endlessly clicking through the ArcGIS (or QGIS) user interface. From an academic productivity perspective, this is a waste of time. My hope is that this book helps researchers become more proficient in spatial data processing, ultimately enhancing productivity in economics and other scientific fields where spatial data is essential.
+
+**About me**
+
+I am an Associate Professor in the Department of Agricultural Economics at the University of Nebraska-Lincoln. My research interests lie in precision agriculture, water economics, and agricultural policy. You can visit my personal website [here](https://taro-mieno-pf.quarto.pub/taro-mieno/). 
+
+**Contributors of the book**
+
+Here is the list of contributors to the book and the parts they contributed to: 
+
++ **Kyle Butts**, PhD candidate, University of Colorado Boulder
+  * Section \@ref(demo-slave), \@ref(demo-tri), and \@ref(demo-tsetse)
++ **Bowen Chen**, Data Scientist, Bunge, Missouri
+	* Section \@ref(CropScapeR)
++ **Shinya Uryu**, Assistant Professor, Center for Design-Oriented AI Education and Research, Tokushima University, Japan (github account: <https://github.com/uribo>)  
+	* Section \@ref(create-maps)
++ **Gal Koss**, Graduate Student, Colorado State University   
+	* Section \@ref(work-with-netcdf) and \@ref(gridMET)
++ **Jude Bayham**, Assistant Professor, Colorado State University
+	* Section \@ref(work-with-netcdf) and \@ref(gridMET)
+
+**Comments and Suggestions?**
+
+Any constructive comments and suggestions about how I can improve the book are all welcome. Please send me an email at tmieno2@unl.edu or create an issue on [the Github page](https://github.com/tmieno2/R-as-GIS-for-Economists) of this book.
+
+<hr>
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+
+
+
+
+
+
+

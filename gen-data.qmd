@@ -1,0 +1,145 @@
+# Preparation
+
+```{r}
+library(sf)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+```
+
+## Midwest railroads
+
+```{r}
+rail_roads <-
+  sf::st_read("Data/tl_2015_us_rails.shp") %>%
+  sf::st_transform(st_crs(KS_counties)) %>%
+  dplyr::select(FULLNAME, LINEARID)
+
+MW_states <-
+  tigris::states() %>%
+  dplyr::filter(NAME %in% c("Illinois", "Minnesota", "Nebraska", "Iowa", "Wisconsin", "Kansas", "Ohio", "Indiana", "Michigan", "Oklahoma", "Colorado")) %>%
+  sf::st_transform(32614) %>%
+  st_bbox() %>%
+  st_as_sfc()
+
+rail_roads_mw <- rail_roads[MW_states, ]
+
+sf::st_write(rail_roads_mw, "Data/mw_railroads.geojson", append = FALSE, delete_layer = TRUE)
+
+# temp <- st_read("Data/mw_railroads.geojson")
+# ggplot(temp) + geom_sf()
+```
+
+## PRISM data for Chapter 1
+
+```{r}
+options(prism.path = "Data/PRISM/")
+
+prism::get_prism_dailys(
+  type = "ppt",
+  minDate = "2014-04-01",
+  maxDate = "2014-04-01",
+  keepZip = FALSE
+)
+```
+
+## CDL for Iowa in 2015 (Demo 4)
+
+```{r}
+(
+  cdl_IA_2015 <- CropScapeR::GetCDLData(aoi = 19, year = 2015, type = "f")
+)
+
+terra::writeRaster(terra::rast(cdl_IA_2015), "Data/IA_cdl_2015.tif", overwrite = TRUE)
+```
+
+## PRISM data for Chapter 6: loop and parallel
+
+```{r def-function}
+#--- define a function to download and save PRISM data stacked by month ---#
+get_save_prism <- function(i, var_type) {
+  #++++++++++++++++++++++++++++++++++++
+  #+ Debug
+  #++++++++++++++++++++++++++++++++++++
+  # i <- 1
+  # var_type <- "ppt"
+
+  #++++++++++++++++++++++++++++++++++++
+  #+ Main
+  #++++++++++++++++++++++++++++++++++++
+  print(paste0("working on ", i))
+
+  temp_month <- month_year_data[i, month] # working month
+  temp_year <- month_year_data[i, year] # working year
+
+  tif_file_path <- paste0("Data/PRISM/PRISM_", var_type, "_y", temp_year, "_m", temp_month, ".tif")
+
+  if (file.exists(tif_file_path)) {
+    return(NULL)
+  }
+
+  #--- starting date of the working month-year ---#
+  start_date <- lubridate::dmy(paste0("1/", temp_month, "/", temp_year))
+  #--- end date ---#
+  end_date <- start_date %m+% months(1) - 1
+
+
+  #--- download daily PRISM data for the working month-year ---#
+  prism::get_prism_dailys(
+    type = var_type,
+    minDate = as.character(start_date),
+    maxDate = as.character(end_date),
+    keepZip = FALSE
+  )
+
+  #--- list of dates of the working month-year ---#
+  dates_ls <- seq(start_date, end_date, "days")
+
+  #--- remove dashes ---#
+  dates_prism_txt <- stringr::str_remove_all(dates_ls, "-")
+
+  #--- folder names ---#
+  folder_name <- paste0("PRISM_", var_type, "_stable_4kmD2_", dates_prism_txt, "_bil")
+  #--- the file name of the downloaded data ---#
+  file_name <- paste0("PRISM_", var_type, "_stable_4kmD2_", dates_prism_txt, "_bil.bil")
+  #--- complete path to the downloaded files ---#
+  file_path <- paste0("Data/PRISM/", folder_name, "/", file_name)
+
+  #--- combine all the PRISM files as a SpatRaster ---#
+  temp_sv <- terra::rast(file_path)
+  terra::set.names(temp_sv, dates_ls)
+
+  #--- save the stars as an rds file ---#
+  terra::writeRaster(
+    temp_sv,
+    tif_file_path,
+    overwrite = TRUE
+  )
+
+  #--- delete all the downloaded files ---#
+  unlink(paste0("Data/PRISM/", folder_name), recursive = TRUE)
+}
+```
+
+```{r}
+(
+  #--- create a set of year-month combinations to loop over ---#
+  month_year_data <- data.table::CJ(month = 1:12, year = 2009:2018)
+)
+```
+
+```{r}
+options(prism.path = "Data/PRISM/")
+
+parallel::mclapply(
+  1:nrow(month_year_data),
+  \(x) get_save_prism(x, "ppt"),
+  mc.cores = parallel::detectCores() - 2
+)
+
+lapply(
+  1:nrow(month_year_data),
+  \(x) get_save_prism(x, "ppt")
+)
+
+```

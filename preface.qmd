@@ -1,0 +1,142 @@
+# Preface {-}
+
+## How is this book any different from other online books and resources? {-}
+
+We are seeing an explosion of online (and free) resources that teach how to use R for spatial data processing.^[This phenomenon is largely thanks to packages like `bookdown` [@Rbookdown], `blogdown` [@Rblogdown], and `pkgdown` [@Rpkgdown] that has significantly lowered the cost of professional contents creation than before. Indeed, this book was built taking advantage of the `bookdown` package.]  Here is an incomplete list of such resources:
+
++ [Geocomputation with R](https://geocompr.robinlovelace.net/)
++ [Spatial Data Science](https://keen-swartz-3146c4.netlify.app/)
++ [Spatial Data Science with R](https://www.rspatial.org/index.html)
++ [Introduction to GIS using R](https://www.jessesadler.com/post/gis-with-r-intro/)
++ [Code for An Introduction to Spatial Analysis and Mapping in R](https://bookdown.org/lexcomber/brunsdoncomber2e/)
++ [Introduction to GIS in R](https://annakrystalli.me/intro-r-gis/index.html)
++ [Intro to GIS and Spatial Analysis](https://mgimond.github.io/Spatial/index.html)
++ [Introduction to Spatial Data Programming with R](http://132.72.155.230:3838/r/)
++ [Reproducible GIS analysis with R](http://staff.washington.edu/phurvitz/r_gis/)
++ [R for Earth-System Science](http://geog.uoregon.edu/bartlein/courses/geog490/index.html)
++ [Rspatial](http://rspatial.org/index.html)
++ [NEON Data Skills](https://www.neonscience.org/resources/data-skills)
++ [Simple Features for R](https://r-spatial.github.io/sf/)
++ [Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny](https://www.paulamoraga.com/book-geospatial/)
+<!-- + [Nick Eubank](https://www.nickeubank.com/gis-in-r/) -->
+
+Thanks to all these resources, it has become much easier to self-teach R for GIS work than 10 years ago when I first started using R for GIS. Even though I have not read through all these resources carefully, I am pretty sure every topic found in this book can also be found _somewhere_ in these resources (except the demonstrations). So, you may wonder why on earth you can benefit from reading this book. It all boils down to search costs. Researchers in different disciplines require different sets of spatial data skills. The available resources are typically very general covering so many topics, some of which economists are unlikely to use. It is particularly hard for those who do not have much experience in GIS to identify whether particular skills are essential or not. So, they could spend so much time learning something that is not really useful. The value of this book lies in its deliberate incomprehensiveness. It only packages materials that satisfy the need of most economists, cutting out many topics that are likely to be of limited use for economists. 
+
+For those who are looking for more comprehensive treatments of spatial data handling and processing in one book, I personally like [Geocomputation with R](https://geocompr.robinlovelace.net/) a lot. Increasingly, the developer of R packages created a website dedicated to their R packages, where you can often find vignettes (tutorials), like [Simple Features for R](https://r-spatial.github.io/sf/). 
+
+## Topics covered in this book {-}
+
+The book starts with the very basics of spatial data handling (e.g., importing and exporting spatial datasets) and moves on to more practical spatial data operations (e.g., spatial data join) that are useful for research projects. Some parts of this books are still under development. Right now, Chapters 1 through 8, parts of Chapter 9, and Appendix A are available. 
+
++ Chapter 1: Demonstrations of R as GIS 
+	* groundwater pumping and groundwater level
+	* precision agriculture
+	* land use and weather
+	* corn planted acreage and railroads
+	* groundwater pumping and weather
+	* slave trade and economic development in Africa
+	* terrain ruggedness and economic development in Africa
+	* TseTse fly and economic developtment in Africa
++ Chapter 2: The basics of vector data handling using `sf` package 
+	* spatial data structure in `sf`
+	* import and export vector data
+	* (re)projection of spatial datasets
+	* single-layer geometrical operations (e.g., create buffers, find centroids)
+	* other miscellaneous basic operations
++ Chapter 3: Spatial interactions of vector datasets
+	* understand topological relations of multiple `sf` objects
+	* spatially subset a layer based on another layer
+	* extracting values from one layer to another layer
++ Chapter 4: The basics of raster data handling using the `raster` and `terra`  packages
+	* understand object classes by the `terra` and `raster` packages
+	* import and export raster data
+	* stack raster data
+	* quick plotting
+	* handle netCDF files
++ Chapter 5: Spatial interactions of vector and raster datasets
+	* cropping a raster layer to the geographic extent of a vector layer 
+	* extracting values from a raster layer to a vector layer
++ Chapter 6: Speed things up
+	* make raster data extraction faster by parallelization
++ Chapter 7: Spatiotemporal raster data handling with the `stars` package
++ Chapter 8: Creating Maps using the `ggplot2` package
+	* use the `ggplot2` packages to create maps
++ Chapter 9: Download and process publicly available spatial datasets (partially available)
+	* USDA NASS QuickStat (`tidyUSDA`) - available
+	* PRISM (`prism`) - available
+	* Daymet (`daymetr`) - available
+	* gridMET - available
+	* Cropland Data Layer (`CropScapeR`) - available
+	* SSURGO (`tidycensus`) - under construction
+	* Census (`tidycensus`) - under construction
++ Appendix A: Loop and parallel computation 
++ Appendix B: Cheatsheet - under construction
+
+As you can see above, this book does not spend any time on the very basics of GIS concepts. Before you start reading the book, you should know the followings at least (it's not much): 
+
++ What Geographic Coordinate System (GCS), Coordinate Reference System (CRS), and projection are ([this](https://annakrystalli.me/intro-r-gis/gis.html) is a good resource)
++ Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
+
+This book is about spatial data processing and does not provide detailed explanations on non-spatial R operations, assuming some basic knowledge of R. In particular, the `dplyr` and `data.table` packages are extensively used for data wrangling. For data wrangling using `tidyverse` (a collection of packages including `dplyr`), see [R for Data Science](https://r4ds.had.co.nz/). For `data.table`, [this](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-intro.html) is a good resource.
+
+Finally, this book does not cover spatial statistics or spatial econometrics at all. This book is about spatial data _processing_. Spatial analysis is something you do _after_ you have processed spatial data.
+
+## Conventions of the book and some notes {-}
+
+Here are some notes of the conventions of this book and notes for R beginners and those who are not used to reading `rmarkdown`-generated html documents.
+
+### Texts in gray boxes {-}
+
+They are one of the following:
+
++ objects defined on R during demonstrations
++ R functions
++ R packages
+
+When it is a function, I always put parentheses at the end like this: `st_read()`. Sometimes, I combine a package and function in one like this: `sf::st_read()`. This means it is a function called `st_read()` from the `sf` package. 
+
+### Colored Boxes {-}
+
+Codes are in blue boxes, and outcomes are in red boxes.
+
+Codes:
+
+```{r codes, eval = F}
+runif(5)
+```
+
+Outcomes:
+
+```{r outcomes, echo = F}
+runif(5)
+```
+
+### Parentheses around codes {-}
+
+Sometimes you will see codes enclosed by parenthesis like this:
+
+```{r notes_par}
+(
+  a <- runif(5)
+)
+```
+
+The parentheses prints what's inside of a newly created object (here `a`) without explicitly evaluating the object. So, basically I am signaling that we will be looking inside of the object that was just created. 
+
+This one prints nothing.
+
+```{r notes_par_nodisp}
+a <- runif(5)
+```
+
+### Footnotes {-}
+
+Footnotes appear at the bottom of the page. You can easily get to a footnote by clicking on the footnote number. You can also go back to the main narrative where the footnote number is by clicking on the curved arrow at the end of the footnote. So, don't worry about having to scroll all the way up to where you were after reading footnotes.
+
+## Session Information {-}
+
+Here is the session information when compiling the book:
+
+```{r session_info}
+sessionInfo()
+```
