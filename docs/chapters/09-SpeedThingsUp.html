@@ -1009,7 +1009,7 @@ Figure&nbsp;9.3: Regular grids over Iowas as sf
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>elapsed 
- 18.578 </code></pre>
+ 23.025 </code></pre>
 </div>
 </div>
 <hr>
@@ -2484,630 +2484,632 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb91-627"><a href="#cb91-627" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb91-628"><a href="#cb91-628" aria-hidden="true" tabindex="-1"></a><span class="in">```{r time_ee_run, echo = F}</span></span>
 <span id="cb91-629"><a href="#cb91-629" aria-hidden="true" tabindex="-1"></a><span class="in">#| cache: false</span></span>
-<span id="cb91-630"><a href="#cb91-630" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-631"><a href="#cb91-631" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-632"><a href="#cb91-632" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
-<span id="cb91-633"><a href="#cb91-633" aria-hidden="true" tabindex="-1"></a><span class="in">  exactextractr::exact_extract(IA_cdl_15, IA_grids, progress = FALSE) %&gt;%</span></span>
-<span id="cb91-634"><a href="#cb91-634" aria-hidden="true" tabindex="-1"></a><span class="in">  data.table::rbindlist()</span></span>
-<span id="cb91-635"><a href="#cb91-635" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-636"><a href="#cb91-636" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-637"><a href="#cb91-637" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar &lt;- log_txt[[1]]$toc - log_txt[[1]]$tic</span></span>
-<span id="cb91-638"><a href="#cb91-638" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar</span></span>
-<span id="cb91-639"><a href="#cb91-639" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-640"><a href="#cb91-640" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-641"><a href="#cb91-641" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb91-630"><a href="#cb91-630" aria-hidden="true" tabindex="-1"></a><span class="in"># Note: need to keep cache: false, otherwise you will get an error at the time of building the book</span></span>
+<span id="cb91-631"><a href="#cb91-631" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-632"><a href="#cb91-632" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-633"><a href="#cb91-633" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-634"><a href="#cb91-634" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
+<span id="cb91-635"><a href="#cb91-635" aria-hidden="true" tabindex="-1"></a><span class="in">  exactextractr::exact_extract(IA_cdl_15, IA_grids, progress = FALSE) %&gt;%</span></span>
+<span id="cb91-636"><a href="#cb91-636" aria-hidden="true" tabindex="-1"></a><span class="in">  data.table::rbindlist()</span></span>
+<span id="cb91-637"><a href="#cb91-637" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-638"><a href="#cb91-638" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-639"><a href="#cb91-639" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar &lt;- log_txt[[1]]$toc - log_txt[[1]]$tic</span></span>
+<span id="cb91-640"><a href="#cb91-640" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar</span></span>
+<span id="cb91-641"><a href="#cb91-641" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-642"><a href="#cb91-642" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-643"><a href="#cb91-643" aria-hidden="true" tabindex="-1"></a>One way to parallelize this process is to let each core work on one polygon at a time. Let's first define the function to extract values for one polygon and then run it for all the polygons parallelized.</span>
+<span id="cb91-643"><a href="#cb91-643" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb91-644"><a href="#cb91-644" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-645"><a href="#cb91-645" aria-hidden="true" tabindex="-1"></a><span class="in">```{r par_one_poly, eval = F}</span></span>
-<span id="cb91-646"><a href="#cb91-646" aria-hidden="true" tabindex="-1"></a><span class="in">#--- function to extract raster values for a single polygon ---#</span></span>
-<span id="cb91-647"><a href="#cb91-647" aria-hidden="true" tabindex="-1"></a><span class="in">get_values_i &lt;- function(i) {</span></span>
-<span id="cb91-648"><a href="#cb91-648" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- </span></span>
-<span id="cb91-649"><a href="#cb91-649" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(IA_cdl_15, IA_grids[i, ]) %&gt;%</span></span>
-<span id="cb91-650"><a href="#cb91-650" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist()</span></span>
-<span id="cb91-651"><a href="#cb91-651" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-652"><a href="#cb91-652" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp)</span></span>
-<span id="cb91-653"><a href="#cb91-653" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-654"><a href="#cb91-654" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-655"><a href="#cb91-655" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized ---#</span></span>
-<span id="cb91-656"><a href="#cb91-656" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-657"><a href="#cb91-657" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)</span></span>
-<span id="cb91-658"><a href="#cb91-658" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
-<span id="cb91-659"><a href="#cb91-659" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-660"><a href="#cb91-660" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-661"><a href="#cb91-661" aria-hidden="true" tabindex="-1"></a><span class="in">```{r par_one_poly_run, echo = F, eval = F}</span></span>
-<span id="cb91-662"><a href="#cb91-662" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-663"><a href="#cb91-663" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-664"><a href="#cb91-664" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)</span></span>
-<span id="cb91-665"><a href="#cb91-665" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-666"><a href="#cb91-666" aria-hidden="true" tabindex="-1"></a><span class="in">log_one_poly &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-667"><a href="#cb91-667" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_one_poly, "Data/log_one_poly.rds")</span></span>
-<span id="cb91-668"><a href="#cb91-668" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-669"><a href="#cb91-669" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-670"><a href="#cb91-670" aria-hidden="true" tabindex="-1"></a><span class="in">```{r par_one_poly_show, echo = F, cache = TRUE}</span></span>
-<span id="cb91-671"><a href="#cb91-671" aria-hidden="true" tabindex="-1"></a><span class="in">log_one_poly &lt;- readRDS("Data/log_one_poly.rds")</span></span>
-<span id="cb91-672"><a href="#cb91-672" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar &lt;- log_one_poly[[1]]$toc - log_one_poly[[1]]$tic</span></span>
-<span id="cb91-673"><a href="#cb91-673" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar</span></span>
-<span id="cb91-674"><a href="#cb91-674" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-675"><a href="#cb91-675" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-676"><a href="#cb91-676" aria-hidden="true" tabindex="-1"></a>As you can see, this is not a good way to parallelize the computation process. To see why, let's look at the computation time of extracting from one polygon, two polygons, and up to five polygons. </span>
+<span id="cb91-645"><a href="#cb91-645" aria-hidden="true" tabindex="-1"></a>One way to parallelize this process is to let each core work on one polygon at a time. Let's first define the function to extract values for one polygon and then run it for all the polygons parallelized.</span>
+<span id="cb91-646"><a href="#cb91-646" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-647"><a href="#cb91-647" aria-hidden="true" tabindex="-1"></a><span class="in">```{r par_one_poly, eval = F}</span></span>
+<span id="cb91-648"><a href="#cb91-648" aria-hidden="true" tabindex="-1"></a><span class="in">#--- function to extract raster values for a single polygon ---#</span></span>
+<span id="cb91-649"><a href="#cb91-649" aria-hidden="true" tabindex="-1"></a><span class="in">get_values_i &lt;- function(i) {</span></span>
+<span id="cb91-650"><a href="#cb91-650" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- </span></span>
+<span id="cb91-651"><a href="#cb91-651" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(IA_cdl_15, IA_grids[i, ]) %&gt;%</span></span>
+<span id="cb91-652"><a href="#cb91-652" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist()</span></span>
+<span id="cb91-653"><a href="#cb91-653" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-654"><a href="#cb91-654" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp)</span></span>
+<span id="cb91-655"><a href="#cb91-655" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-656"><a href="#cb91-656" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-657"><a href="#cb91-657" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized ---#</span></span>
+<span id="cb91-658"><a href="#cb91-658" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-659"><a href="#cb91-659" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)</span></span>
+<span id="cb91-660"><a href="#cb91-660" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
+<span id="cb91-661"><a href="#cb91-661" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-662"><a href="#cb91-662" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-663"><a href="#cb91-663" aria-hidden="true" tabindex="-1"></a><span class="in">```{r par_one_poly_run, echo = F, eval = F}</span></span>
+<span id="cb91-664"><a href="#cb91-664" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-665"><a href="#cb91-665" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-666"><a href="#cb91-666" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)</span></span>
+<span id="cb91-667"><a href="#cb91-667" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-668"><a href="#cb91-668" aria-hidden="true" tabindex="-1"></a><span class="in">log_one_poly &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-669"><a href="#cb91-669" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_one_poly, "Data/log_one_poly.rds")</span></span>
+<span id="cb91-670"><a href="#cb91-670" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-671"><a href="#cb91-671" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-672"><a href="#cb91-672" aria-hidden="true" tabindex="-1"></a><span class="in">```{r par_one_poly_show, echo = F, cache = TRUE}</span></span>
+<span id="cb91-673"><a href="#cb91-673" aria-hidden="true" tabindex="-1"></a><span class="in">log_one_poly &lt;- readRDS("Data/log_one_poly.rds")</span></span>
+<span id="cb91-674"><a href="#cb91-674" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar &lt;- log_one_poly[[1]]$toc - log_one_poly[[1]]$tic</span></span>
+<span id="cb91-675"><a href="#cb91-675" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_nonpar</span></span>
+<span id="cb91-676"><a href="#cb91-676" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-677"><a href="#cb91-677" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-678"><a href="#cb91-678" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mb_poly, eval = F}</span></span>
-<span id="cb91-679"><a href="#cb91-679" aria-hidden="true" tabindex="-1"></a><span class="in">mb &lt;- </span></span>
-<span id="cb91-680"><a href="#cb91-680" aria-hidden="true" tabindex="-1"></a><span class="in">  microbenchmark::microbenchmark(</span></span>
-<span id="cb91-681"><a href="#cb91-681" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_1" = {</span></span>
-<span id="cb91-682"><a href="#cb91-682" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1, ])</span></span>
-<span id="cb91-683"><a href="#cb91-683" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-684"><a href="#cb91-684" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_2" = {</span></span>
-<span id="cb91-685"><a href="#cb91-685" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:2, ])</span></span>
-<span id="cb91-686"><a href="#cb91-686" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-687"><a href="#cb91-687" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_3" = {</span></span>
-<span id="cb91-688"><a href="#cb91-688" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:3, ])</span></span>
-<span id="cb91-689"><a href="#cb91-689" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-690"><a href="#cb91-690" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_4" = {</span></span>
-<span id="cb91-691"><a href="#cb91-691" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:4, ])</span></span>
-<span id="cb91-692"><a href="#cb91-692" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-693"><a href="#cb91-693" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_5" = {</span></span>
-<span id="cb91-694"><a href="#cb91-694" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:5, ])</span></span>
-<span id="cb91-695"><a href="#cb91-695" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-696"><a href="#cb91-696" aria-hidden="true" tabindex="-1"></a><span class="in">    times = 100</span></span>
-<span id="cb91-697"><a href="#cb91-697" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-698"><a href="#cb91-698" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-699"><a href="#cb91-699" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-700"><a href="#cb91-700" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mb_poly_run, echo = F, eval = F}</span></span>
-<span id="cb91-701"><a href="#cb91-701" aria-hidden="true" tabindex="-1"></a><span class="in">mb &lt;- </span></span>
-<span id="cb91-702"><a href="#cb91-702" aria-hidden="true" tabindex="-1"></a><span class="in">  microbenchmark::microbenchmark(</span></span>
-<span id="cb91-703"><a href="#cb91-703" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_1" = {</span></span>
-<span id="cb91-704"><a href="#cb91-704" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1, ], progress = F)</span></span>
-<span id="cb91-705"><a href="#cb91-705" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-706"><a href="#cb91-706" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_2" = {</span></span>
-<span id="cb91-707"><a href="#cb91-707" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:2, ], progress = F)</span></span>
-<span id="cb91-708"><a href="#cb91-708" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-709"><a href="#cb91-709" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_3" = {</span></span>
-<span id="cb91-710"><a href="#cb91-710" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:3, ], progress = F)</span></span>
-<span id="cb91-711"><a href="#cb91-711" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-712"><a href="#cb91-712" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_4" = {</span></span>
-<span id="cb91-713"><a href="#cb91-713" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:4, ], progress = F)</span></span>
-<span id="cb91-714"><a href="#cb91-714" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-715"><a href="#cb91-715" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_5" = {</span></span>
-<span id="cb91-716"><a href="#cb91-716" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:5, ], progress = F)</span></span>
-<span id="cb91-717"><a href="#cb91-717" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-718"><a href="#cb91-718" aria-hidden="true" tabindex="-1"></a><span class="in">    times = 100</span></span>
-<span id="cb91-719"><a href="#cb91-719" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-720"><a href="#cb91-720" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-721"><a href="#cb91-721" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(mb, "Data/mb_poly_run.rds")</span></span>
-<span id="cb91-722"><a href="#cb91-722" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-723"><a href="#cb91-723" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-724"><a href="#cb91-724" aria-hidden="true" tabindex="-1"></a><span class="in">```{r read-mb, echo = F, cache = TRUE}</span></span>
-<span id="cb91-725"><a href="#cb91-725" aria-hidden="true" tabindex="-1"></a><span class="in">mb &lt;- readRDS("Data/mb_poly_run.rds")</span></span>
-<span id="cb91-726"><a href="#cb91-726" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-727"><a href="#cb91-727" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-728"><a href="#cb91-728" aria-hidden="true" tabindex="-1"></a>@fig-comp-polygons shows the results of the benchmarking.</span>
+<span id="cb91-678"><a href="#cb91-678" aria-hidden="true" tabindex="-1"></a>As you can see, this is not a good way to parallelize the computation process. To see why, let's look at the computation time of extracting from one polygon, two polygons, and up to five polygons. </span>
+<span id="cb91-679"><a href="#cb91-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-680"><a href="#cb91-680" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mb_poly, eval = F}</span></span>
+<span id="cb91-681"><a href="#cb91-681" aria-hidden="true" tabindex="-1"></a><span class="in">mb &lt;- </span></span>
+<span id="cb91-682"><a href="#cb91-682" aria-hidden="true" tabindex="-1"></a><span class="in">  microbenchmark::microbenchmark(</span></span>
+<span id="cb91-683"><a href="#cb91-683" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_1" = {</span></span>
+<span id="cb91-684"><a href="#cb91-684" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1, ])</span></span>
+<span id="cb91-685"><a href="#cb91-685" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-686"><a href="#cb91-686" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_2" = {</span></span>
+<span id="cb91-687"><a href="#cb91-687" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:2, ])</span></span>
+<span id="cb91-688"><a href="#cb91-688" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-689"><a href="#cb91-689" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_3" = {</span></span>
+<span id="cb91-690"><a href="#cb91-690" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:3, ])</span></span>
+<span id="cb91-691"><a href="#cb91-691" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-692"><a href="#cb91-692" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_4" = {</span></span>
+<span id="cb91-693"><a href="#cb91-693" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:4, ])</span></span>
+<span id="cb91-694"><a href="#cb91-694" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-695"><a href="#cb91-695" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_5" = {</span></span>
+<span id="cb91-696"><a href="#cb91-696" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:5, ])</span></span>
+<span id="cb91-697"><a href="#cb91-697" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-698"><a href="#cb91-698" aria-hidden="true" tabindex="-1"></a><span class="in">    times = 100</span></span>
+<span id="cb91-699"><a href="#cb91-699" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-700"><a href="#cb91-700" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-701"><a href="#cb91-701" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-702"><a href="#cb91-702" aria-hidden="true" tabindex="-1"></a><span class="in">```{r mb_poly_run, echo = F, eval = F}</span></span>
+<span id="cb91-703"><a href="#cb91-703" aria-hidden="true" tabindex="-1"></a><span class="in">mb &lt;- </span></span>
+<span id="cb91-704"><a href="#cb91-704" aria-hidden="true" tabindex="-1"></a><span class="in">  microbenchmark::microbenchmark(</span></span>
+<span id="cb91-705"><a href="#cb91-705" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_1" = {</span></span>
+<span id="cb91-706"><a href="#cb91-706" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1, ], progress = F)</span></span>
+<span id="cb91-707"><a href="#cb91-707" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-708"><a href="#cb91-708" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_2" = {</span></span>
+<span id="cb91-709"><a href="#cb91-709" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:2, ], progress = F)</span></span>
+<span id="cb91-710"><a href="#cb91-710" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-711"><a href="#cb91-711" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_3" = {</span></span>
+<span id="cb91-712"><a href="#cb91-712" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:3, ], progress = F)</span></span>
+<span id="cb91-713"><a href="#cb91-713" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-714"><a href="#cb91-714" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_4" = {</span></span>
+<span id="cb91-715"><a href="#cb91-715" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:4, ], progress = F)</span></span>
+<span id="cb91-716"><a href="#cb91-716" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-717"><a href="#cb91-717" aria-hidden="true" tabindex="-1"></a><span class="in">    "p_5" = {</span></span>
+<span id="cb91-718"><a href="#cb91-718" aria-hidden="true" tabindex="-1"></a><span class="in">      temp &lt;- exactextractr::exact_extract(IA_cdl_15, IA_grids[1:5, ], progress = F)</span></span>
+<span id="cb91-719"><a href="#cb91-719" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-720"><a href="#cb91-720" aria-hidden="true" tabindex="-1"></a><span class="in">    times = 100</span></span>
+<span id="cb91-721"><a href="#cb91-721" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-722"><a href="#cb91-722" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-723"><a href="#cb91-723" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(mb, "Data/mb_poly_run.rds")</span></span>
+<span id="cb91-724"><a href="#cb91-724" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-725"><a href="#cb91-725" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-726"><a href="#cb91-726" aria-hidden="true" tabindex="-1"></a><span class="in">```{r read-mb, echo = F, cache = TRUE}</span></span>
+<span id="cb91-727"><a href="#cb91-727" aria-hidden="true" tabindex="-1"></a><span class="in">mb &lt;- readRDS("Data/mb_poly_run.rds")</span></span>
+<span id="cb91-728"><a href="#cb91-728" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-729"><a href="#cb91-729" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-732"><a href="#cb91-732" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb91-733"><a href="#cb91-733" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-comp-polygons</span></span>
-<span id="cb91-734"><a href="#cb91-734" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Comparison of the computation time of raster data extractions"</span></span>
-<span id="cb91-735"><a href="#cb91-735" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb91-736"><a href="#cb91-736" aria-hidden="true" tabindex="-1"></a><span class="co">#| cache: true</span></span>
-<span id="cb91-737"><a href="#cb91-737" aria-hidden="true" tabindex="-1"></a>mb <span class="sc">%&gt;%</span></span>
-<span id="cb91-738"><a href="#cb91-738" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.table</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb91-739"><a href="#cb91-739" aria-hidden="true" tabindex="-1"></a>  .[, expr <span class="sc">:</span><span class="er">=</span> <span class="fu">gsub</span>(<span class="st">"p_"</span>, <span class="st">""</span>, expr)] <span class="sc">%&gt;%</span></span>
-<span id="cb91-740"><a href="#cb91-740" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.) <span class="sc">+</span></span>
-<span id="cb91-741"><a href="#cb91-741" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> time <span class="sc">/</span> <span class="fl">1e9</span>, <span class="at">x =</span> expr)) <span class="sc">+</span></span>
-<span id="cb91-742"><a href="#cb91-742" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="cn">NA</span>) <span class="sc">+</span></span>
-<span id="cb91-743"><a href="#cb91-743" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"seconds"</span>) <span class="sc">+</span></span>
-<span id="cb91-744"><a href="#cb91-744" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"number of polygons to process"</span>)</span>
-<span id="cb91-745"><a href="#cb91-745" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-746"><a href="#cb91-746" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-747"><a href="#cb91-747" aria-hidden="true" tabindex="-1"></a><span class="in">```{r overhead, echo = F, cache = TRUE}</span></span>
-<span id="cb91-748"><a href="#cb91-748" aria-hidden="true" tabindex="-1"></a><span class="in">mb_dt &lt;- data.table(mb)</span></span>
-<span id="cb91-749"><a href="#cb91-749" aria-hidden="true" tabindex="-1"></a><span class="in">overhead &lt;- ((mb_dt[expr == "p_1", mean(time)] - (mb_dt[expr == "p_2", mean(time)] - mb_dt[expr == "p_1", mean(time)])) / 1e9) %&gt;% round(digits = 2)</span></span>
-<span id="cb91-750"><a href="#cb91-750" aria-hidden="true" tabindex="-1"></a><span class="in">num_polygons_per_core &lt;- floor(nrow(IA_grids) / num_cores)</span></span>
-<span id="cb91-751"><a href="#cb91-751" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-752"><a href="#cb91-752" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-753"><a href="#cb91-753" aria-hidden="true" tabindex="-1"></a>As you can see, there is a significant overhead (about <span class="in">`r overhead`</span> seconds) regardless of the number of polygons being processed for data extraction. Once the process is initiated and ready to begin extracting values for the polygons, the additional time required to process extra units is minimal. This serves as a prime example of how not to parallelize a task. Since each core processes approximately <span class="in">`r num_polygons_per_core`</span> polygons, simple math suggests that you would spend at least <span class="in">`r round(overhead * num_polygons_per_core, digits = 2)`</span> seconds (calculated as <span class="in">`r overhead`</span> $\times$ <span class="in">`r num_polygons_per_core`</span>) just in preparing the extraction jobs.</span>
+<span id="cb91-730"><a href="#cb91-730" aria-hidden="true" tabindex="-1"></a>@fig-comp-polygons shows the results of the benchmarking.</span>
+<span id="cb91-731"><a href="#cb91-731" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-734"><a href="#cb91-734" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb91-735"><a href="#cb91-735" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-comp-polygons</span></span>
+<span id="cb91-736"><a href="#cb91-736" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Comparison of the computation time of raster data extractions"</span></span>
+<span id="cb91-737"><a href="#cb91-737" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb91-738"><a href="#cb91-738" aria-hidden="true" tabindex="-1"></a><span class="co">#| cache: true</span></span>
+<span id="cb91-739"><a href="#cb91-739" aria-hidden="true" tabindex="-1"></a>mb <span class="sc">%&gt;%</span></span>
+<span id="cb91-740"><a href="#cb91-740" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.table</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb91-741"><a href="#cb91-741" aria-hidden="true" tabindex="-1"></a>  .[, expr <span class="sc">:</span><span class="er">=</span> <span class="fu">gsub</span>(<span class="st">"p_"</span>, <span class="st">""</span>, expr)] <span class="sc">%&gt;%</span></span>
+<span id="cb91-742"><a href="#cb91-742" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(.) <span class="sc">+</span></span>
+<span id="cb91-743"><a href="#cb91-743" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> time <span class="sc">/</span> <span class="fl">1e9</span>, <span class="at">x =</span> expr)) <span class="sc">+</span></span>
+<span id="cb91-744"><a href="#cb91-744" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb91-745"><a href="#cb91-745" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"seconds"</span>) <span class="sc">+</span></span>
+<span id="cb91-746"><a href="#cb91-746" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"number of polygons to process"</span>)</span>
+<span id="cb91-747"><a href="#cb91-747" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-748"><a href="#cb91-748" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-749"><a href="#cb91-749" aria-hidden="true" tabindex="-1"></a><span class="in">```{r overhead, echo = F, cache = TRUE}</span></span>
+<span id="cb91-750"><a href="#cb91-750" aria-hidden="true" tabindex="-1"></a><span class="in">mb_dt &lt;- data.table(mb)</span></span>
+<span id="cb91-751"><a href="#cb91-751" aria-hidden="true" tabindex="-1"></a><span class="in">overhead &lt;- ((mb_dt[expr == "p_1", mean(time)] - (mb_dt[expr == "p_2", mean(time)] - mb_dt[expr == "p_1", mean(time)])) / 1e9) %&gt;% round(digits = 2)</span></span>
+<span id="cb91-752"><a href="#cb91-752" aria-hidden="true" tabindex="-1"></a><span class="in">num_polygons_per_core &lt;- floor(nrow(IA_grids) / num_cores)</span></span>
+<span id="cb91-753"><a href="#cb91-753" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-754"><a href="#cb91-754" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-755"><a href="#cb91-755" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb91-755"><a href="#cb91-755" aria-hidden="true" tabindex="-1"></a>As you can see, there is a significant overhead (about <span class="in">`r overhead`</span> seconds) regardless of the number of polygons being processed for data extraction. Once the process is initiated and ready to begin extracting values for the polygons, the additional time required to process extra units is minimal. This serves as a prime example of how not to parallelize a task. Since each core processes approximately <span class="in">`r num_polygons_per_core`</span> polygons, simple math suggests that you would spend at least <span class="in">`r round(overhead * num_polygons_per_core, digits = 2)`</span> seconds (calculated as <span class="in">`r overhead`</span> $\times$ <span class="in">`r num_polygons_per_core`</span>) just in preparing the extraction jobs.</span>
 <span id="cb91-756"><a href="#cb91-756" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-757"><a href="#cb91-757" aria-hidden="true" tabindex="-1"></a>We can minimize this overhead as much as possible by having each core use <span class="in">`exactextract::exact_extract()`</span> only once in which multiple polygons are processed in the single call. Specifically, we will split the collection of the polygons into <span class="in">`r num_cores`</span> groups and have each core extract for one group. </span>
+<span id="cb91-757"><a href="#cb91-757" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb91-758"><a href="#cb91-758" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-759"><a href="#cb91-759" aria-hidden="true" tabindex="-1"></a><span class="in">```{r group_par_code_disp, eval = F}</span></span>
-<span id="cb91-760"><a href="#cb91-760" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
-<span id="cb91-761"><a href="#cb91-761" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(IA_grids) / num_cores)</span></span>
-<span id="cb91-762"><a href="#cb91-762" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-763"><a href="#cb91-763" aria-hidden="true" tabindex="-1"></a><span class="in">#--- assign group id to polygons ---#</span></span>
-<span id="cb91-764"><a href="#cb91-764" aria-hidden="true" tabindex="-1"></a><span class="in">IA_grids &lt;- </span></span>
-<span id="cb91-765"><a href="#cb91-765" aria-hidden="true" tabindex="-1"></a><span class="in">  IA_grids %&gt;%</span></span>
-<span id="cb91-766"><a href="#cb91-766" aria-hidden="true" tabindex="-1"></a><span class="in">  dplyr::mutate(</span></span>
-<span id="cb91-767"><a href="#cb91-767" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
-<span id="cb91-768"><a href="#cb91-768" aria-hidden="true" tabindex="-1"></a><span class="in">    grid_id = 1:nrow(.),</span></span>
-<span id="cb91-769"><a href="#cb91-769" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
-<span id="cb91-770"><a href="#cb91-770" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = grid_id %/% num_in_group + 1</span></span>
-<span id="cb91-771"><a href="#cb91-771" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-772"><a href="#cb91-772" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-773"><a href="#cb91-773" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-774"><a href="#cb91-774" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
-<span id="cb91-775"><a href="#cb91-775" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
-<span id="cb91-776"><a href="#cb91-776" aria-hidden="true" tabindex="-1"></a><span class="in">  parallel::mclapply(</span></span>
-<span id="cb91-777"><a href="#cb91-777" aria-hidden="true" tabindex="-1"></a><span class="in">    1:num_cores,</span></span>
-<span id="cb91-778"><a href="#cb91-778" aria-hidden="true" tabindex="-1"></a><span class="in">    \(x) {</span></span>
-<span id="cb91-779"><a href="#cb91-779" aria-hidden="true" tabindex="-1"></a><span class="in">      exactextractr::exact_extract(IA_cdl_15, dplyr::filter(IA_grids, group_id == x)) %&gt;%</span></span>
-<span id="cb91-780"><a href="#cb91-780" aria-hidden="true" tabindex="-1"></a><span class="in">      data.table::rbindlist()</span></span>
-<span id="cb91-781"><a href="#cb91-781" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-782"><a href="#cb91-782" aria-hidden="true" tabindex="-1"></a><span class="in">    mc.cores = num_cores</span></span>
-<span id="cb91-783"><a href="#cb91-783" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-784"><a href="#cb91-784" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
-<span id="cb91-785"><a href="#cb91-785" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-786"><a href="#cb91-786" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-787"><a href="#cb91-787" aria-hidden="true" tabindex="-1"></a><span class="in">```{r group_par_run, echo = F, eval = F}</span></span>
-<span id="cb91-788"><a href="#cb91-788" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-789"><a href="#cb91-789" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-790"><a href="#cb91-790" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
-<span id="cb91-791"><a href="#cb91-791" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(IA_grids) / num_cores)</span></span>
-<span id="cb91-792"><a href="#cb91-792" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-793"><a href="#cb91-793" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define group id ---#</span></span>
-<span id="cb91-794"><a href="#cb91-794" aria-hidden="true" tabindex="-1"></a><span class="in">IA_grids &lt;- IA_grids %&gt;%</span></span>
-<span id="cb91-795"><a href="#cb91-795" aria-hidden="true" tabindex="-1"></a><span class="in">  mutate(</span></span>
-<span id="cb91-796"><a href="#cb91-796" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
-<span id="cb91-797"><a href="#cb91-797" aria-hidden="true" tabindex="-1"></a><span class="in">    grid_id = 1:nrow(.),</span></span>
-<span id="cb91-798"><a href="#cb91-798" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
-<span id="cb91-799"><a href="#cb91-799" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = grid_id %/% num_in_group + 1</span></span>
-<span id="cb91-800"><a href="#cb91-800" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-801"><a href="#cb91-801" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-802"><a href="#cb91-802" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
-<span id="cb91-803"><a href="#cb91-803" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
-<span id="cb91-804"><a href="#cb91-804" aria-hidden="true" tabindex="-1"></a><span class="in">  parallel::mclapply(</span></span>
-<span id="cb91-805"><a href="#cb91-805" aria-hidden="true" tabindex="-1"></a><span class="in">    1:num_cores,</span></span>
-<span id="cb91-806"><a href="#cb91-806" aria-hidden="true" tabindex="-1"></a><span class="in">    \(x) {</span></span>
-<span id="cb91-807"><a href="#cb91-807" aria-hidden="true" tabindex="-1"></a><span class="in">      exactextractr::exact_extract(IA_cdl_15, dplyr::filter(IA_grids, group_id == x)) %&gt;%</span></span>
-<span id="cb91-808"><a href="#cb91-808" aria-hidden="true" tabindex="-1"></a><span class="in">      data.table::rbindlist()</span></span>
-<span id="cb91-809"><a href="#cb91-809" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-810"><a href="#cb91-810" aria-hidden="true" tabindex="-1"></a><span class="in">    mc.cores = num_cores</span></span>
-<span id="cb91-811"><a href="#cb91-811" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-812"><a href="#cb91-812" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-813"><a href="#cb91-813" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-814"><a href="#cb91-814" aria-hidden="true" tabindex="-1"></a><span class="in">log_group_par_run &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-815"><a href="#cb91-815" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-816"><a href="#cb91-816" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_group_par_run, "Data/log_group_par_run.rds")</span></span>
-<span id="cb91-817"><a href="#cb91-817" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-818"><a href="#cb91-818" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-819"><a href="#cb91-819" aria-hidden="true" tabindex="-1"></a><span class="in">```{r group_par_show, echo = F, cache = TRUE}</span></span>
-<span id="cb91-820"><a href="#cb91-820" aria-hidden="true" tabindex="-1"></a><span class="in">log_group_par_run &lt;- readRDS("Data/log_group_par_run.rds")</span></span>
-<span id="cb91-821"><a href="#cb91-821" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_gropu_par &lt;- log_group_par_run[[1]]$toc - log_group_par_run[[1]]$tic</span></span>
-<span id="cb91-822"><a href="#cb91-822" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_gropu_par</span></span>
-<span id="cb91-823"><a href="#cb91-823" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-824"><a href="#cb91-824" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-825"><a href="#cb91-825" aria-hidden="true" tabindex="-1"></a>Okay, this is much better.</span>
+<span id="cb91-759"><a href="#cb91-759" aria-hidden="true" tabindex="-1"></a>We can minimize this overhead as much as possible by having each core use <span class="in">`exactextract::exact_extract()`</span> only once in which multiple polygons are processed in the single call. Specifically, we will split the collection of the polygons into <span class="in">`r num_cores`</span> groups and have each core extract for one group. </span>
+<span id="cb91-760"><a href="#cb91-760" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-761"><a href="#cb91-761" aria-hidden="true" tabindex="-1"></a><span class="in">```{r group_par_code_disp, eval = F}</span></span>
+<span id="cb91-762"><a href="#cb91-762" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
+<span id="cb91-763"><a href="#cb91-763" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(IA_grids) / num_cores)</span></span>
+<span id="cb91-764"><a href="#cb91-764" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-765"><a href="#cb91-765" aria-hidden="true" tabindex="-1"></a><span class="in">#--- assign group id to polygons ---#</span></span>
+<span id="cb91-766"><a href="#cb91-766" aria-hidden="true" tabindex="-1"></a><span class="in">IA_grids &lt;- </span></span>
+<span id="cb91-767"><a href="#cb91-767" aria-hidden="true" tabindex="-1"></a><span class="in">  IA_grids %&gt;%</span></span>
+<span id="cb91-768"><a href="#cb91-768" aria-hidden="true" tabindex="-1"></a><span class="in">  dplyr::mutate(</span></span>
+<span id="cb91-769"><a href="#cb91-769" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
+<span id="cb91-770"><a href="#cb91-770" aria-hidden="true" tabindex="-1"></a><span class="in">    grid_id = 1:nrow(.),</span></span>
+<span id="cb91-771"><a href="#cb91-771" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
+<span id="cb91-772"><a href="#cb91-772" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = grid_id %/% num_in_group + 1</span></span>
+<span id="cb91-773"><a href="#cb91-773" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-774"><a href="#cb91-774" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-775"><a href="#cb91-775" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-776"><a href="#cb91-776" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
+<span id="cb91-777"><a href="#cb91-777" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
+<span id="cb91-778"><a href="#cb91-778" aria-hidden="true" tabindex="-1"></a><span class="in">  parallel::mclapply(</span></span>
+<span id="cb91-779"><a href="#cb91-779" aria-hidden="true" tabindex="-1"></a><span class="in">    1:num_cores,</span></span>
+<span id="cb91-780"><a href="#cb91-780" aria-hidden="true" tabindex="-1"></a><span class="in">    \(x) {</span></span>
+<span id="cb91-781"><a href="#cb91-781" aria-hidden="true" tabindex="-1"></a><span class="in">      exactextractr::exact_extract(IA_cdl_15, dplyr::filter(IA_grids, group_id == x)) %&gt;%</span></span>
+<span id="cb91-782"><a href="#cb91-782" aria-hidden="true" tabindex="-1"></a><span class="in">      data.table::rbindlist()</span></span>
+<span id="cb91-783"><a href="#cb91-783" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-784"><a href="#cb91-784" aria-hidden="true" tabindex="-1"></a><span class="in">    mc.cores = num_cores</span></span>
+<span id="cb91-785"><a href="#cb91-785" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-786"><a href="#cb91-786" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
+<span id="cb91-787"><a href="#cb91-787" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-788"><a href="#cb91-788" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-789"><a href="#cb91-789" aria-hidden="true" tabindex="-1"></a><span class="in">```{r group_par_run, echo = F, eval = F}</span></span>
+<span id="cb91-790"><a href="#cb91-790" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-791"><a href="#cb91-791" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-792"><a href="#cb91-792" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
+<span id="cb91-793"><a href="#cb91-793" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(IA_grids) / num_cores)</span></span>
+<span id="cb91-794"><a href="#cb91-794" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-795"><a href="#cb91-795" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define group id ---#</span></span>
+<span id="cb91-796"><a href="#cb91-796" aria-hidden="true" tabindex="-1"></a><span class="in">IA_grids &lt;- IA_grids %&gt;%</span></span>
+<span id="cb91-797"><a href="#cb91-797" aria-hidden="true" tabindex="-1"></a><span class="in">  mutate(</span></span>
+<span id="cb91-798"><a href="#cb91-798" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
+<span id="cb91-799"><a href="#cb91-799" aria-hidden="true" tabindex="-1"></a><span class="in">    grid_id = 1:nrow(.),</span></span>
+<span id="cb91-800"><a href="#cb91-800" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
+<span id="cb91-801"><a href="#cb91-801" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = grid_id %/% num_in_group + 1</span></span>
+<span id="cb91-802"><a href="#cb91-802" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-803"><a href="#cb91-803" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-804"><a href="#cb91-804" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
+<span id="cb91-805"><a href="#cb91-805" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
+<span id="cb91-806"><a href="#cb91-806" aria-hidden="true" tabindex="-1"></a><span class="in">  parallel::mclapply(</span></span>
+<span id="cb91-807"><a href="#cb91-807" aria-hidden="true" tabindex="-1"></a><span class="in">    1:num_cores,</span></span>
+<span id="cb91-808"><a href="#cb91-808" aria-hidden="true" tabindex="-1"></a><span class="in">    \(x) {</span></span>
+<span id="cb91-809"><a href="#cb91-809" aria-hidden="true" tabindex="-1"></a><span class="in">      exactextractr::exact_extract(IA_cdl_15, dplyr::filter(IA_grids, group_id == x)) %&gt;%</span></span>
+<span id="cb91-810"><a href="#cb91-810" aria-hidden="true" tabindex="-1"></a><span class="in">      data.table::rbindlist()</span></span>
+<span id="cb91-811"><a href="#cb91-811" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-812"><a href="#cb91-812" aria-hidden="true" tabindex="-1"></a><span class="in">    mc.cores = num_cores</span></span>
+<span id="cb91-813"><a href="#cb91-813" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-814"><a href="#cb91-814" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-815"><a href="#cb91-815" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-816"><a href="#cb91-816" aria-hidden="true" tabindex="-1"></a><span class="in">log_group_par_run &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-817"><a href="#cb91-817" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-818"><a href="#cb91-818" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_group_par_run, "Data/log_group_par_run.rds")</span></span>
+<span id="cb91-819"><a href="#cb91-819" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-820"><a href="#cb91-820" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-821"><a href="#cb91-821" aria-hidden="true" tabindex="-1"></a><span class="in">```{r group_par_show, echo = F, cache = TRUE}</span></span>
+<span id="cb91-822"><a href="#cb91-822" aria-hidden="true" tabindex="-1"></a><span class="in">log_group_par_run &lt;- readRDS("Data/log_group_par_run.rds")</span></span>
+<span id="cb91-823"><a href="#cb91-823" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_gropu_par &lt;- log_group_par_run[[1]]$toc - log_group_par_run[[1]]$tic</span></span>
+<span id="cb91-824"><a href="#cb91-824" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_gropu_par</span></span>
+<span id="cb91-825"><a href="#cb91-825" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-826"><a href="#cb91-826" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-827"><a href="#cb91-827" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb91-827"><a href="#cb91-827" aria-hidden="true" tabindex="-1"></a>Okay, this is much better.</span>
 <span id="cb91-828"><a href="#cb91-828" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-829"><a href="#cb91-829" aria-hidden="true" tabindex="-1"></a>Now, we can further reduce the processing time by reducing the size of the object that is returned from each core to be collated into one. In the code above, each core returns a list of <span class="in">`data.frame`</span>s where each grid of the same group has multiple values from the intersecting raster cells.</span>
+<span id="cb91-829"><a href="#cb91-829" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb91-830"><a href="#cb91-830" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-831"><a href="#cb91-831" aria-hidden="true" tabindex="-1"></a><span class="in">```{r include = F, cache = TRUE}</span></span>
-<span id="cb91-832"><a href="#cb91-832" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;-</span></span>
-<span id="cb91-833"><a href="#cb91-833" aria-hidden="true" tabindex="-1"></a><span class="in">  parallel::mclapply(</span></span>
-<span id="cb91-834"><a href="#cb91-834" aria-hidden="true" tabindex="-1"></a><span class="in">    1:num_cores,</span></span>
-<span id="cb91-835"><a href="#cb91-835" aria-hidden="true" tabindex="-1"></a><span class="in">    \(x) {</span></span>
-<span id="cb91-836"><a href="#cb91-836" aria-hidden="true" tabindex="-1"></a><span class="in">      exactextractr::exact_extract(</span></span>
-<span id="cb91-837"><a href="#cb91-837" aria-hidden="true" tabindex="-1"></a><span class="in">        IA_cdl_15, </span></span>
-<span id="cb91-838"><a href="#cb91-838" aria-hidden="true" tabindex="-1"></a><span class="in">        dplyr::filter(IA_grids, group_id == x)</span></span>
-<span id="cb91-839"><a href="#cb91-839" aria-hidden="true" tabindex="-1"></a><span class="in">      ) %&gt;%</span></span>
-<span id="cb91-840"><a href="#cb91-840" aria-hidden="true" tabindex="-1"></a><span class="in">      data.table::rbindlist()</span></span>
-<span id="cb91-841"><a href="#cb91-841" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
-<span id="cb91-842"><a href="#cb91-842" aria-hidden="true" tabindex="-1"></a><span class="in">    mc.cores = num_cores</span></span>
-<span id="cb91-843"><a href="#cb91-843" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-844"><a href="#cb91-844" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-845"><a href="#cb91-845" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-846"><a href="#cb91-846" aria-hidden="true" tabindex="-1"></a>In total, about 2.3GB of data has to be collated into one list from <span class="in">`r num_cores`</span> cores. It turns out, this process is costly. To see this, take a look at the following example where the same <span class="in">`exactextractr::exact_extrct()`</span> processes are run, yet nothing is returned by each core.</span>
+<span id="cb91-831"><a href="#cb91-831" aria-hidden="true" tabindex="-1"></a>Now, we can further reduce the processing time by reducing the size of the object that is returned from each core to be collated into one. In the code above, each core returns a list of <span class="in">`data.frame`</span>s where each grid of the same group has multiple values from the intersecting raster cells.</span>
+<span id="cb91-832"><a href="#cb91-832" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-833"><a href="#cb91-833" aria-hidden="true" tabindex="-1"></a><span class="in">```{r include = F, cache = TRUE}</span></span>
+<span id="cb91-834"><a href="#cb91-834" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;-</span></span>
+<span id="cb91-835"><a href="#cb91-835" aria-hidden="true" tabindex="-1"></a><span class="in">  parallel::mclapply(</span></span>
+<span id="cb91-836"><a href="#cb91-836" aria-hidden="true" tabindex="-1"></a><span class="in">    1:num_cores,</span></span>
+<span id="cb91-837"><a href="#cb91-837" aria-hidden="true" tabindex="-1"></a><span class="in">    \(x) {</span></span>
+<span id="cb91-838"><a href="#cb91-838" aria-hidden="true" tabindex="-1"></a><span class="in">      exactextractr::exact_extract(</span></span>
+<span id="cb91-839"><a href="#cb91-839" aria-hidden="true" tabindex="-1"></a><span class="in">        IA_cdl_15, </span></span>
+<span id="cb91-840"><a href="#cb91-840" aria-hidden="true" tabindex="-1"></a><span class="in">        dplyr::filter(IA_grids, group_id == x)</span></span>
+<span id="cb91-841"><a href="#cb91-841" aria-hidden="true" tabindex="-1"></a><span class="in">      ) %&gt;%</span></span>
+<span id="cb91-842"><a href="#cb91-842" aria-hidden="true" tabindex="-1"></a><span class="in">      data.table::rbindlist()</span></span>
+<span id="cb91-843"><a href="#cb91-843" aria-hidden="true" tabindex="-1"></a><span class="in">    },</span></span>
+<span id="cb91-844"><a href="#cb91-844" aria-hidden="true" tabindex="-1"></a><span class="in">    mc.cores = num_cores</span></span>
+<span id="cb91-845"><a href="#cb91-845" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-846"><a href="#cb91-846" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-847"><a href="#cb91-847" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-848"><a href="#cb91-848" aria-hidden="true" tabindex="-1"></a><span class="in">```{r nothing_returned, eval = F}</span></span>
-<span id="cb91-849"><a href="#cb91-849" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define the function to extract values by block of polygons ---#</span></span>
-<span id="cb91-850"><a href="#cb91-850" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
-<span id="cb91-851"><a href="#cb91-851" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- </span></span>
-<span id="cb91-852"><a href="#cb91-852" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(IA_cdl_15, filter(IA_grids, group_id == i)) %&gt;%</span></span>
-<span id="cb91-853"><a href="#cb91-853" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist()</span></span>
-<span id="cb91-854"><a href="#cb91-854" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-855"><a href="#cb91-855" aria-hidden="true" tabindex="-1"></a><span class="in">  #--- returns nothing! ---#</span></span>
-<span id="cb91-856"><a href="#cb91-856" aria-hidden="true" tabindex="-1"></a><span class="in">  return(NULL)</span></span>
-<span id="cb91-857"><a href="#cb91-857" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-858"><a href="#cb91-858" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-859"><a href="#cb91-859" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
-<span id="cb91-860"><a href="#cb91-860" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-861"><a href="#cb91-861" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
-<span id="cb91-862"><a href="#cb91-862" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
-<span id="cb91-863"><a href="#cb91-863" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group(i),</span></span>
-<span id="cb91-864"><a href="#cb91-864" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
-<span id="cb91-865"><a href="#cb91-865" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-866"><a href="#cb91-866" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
-<span id="cb91-867"><a href="#cb91-867" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-868"><a href="#cb91-868" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-869"><a href="#cb91-869" aria-hidden="true" tabindex="-1"></a><span class="in">```{r nothing_returned_run, echo = F, eval = F}</span></span>
-<span id="cb91-870"><a href="#cb91-870" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define function ---#</span></span>
-<span id="cb91-871"><a href="#cb91-871" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
-<span id="cb91-872"><a href="#cb91-872" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;-</span></span>
-<span id="cb91-873"><a href="#cb91-873" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(IA_cdl_15, filter(IA_grids, group_id == i)) %&gt;%</span></span>
-<span id="cb91-874"><a href="#cb91-874" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist()</span></span>
-<span id="cb91-875"><a href="#cb91-875" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-876"><a href="#cb91-876" aria-hidden="true" tabindex="-1"></a><span class="in">  return(NULL)</span></span>
-<span id="cb91-877"><a href="#cb91-877" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-878"><a href="#cb91-878" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-879"><a href="#cb91-879" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-880"><a href="#cb91-880" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-881"><a href="#cb91-881" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
-<span id="cb91-882"><a href="#cb91-882" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
-<span id="cb91-883"><a href="#cb91-883" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
-<span id="cb91-884"><a href="#cb91-884" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group(i),</span></span>
-<span id="cb91-885"><a href="#cb91-885" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
-<span id="cb91-886"><a href="#cb91-886" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-887"><a href="#cb91-887" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-888"><a href="#cb91-888" aria-hidden="true" tabindex="-1"></a><span class="in">log_no_return &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-889"><a href="#cb91-889" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-890"><a href="#cb91-890" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_no_return, "Data/log_no_return.rds")</span></span>
-<span id="cb91-891"><a href="#cb91-891" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-892"><a href="#cb91-892" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-893"><a href="#cb91-893" aria-hidden="true" tabindex="-1"></a><span class="in">```{r nothing_returned_show, echo = F, cache = TRUE}</span></span>
-<span id="cb91-894"><a href="#cb91-894" aria-hidden="true" tabindex="-1"></a><span class="in">log_no_return &lt;- readRDS("Data/log_no_return.rds")</span></span>
-<span id="cb91-895"><a href="#cb91-895" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_none &lt;- log_no_return[[1]]$toc - log_no_return[[1]]$tic</span></span>
-<span id="cb91-896"><a href="#cb91-896" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_none</span></span>
-<span id="cb91-897"><a href="#cb91-897" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-898"><a href="#cb91-898" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-899"><a href="#cb91-899" aria-hidden="true" tabindex="-1"></a>Approximately <span class="in">`r time_elapsed_gropu_par - time_elapsed_group_none`</span> seconds were used just to collect the 2.3GB worth of data from the cores into one.</span>
+<span id="cb91-848"><a href="#cb91-848" aria-hidden="true" tabindex="-1"></a>In total, about 2.3GB of data has to be collated into one list from <span class="in">`r num_cores`</span> cores. It turns out, this process is costly. To see this, take a look at the following example where the same <span class="in">`exactextractr::exact_extrct()`</span> processes are run, yet nothing is returned by each core.</span>
+<span id="cb91-849"><a href="#cb91-849" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-850"><a href="#cb91-850" aria-hidden="true" tabindex="-1"></a><span class="in">```{r nothing_returned, eval = F}</span></span>
+<span id="cb91-851"><a href="#cb91-851" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define the function to extract values by block of polygons ---#</span></span>
+<span id="cb91-852"><a href="#cb91-852" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
+<span id="cb91-853"><a href="#cb91-853" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- </span></span>
+<span id="cb91-854"><a href="#cb91-854" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(IA_cdl_15, filter(IA_grids, group_id == i)) %&gt;%</span></span>
+<span id="cb91-855"><a href="#cb91-855" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist()</span></span>
+<span id="cb91-856"><a href="#cb91-856" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-857"><a href="#cb91-857" aria-hidden="true" tabindex="-1"></a><span class="in">  #--- returns nothing! ---#</span></span>
+<span id="cb91-858"><a href="#cb91-858" aria-hidden="true" tabindex="-1"></a><span class="in">  return(NULL)</span></span>
+<span id="cb91-859"><a href="#cb91-859" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-860"><a href="#cb91-860" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-861"><a href="#cb91-861" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
+<span id="cb91-862"><a href="#cb91-862" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-863"><a href="#cb91-863" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
+<span id="cb91-864"><a href="#cb91-864" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
+<span id="cb91-865"><a href="#cb91-865" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group(i),</span></span>
+<span id="cb91-866"><a href="#cb91-866" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
+<span id="cb91-867"><a href="#cb91-867" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-868"><a href="#cb91-868" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
+<span id="cb91-869"><a href="#cb91-869" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-870"><a href="#cb91-870" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-871"><a href="#cb91-871" aria-hidden="true" tabindex="-1"></a><span class="in">```{r nothing_returned_run, echo = F, eval = F}</span></span>
+<span id="cb91-872"><a href="#cb91-872" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define function ---#</span></span>
+<span id="cb91-873"><a href="#cb91-873" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
+<span id="cb91-874"><a href="#cb91-874" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;-</span></span>
+<span id="cb91-875"><a href="#cb91-875" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(IA_cdl_15, filter(IA_grids, group_id == i)) %&gt;%</span></span>
+<span id="cb91-876"><a href="#cb91-876" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist()</span></span>
+<span id="cb91-877"><a href="#cb91-877" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-878"><a href="#cb91-878" aria-hidden="true" tabindex="-1"></a><span class="in">  return(NULL)</span></span>
+<span id="cb91-879"><a href="#cb91-879" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-880"><a href="#cb91-880" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-881"><a href="#cb91-881" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-882"><a href="#cb91-882" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-883"><a href="#cb91-883" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
+<span id="cb91-884"><a href="#cb91-884" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
+<span id="cb91-885"><a href="#cb91-885" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
+<span id="cb91-886"><a href="#cb91-886" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group(i),</span></span>
+<span id="cb91-887"><a href="#cb91-887" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
+<span id="cb91-888"><a href="#cb91-888" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-889"><a href="#cb91-889" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-890"><a href="#cb91-890" aria-hidden="true" tabindex="-1"></a><span class="in">log_no_return &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-891"><a href="#cb91-891" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-892"><a href="#cb91-892" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_no_return, "Data/log_no_return.rds")</span></span>
+<span id="cb91-893"><a href="#cb91-893" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-894"><a href="#cb91-894" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-895"><a href="#cb91-895" aria-hidden="true" tabindex="-1"></a><span class="in">```{r nothing_returned_show, echo = F, cache = TRUE}</span></span>
+<span id="cb91-896"><a href="#cb91-896" aria-hidden="true" tabindex="-1"></a><span class="in">log_no_return &lt;- readRDS("Data/log_no_return.rds")</span></span>
+<span id="cb91-897"><a href="#cb91-897" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_none &lt;- log_no_return[[1]]$toc - log_no_return[[1]]$tic</span></span>
+<span id="cb91-898"><a href="#cb91-898" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_none</span></span>
+<span id="cb91-899"><a href="#cb91-899" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-900"><a href="#cb91-900" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-901"><a href="#cb91-901" aria-hidden="true" tabindex="-1"></a>In most cases, we do not have to carry around all the individual cell values of land use types for our subsequent analysis. For example, in Demonstration 3 (@sec-demo3) we just need a summary (count) of each unique land use type by polygon. So, let's get the summary before we have the computer collect the objects returned from each core as follows: </span>
+<span id="cb91-901"><a href="#cb91-901" aria-hidden="true" tabindex="-1"></a>Approximately <span class="in">`r time_elapsed_gropu_par - time_elapsed_group_none`</span> seconds were used just to collect the 2.3GB worth of data from the cores into one.</span>
 <span id="cb91-902"><a href="#cb91-902" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-903"><a href="#cb91-903" aria-hidden="true" tabindex="-1"></a><span class="in">```{r return_reduced_group, eval = F}</span></span>
-<span id="cb91-904"><a href="#cb91-904" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group_reduced &lt;- function(i) {</span></span>
-<span id="cb91-905"><a href="#cb91-905" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- </span></span>
-<span id="cb91-906"><a href="#cb91-906" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(</span></span>
-<span id="cb91-907"><a href="#cb91-907" aria-hidden="true" tabindex="-1"></a><span class="in">      IA_cdl_15,</span></span>
-<span id="cb91-908"><a href="#cb91-908" aria-hidden="true" tabindex="-1"></a><span class="in">      filter(IA_grids, group_id == i)</span></span>
-<span id="cb91-909"><a href="#cb91-909" aria-hidden="true" tabindex="-1"></a><span class="in">    ) %&gt;%</span></span>
-<span id="cb91-910"><a href="#cb91-910" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- combine the list of data.frames into one with polygon id ---#</span></span>
-<span id="cb91-911"><a href="#cb91-911" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist(idcol = "id_within_group") %&gt;%</span></span>
-<span id="cb91-912"><a href="#cb91-912" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- find the count of land use type values by polygon ---#</span></span>
-<span id="cb91-913"><a href="#cb91-913" aria-hidden="true" tabindex="-1"></a><span class="in">    .[, .(num_value = .N), by = .(value, id_within_group)]</span></span>
-<span id="cb91-914"><a href="#cb91-914" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-915"><a href="#cb91-915" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
-<span id="cb91-916"><a href="#cb91-916" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-917"><a href="#cb91-917" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-918"><a href="#cb91-918" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-919"><a href="#cb91-919" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
-<span id="cb91-920"><a href="#cb91-920" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
-<span id="cb91-921"><a href="#cb91-921" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
-<span id="cb91-922"><a href="#cb91-922" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group_reduced(i),</span></span>
-<span id="cb91-923"><a href="#cb91-923" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
-<span id="cb91-924"><a href="#cb91-924" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-925"><a href="#cb91-925" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
-<span id="cb91-926"><a href="#cb91-926" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-927"><a href="#cb91-927" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-928"><a href="#cb91-928" aria-hidden="true" tabindex="-1"></a><span class="in">```{r return_reduced_group_run, echo = F, eval = F}</span></span>
-<span id="cb91-929"><a href="#cb91-929" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-930"><a href="#cb91-930" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-931"><a href="#cb91-931" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-932"><a href="#cb91-932" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group_reduced &lt;- function(i) {</span></span>
-<span id="cb91-933"><a href="#cb91-933" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- </span></span>
-<span id="cb91-934"><a href="#cb91-934" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(</span></span>
-<span id="cb91-935"><a href="#cb91-935" aria-hidden="true" tabindex="-1"></a><span class="in">      IA_cdl_15,</span></span>
-<span id="cb91-936"><a href="#cb91-936" aria-hidden="true" tabindex="-1"></a><span class="in">      dplyr::filter(IA_grids, group_id == i)</span></span>
-<span id="cb91-937"><a href="#cb91-937" aria-hidden="true" tabindex="-1"></a><span class="in">    ) %&gt;%</span></span>
-<span id="cb91-938"><a href="#cb91-938" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- combine the list of data.frames into one with polygon id ---#</span></span>
-<span id="cb91-939"><a href="#cb91-939" aria-hidden="true" tabindex="-1"></a><span class="in">    rbindlist(idcol = "id_within_group") %&gt;%</span></span>
-<span id="cb91-940"><a href="#cb91-940" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- find the count of land use type values by polygon ---#</span></span>
-<span id="cb91-941"><a href="#cb91-941" aria-hidden="true" tabindex="-1"></a><span class="in">    .[, .(num_value = .N), by = .(value, id_within_group)]</span></span>
-<span id="cb91-942"><a href="#cb91-942" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
-<span id="cb91-943"><a href="#cb91-943" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-944"><a href="#cb91-944" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-945"><a href="#cb91-945" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
-<span id="cb91-946"><a href="#cb91-946" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
-<span id="cb91-947"><a href="#cb91-947" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
-<span id="cb91-948"><a href="#cb91-948" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group_reduced(i),</span></span>
-<span id="cb91-949"><a href="#cb91-949" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
-<span id="cb91-950"><a href="#cb91-950" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-951"><a href="#cb91-951" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-952"><a href="#cb91-952" aria-hidden="true" tabindex="-1"></a><span class="in">log_reduced &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-953"><a href="#cb91-953" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-954"><a href="#cb91-954" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_reduced, "Data/log_reduced.rds")</span></span>
-<span id="cb91-955"><a href="#cb91-955" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-956"><a href="#cb91-956" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-957"><a href="#cb91-957" aria-hidden="true" tabindex="-1"></a><span class="in">```{r return_reduced_group_show, echo = F, cache = TRUE}</span></span>
-<span id="cb91-958"><a href="#cb91-958" aria-hidden="true" tabindex="-1"></a><span class="in">log_reduced &lt;- readRDS("Data/log_reduced.rds")</span></span>
-<span id="cb91-959"><a href="#cb91-959" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_reduced &lt;- log_reduced[[1]]$toc - log_reduced[[1]]$tic</span></span>
-<span id="cb91-960"><a href="#cb91-960" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_reduced</span></span>
-<span id="cb91-961"><a href="#cb91-961" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-962"><a href="#cb91-962" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-963"><a href="#cb91-963" aria-hidden="true" tabindex="-1"></a>It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.</span>
+<span id="cb91-903"><a href="#cb91-903" aria-hidden="true" tabindex="-1"></a>In most cases, we do not have to carry around all the individual cell values of land use types for our subsequent analysis. For example, in Demonstration 3 (@sec-demo3) we just need a summary (count) of each unique land use type by polygon. So, let's get the summary before we have the computer collect the objects returned from each core as follows: </span>
+<span id="cb91-904"><a href="#cb91-904" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-905"><a href="#cb91-905" aria-hidden="true" tabindex="-1"></a><span class="in">```{r return_reduced_group, eval = F}</span></span>
+<span id="cb91-906"><a href="#cb91-906" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group_reduced &lt;- function(i) {</span></span>
+<span id="cb91-907"><a href="#cb91-907" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- </span></span>
+<span id="cb91-908"><a href="#cb91-908" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(</span></span>
+<span id="cb91-909"><a href="#cb91-909" aria-hidden="true" tabindex="-1"></a><span class="in">      IA_cdl_15,</span></span>
+<span id="cb91-910"><a href="#cb91-910" aria-hidden="true" tabindex="-1"></a><span class="in">      filter(IA_grids, group_id == i)</span></span>
+<span id="cb91-911"><a href="#cb91-911" aria-hidden="true" tabindex="-1"></a><span class="in">    ) %&gt;%</span></span>
+<span id="cb91-912"><a href="#cb91-912" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- combine the list of data.frames into one with polygon id ---#</span></span>
+<span id="cb91-913"><a href="#cb91-913" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist(idcol = "id_within_group") %&gt;%</span></span>
+<span id="cb91-914"><a href="#cb91-914" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- find the count of land use type values by polygon ---#</span></span>
+<span id="cb91-915"><a href="#cb91-915" aria-hidden="true" tabindex="-1"></a><span class="in">    .[, .(num_value = .N), by = .(value, id_within_group)]</span></span>
+<span id="cb91-916"><a href="#cb91-916" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-917"><a href="#cb91-917" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
+<span id="cb91-918"><a href="#cb91-918" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-919"><a href="#cb91-919" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-920"><a href="#cb91-920" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-921"><a href="#cb91-921" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
+<span id="cb91-922"><a href="#cb91-922" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
+<span id="cb91-923"><a href="#cb91-923" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
+<span id="cb91-924"><a href="#cb91-924" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group_reduced(i),</span></span>
+<span id="cb91-925"><a href="#cb91-925" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
+<span id="cb91-926"><a href="#cb91-926" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-927"><a href="#cb91-927" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
+<span id="cb91-928"><a href="#cb91-928" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-929"><a href="#cb91-929" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-930"><a href="#cb91-930" aria-hidden="true" tabindex="-1"></a><span class="in">```{r return_reduced_group_run, echo = F, eval = F}</span></span>
+<span id="cb91-931"><a href="#cb91-931" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-932"><a href="#cb91-932" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-933"><a href="#cb91-933" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-934"><a href="#cb91-934" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group_reduced &lt;- function(i) {</span></span>
+<span id="cb91-935"><a href="#cb91-935" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- </span></span>
+<span id="cb91-936"><a href="#cb91-936" aria-hidden="true" tabindex="-1"></a><span class="in">    exactextractr::exact_extract(</span></span>
+<span id="cb91-937"><a href="#cb91-937" aria-hidden="true" tabindex="-1"></a><span class="in">      IA_cdl_15,</span></span>
+<span id="cb91-938"><a href="#cb91-938" aria-hidden="true" tabindex="-1"></a><span class="in">      dplyr::filter(IA_grids, group_id == i)</span></span>
+<span id="cb91-939"><a href="#cb91-939" aria-hidden="true" tabindex="-1"></a><span class="in">    ) %&gt;%</span></span>
+<span id="cb91-940"><a href="#cb91-940" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- combine the list of data.frames into one with polygon id ---#</span></span>
+<span id="cb91-941"><a href="#cb91-941" aria-hidden="true" tabindex="-1"></a><span class="in">    rbindlist(idcol = "id_within_group") %&gt;%</span></span>
+<span id="cb91-942"><a href="#cb91-942" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- find the count of land use type values by polygon ---#</span></span>
+<span id="cb91-943"><a href="#cb91-943" aria-hidden="true" tabindex="-1"></a><span class="in">    .[, .(num_value = .N), by = .(value, id_within_group)]</span></span>
+<span id="cb91-944"><a href="#cb91-944" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
+<span id="cb91-945"><a href="#cb91-945" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-946"><a href="#cb91-946" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-947"><a href="#cb91-947" aria-hidden="true" tabindex="-1"></a><span class="in">#--- parallelized processing by group ---#</span></span>
+<span id="cb91-948"><a href="#cb91-948" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(</span></span>
+<span id="cb91-949"><a href="#cb91-949" aria-hidden="true" tabindex="-1"></a><span class="in">  1:num_cores,</span></span>
+<span id="cb91-950"><a href="#cb91-950" aria-hidden="true" tabindex="-1"></a><span class="in">  function(i) extract_by_group_reduced(i),</span></span>
+<span id="cb91-951"><a href="#cb91-951" aria-hidden="true" tabindex="-1"></a><span class="in">  mc.cores = num_cores</span></span>
+<span id="cb91-952"><a href="#cb91-952" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-953"><a href="#cb91-953" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-954"><a href="#cb91-954" aria-hidden="true" tabindex="-1"></a><span class="in">log_reduced &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-955"><a href="#cb91-955" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-956"><a href="#cb91-956" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_reduced, "Data/log_reduced.rds")</span></span>
+<span id="cb91-957"><a href="#cb91-957" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-958"><a href="#cb91-958" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-959"><a href="#cb91-959" aria-hidden="true" tabindex="-1"></a><span class="in">```{r return_reduced_group_show, echo = F, cache = TRUE}</span></span>
+<span id="cb91-960"><a href="#cb91-960" aria-hidden="true" tabindex="-1"></a><span class="in">log_reduced &lt;- readRDS("Data/log_reduced.rds")</span></span>
+<span id="cb91-961"><a href="#cb91-961" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_reduced &lt;- log_reduced[[1]]$toc - log_reduced[[1]]$tic</span></span>
+<span id="cb91-962"><a href="#cb91-962" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_group_reduced</span></span>
+<span id="cb91-963"><a href="#cb91-963" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-964"><a href="#cb91-964" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-965"><a href="#cb91-965" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb91-965"><a href="#cb91-965" aria-hidden="true" tabindex="-1"></a>It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.</span>
 <span id="cb91-966"><a href="#cb91-966" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-967"><a href="#cb91-967" aria-hidden="true" tabindex="-1"></a>As you can see, the computation time of the fastest approach is now significantly reduced, but you only saved <span class="in">`r round(time_elapsed_nonpar - time_elapsed_group_reduced, digits = 2)`</span> seconds. How much time did I spend writing the code to implement the parallelized group processing? About three minutes. What truly matters is the total time you spend (coding time plus processing time) to get the desired outcome. The maximum time you could save with clever coding is <span class="in">`r round(time_elapsed_nonpar, digits = 2)`</span> seconds. If writing code to make it faster takes more time than that, it’s simply not worth the effort. So, don't try to optimize your code if the processing time is already short. Before you dive into parallelization, think through the coding steps in your head and assess whether it's really worth the time investment.</span>
+<span id="cb91-967"><a href="#cb91-967" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb91-968"><a href="#cb91-968" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-969"><a href="#cb91-969" aria-hidden="true" tabindex="-1"></a>However, imagine processing CDL data for all U.S. states from 2009 to 2020. The entire process would take approximately <span class="in">`r round(51*12*time_elapsed_nonpar/60/60, digits = 2)`</span> hours (calculated as $51 \times 12 \times <span class="in">`r time_elapsed_nonpar`</span>/60/60$). A rough estimate suggests that with parallelization, using the best approach we discussed, the process could be completed in about <span class="in">`r round(51*12*time_elapsed_group_reduced/60/60, digits = 2)`</span> hours. While <span class="in">`r round(51*12*time_elapsed_nonpar/60/60, digits = 2)`</span> hours is still manageable (you could start the process before bed and have the results ready by the next afternoon), it becomes worthwhile to parallelize the process, especially considering the time savings from parallelization, even after accounting for the time spent coding it.</span>
+<span id="cb91-969"><a href="#cb91-969" aria-hidden="true" tabindex="-1"></a>As you can see, the computation time of the fastest approach is now significantly reduced, but you only saved <span class="in">`r round(time_elapsed_nonpar - time_elapsed_group_reduced, digits = 2)`</span> seconds. How much time did I spend writing the code to implement the parallelized group processing? About three minutes. What truly matters is the total time you spend (coding time plus processing time) to get the desired outcome. The maximum time you could save with clever coding is <span class="in">`r round(time_elapsed_nonpar, digits = 2)`</span> seconds. If writing code to make it faster takes more time than that, it’s simply not worth the effort. So, don't try to optimize your code if the processing time is already short. Before you dive into parallelization, think through the coding steps in your head and assess whether it's really worth the time investment.</span>
 <span id="cb91-970"><a href="#cb91-970" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-971"><a href="#cb91-971" aria-hidden="true" tabindex="-1"></a>:::{.callout-note title="Summary"}</span>
-<span id="cb91-972"><a href="#cb91-972" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Do not let each core runs small tasks over and over again (e.g., extracting raster values for one polygon at a time), or you will suffer from significant overhead.</span>
-<span id="cb91-973"><a href="#cb91-973" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Blocking is one way to avoid the problem above.</span>
-<span id="cb91-974"><a href="#cb91-974" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Reduce the size of the outcome of each core as much as possible to spend less time to simply collating them into one.</span>
-<span id="cb91-975"><a href="#cb91-975" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Do not forget about the time you would spend on coding parallelized processes.</span>
-<span id="cb91-976"><a href="#cb91-976" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>If you are extracting from a single layer, it is likely that you should not parallelize.</span>
-<span id="cb91-977"><a href="#cb91-977" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb91-978"><a href="#cb91-978" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-979"><a href="#cb91-979" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-980"><a href="#cb91-980" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parallelization on many multi-layer raster files {#sec-many-multi-layer}</span></span>
+<span id="cb91-971"><a href="#cb91-971" aria-hidden="true" tabindex="-1"></a>However, imagine processing CDL data for all U.S. states from 2009 to 2020. The entire process would take approximately <span class="in">`r round(51*12*time_elapsed_nonpar/60/60, digits = 2)`</span> hours (calculated as $51 \times 12 \times <span class="in">`r time_elapsed_nonpar`</span>/60/60$). A rough estimate suggests that with parallelization, using the best approach we discussed, the process could be completed in about <span class="in">`r round(51*12*time_elapsed_group_reduced/60/60, digits = 2)`</span> hours. While <span class="in">`r round(51*12*time_elapsed_nonpar/60/60, digits = 2)`</span> hours is still manageable (you could start the process before bed and have the results ready by the next afternoon), it becomes worthwhile to parallelize the process, especially considering the time savings from parallelization, even after accounting for the time spent coding it.</span>
+<span id="cb91-972"><a href="#cb91-972" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-973"><a href="#cb91-973" aria-hidden="true" tabindex="-1"></a>:::{.callout-note title="Summary"}</span>
+<span id="cb91-974"><a href="#cb91-974" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Do not let each core runs small tasks over and over again (e.g., extracting raster values for one polygon at a time), or you will suffer from significant overhead.</span>
+<span id="cb91-975"><a href="#cb91-975" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Blocking is one way to avoid the problem above.</span>
+<span id="cb91-976"><a href="#cb91-976" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Reduce the size of the outcome of each core as much as possible to spend less time to simply collating them into one.</span>
+<span id="cb91-977"><a href="#cb91-977" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Do not forget about the time you would spend on coding parallelized processes.</span>
+<span id="cb91-978"><a href="#cb91-978" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>If you are extracting from a single layer, it is likely that you should not parallelize.</span>
+<span id="cb91-979"><a href="#cb91-979" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb91-980"><a href="#cb91-980" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb91-981"><a href="#cb91-981" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-982"><a href="#cb91-982" aria-hidden="true" tabindex="-1"></a>In this section, we discuss various methods to parallelize the process of extracting values from many multi-layer raster files.</span>
+<span id="cb91-982"><a href="#cb91-982" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parallelization on many multi-layer raster files {#sec-many-multi-layer}</span></span>
 <span id="cb91-983"><a href="#cb91-983" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-984"><a href="#cb91-984" aria-hidden="true" tabindex="-1"></a><span class="fu">### Datasets</span></span>
+<span id="cb91-984"><a href="#cb91-984" aria-hidden="true" tabindex="-1"></a>In this section, we discuss various methods to parallelize the process of extracting values from many multi-layer raster files.</span>
 <span id="cb91-985"><a href="#cb91-985" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-986"><a href="#cb91-986" aria-hidden="true" tabindex="-1"></a>We will use the following datasets:</span>
+<span id="cb91-986"><a href="#cb91-986" aria-hidden="true" tabindex="-1"></a><span class="fu">### Datasets</span></span>
 <span id="cb91-987"><a href="#cb91-987" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-988"><a href="#cb91-988" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**raster**: daily PRISM data 2010 through 2019 stacked by month</span>
-<span id="cb91-989"><a href="#cb91-989" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**polygons**: US County polygons </span>
-<span id="cb91-990"><a href="#cb91-990" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-991"><a href="#cb91-991" aria-hidden="true" tabindex="-1"></a>**daily PRISM precipitation 2010 through 2019**</span>
+<span id="cb91-988"><a href="#cb91-988" aria-hidden="true" tabindex="-1"></a>We will use the following datasets:</span>
+<span id="cb91-989"><a href="#cb91-989" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-990"><a href="#cb91-990" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**raster**: daily PRISM data 2010 through 2019 stacked by month</span>
+<span id="cb91-991"><a href="#cb91-991" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**polygons**: US County polygons </span>
 <span id="cb91-992"><a href="#cb91-992" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-993"><a href="#cb91-993" aria-hidden="true" tabindex="-1"></a>You can download all the prism files from <span class="co">[</span><span class="ot">here</span><span class="co">](https://www.dropbox.com/sh/gkprbgp8sg5362f/AABLLEUjsGkelCK2aUxaUI72a?dl=0)</span>. For those who are interested in learning how to generate the series of daily PRISM data files stored by month, see @sec-download-prism for the code.</span>
+<span id="cb91-993"><a href="#cb91-993" aria-hidden="true" tabindex="-1"></a>**daily PRISM precipitation 2010 through 2019**</span>
 <span id="cb91-994"><a href="#cb91-994" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-995"><a href="#cb91-995" aria-hidden="true" tabindex="-1"></a>Let's retrieve the U.S. counties data (see @fig-us-counties for the map).</span>
+<span id="cb91-995"><a href="#cb91-995" aria-hidden="true" tabindex="-1"></a>You can download all the prism files from <span class="co">[</span><span class="ot">here</span><span class="co">](https://www.dropbox.com/sh/gkprbgp8sg5362f/AABLLEUjsGkelCK2aUxaUI72a?dl=0)</span>. For those who are interested in learning how to generate the series of daily PRISM data files stored by month, see @sec-download-prism for the code.</span>
 <span id="cb91-996"><a href="#cb91-996" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-997"><a href="#cb91-997" aria-hidden="true" tabindex="-1"></a><span class="in">```{r US_county, cache = TRUE}</span></span>
-<span id="cb91-998"><a href="#cb91-998" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
-<span id="cb91-999"><a href="#cb91-999" aria-hidden="true" tabindex="-1"></a><span class="in">  US_county &lt;-</span></span>
-<span id="cb91-1000"><a href="#cb91-1000" aria-hidden="true" tabindex="-1"></a><span class="in">    tigris::counties(cb = TRUE, progress_bar = FALSE) %&gt;%</span></span>
-<span id="cb91-1001"><a href="#cb91-1001" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- only keep geometry ---#</span></span>
-<span id="cb91-1002"><a href="#cb91-1002" aria-hidden="true" tabindex="-1"></a><span class="in">    dplyr::select(geometry) %&gt;%</span></span>
-<span id="cb91-1003"><a href="#cb91-1003" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- project to the CRS of the CDL data ---#</span></span>
-<span id="cb91-1004"><a href="#cb91-1004" aria-hidden="true" tabindex="-1"></a><span class="in">    sf::st_transform(terra::crs(terra::rast("Data/PRISM_ppt_y2009_m1.tif")))</span></span>
-<span id="cb91-1005"><a href="#cb91-1005" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-1006"><a href="#cb91-1006" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1007"><a href="#cb91-1007" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1008"><a href="#cb91-1008" aria-hidden="true" tabindex="-1"></a>::: {.column-margin}</span>
-<span id="cb91-1011"><a href="#cb91-1011" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb91-1012"><a href="#cb91-1012" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-us-counties </span></span>
-<span id="cb91-1013"><a href="#cb91-1013" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "U.S. counties"</span></span>
-<span id="cb91-1014"><a href="#cb91-1014" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb91-1015"><a href="#cb91-1015" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1016"><a href="#cb91-1016" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(US_county) <span class="sc">+</span></span>
-<span id="cb91-1017"><a href="#cb91-1017" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
-<span id="cb91-1018"><a href="#cb91-1018" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span>
-<span id="cb91-1019"><a href="#cb91-1019" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1020"><a href="#cb91-1020" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb91-1021"><a href="#cb91-1021" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--end of column-margin--&gt;</span></span>
-<span id="cb91-1022"><a href="#cb91-1022" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1023"><a href="#cb91-1023" aria-hidden="true" tabindex="-1"></a><span class="fu">### Non-parallelized extraction {#sec-non-par-ext-multi}</span></span>
+<span id="cb91-997"><a href="#cb91-997" aria-hidden="true" tabindex="-1"></a>Let's retrieve the U.S. counties data (see @fig-us-counties for the map).</span>
+<span id="cb91-998"><a href="#cb91-998" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-999"><a href="#cb91-999" aria-hidden="true" tabindex="-1"></a><span class="in">```{r US_county, cache = TRUE}</span></span>
+<span id="cb91-1000"><a href="#cb91-1000" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
+<span id="cb91-1001"><a href="#cb91-1001" aria-hidden="true" tabindex="-1"></a><span class="in">  US_county &lt;-</span></span>
+<span id="cb91-1002"><a href="#cb91-1002" aria-hidden="true" tabindex="-1"></a><span class="in">    tigris::counties(cb = TRUE, progress_bar = FALSE) %&gt;%</span></span>
+<span id="cb91-1003"><a href="#cb91-1003" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- only keep geometry ---#</span></span>
+<span id="cb91-1004"><a href="#cb91-1004" aria-hidden="true" tabindex="-1"></a><span class="in">    dplyr::select(geometry) %&gt;%</span></span>
+<span id="cb91-1005"><a href="#cb91-1005" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- project to the CRS of the CDL data ---#</span></span>
+<span id="cb91-1006"><a href="#cb91-1006" aria-hidden="true" tabindex="-1"></a><span class="in">    sf::st_transform(terra::crs(terra::rast("Data/PRISM_ppt_y2009_m1.tif")))</span></span>
+<span id="cb91-1007"><a href="#cb91-1007" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-1008"><a href="#cb91-1008" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1009"><a href="#cb91-1009" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1010"><a href="#cb91-1010" aria-hidden="true" tabindex="-1"></a>::: {.column-margin}</span>
+<span id="cb91-1013"><a href="#cb91-1013" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb91-1014"><a href="#cb91-1014" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-us-counties </span></span>
+<span id="cb91-1015"><a href="#cb91-1015" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "U.S. counties"</span></span>
+<span id="cb91-1016"><a href="#cb91-1016" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb91-1017"><a href="#cb91-1017" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1018"><a href="#cb91-1018" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(US_county) <span class="sc">+</span></span>
+<span id="cb91-1019"><a href="#cb91-1019" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
+<span id="cb91-1020"><a href="#cb91-1020" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span>
+<span id="cb91-1021"><a href="#cb91-1021" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1022"><a href="#cb91-1022" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb91-1023"><a href="#cb91-1023" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--end of column-margin--&gt;</span></span>
 <span id="cb91-1024"><a href="#cb91-1024" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1025"><a href="#cb91-1025" aria-hidden="true" tabindex="-1"></a>As we learned in @sec-extract-speed, extracting values from stacked raster layers (multi-layer <span class="in">`SpatRaster`</span>) is faster than extracting from multiple single-layer raster datasets one at a time. In this case, daily precipitation datasets are stacked by year and month and saved as multi-layer GeoTIFF files. For example, **PRISM_ppt_y2009_m1.tif** contains the daily precipitation data for January 2009. Below is an example of how long it takes to extract values for U.S. counties from a month of daily PRISM precipitation data.</span>
+<span id="cb91-1025"><a href="#cb91-1025" aria-hidden="true" tabindex="-1"></a><span class="fu">### Non-parallelized extraction {#sec-non-par-ext-multi}</span></span>
 <span id="cb91-1026"><a href="#cb91-1026" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1027"><a href="#cb91-1027" aria-hidden="true" tabindex="-1"></a><span class="in">```{r prism_import_one_month_disp, eval = F}</span></span>
-<span id="cb91-1028"><a href="#cb91-1028" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-1029"><a href="#cb91-1029" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
-<span id="cb91-1030"><a href="#cb91-1030" aria-hidden="true" tabindex="-1"></a><span class="in">  exactextractr::exact_extract(</span></span>
-<span id="cb91-1031"><a href="#cb91-1031" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
-<span id="cb91-1032"><a href="#cb91-1032" aria-hidden="true" tabindex="-1"></a><span class="in">    US_county,</span></span>
-<span id="cb91-1033"><a href="#cb91-1033" aria-hidden="true" tabindex="-1"></a><span class="in">    "mean",</span></span>
-<span id="cb91-1034"><a href="#cb91-1034" aria-hidden="true" tabindex="-1"></a><span class="in">    progress = F</span></span>
-<span id="cb91-1035"><a href="#cb91-1035" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-1036"><a href="#cb91-1036" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
-<span id="cb91-1037"><a href="#cb91-1037" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1038"><a href="#cb91-1038" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1039"><a href="#cb91-1039" aria-hidden="true" tabindex="-1"></a><span class="in">```{r prism_import_one_month_run, echo = F, eval = F}</span></span>
-<span id="cb91-1040"><a href="#cb91-1040" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-1041"><a href="#cb91-1041" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-1042"><a href="#cb91-1042" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
-<span id="cb91-1043"><a href="#cb91-1043" aria-hidden="true" tabindex="-1"></a><span class="in">  exactextractr::exact_extract(</span></span>
-<span id="cb91-1044"><a href="#cb91-1044" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
-<span id="cb91-1045"><a href="#cb91-1045" aria-hidden="true" tabindex="-1"></a><span class="in">    US_county,</span></span>
-<span id="cb91-1046"><a href="#cb91-1046" aria-hidden="true" tabindex="-1"></a><span class="in">    progress = F</span></span>
-<span id="cb91-1047"><a href="#cb91-1047" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-1048"><a href="#cb91-1048" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-1049"><a href="#cb91-1049" aria-hidden="true" tabindex="-1"></a><span class="in">log_prism_import_one_month_run &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-1050"><a href="#cb91-1050" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1051"><a href="#cb91-1051" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_prism_import_one_month_run, "Data/log_prism_import_one_month_run.rds")</span></span>
-<span id="cb91-1052"><a href="#cb91-1052" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1053"><a href="#cb91-1053" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1054"><a href="#cb91-1054" aria-hidden="true" tabindex="-1"></a><span class="in">```{r prism_import_one_month_show, echo = F, cache = TRUE}</span></span>
-<span id="cb91-1055"><a href="#cb91-1055" aria-hidden="true" tabindex="-1"></a><span class="in">log_prism_import_one_month_run &lt;- readRDS("Data/log_prism_import_one_month_run.rds")</span></span>
-<span id="cb91-1056"><a href="#cb91-1056" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_prism_import_one_month &lt;- log_prism_import_one_month_run[[1]]$toc - log_prism_import_one_month_run[[1]]$tic</span></span>
-<span id="cb91-1057"><a href="#cb91-1057" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_prism_import_one_month</span></span>
-<span id="cb91-1058"><a href="#cb91-1058" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1059"><a href="#cb91-1059" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1060"><a href="#cb91-1060" aria-hidden="true" tabindex="-1"></a>Now, to process all the precipitation data from 2009-2018, we consider two approaches in this section are:</span>
+<span id="cb91-1027"><a href="#cb91-1027" aria-hidden="true" tabindex="-1"></a>As we learned in @sec-extract-speed, extracting values from stacked raster layers (multi-layer <span class="in">`SpatRaster`</span>) is faster than extracting from multiple single-layer raster datasets one at a time. In this case, daily precipitation datasets are stacked by year and month and saved as multi-layer GeoTIFF files. For example, **PRISM_ppt_y2009_m1.tif** contains the daily precipitation data for January 2009. Below is an example of how long it takes to extract values for U.S. counties from a month of daily PRISM precipitation data.</span>
+<span id="cb91-1028"><a href="#cb91-1028" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1029"><a href="#cb91-1029" aria-hidden="true" tabindex="-1"></a><span class="in">```{r prism_import_one_month_disp, eval = F}</span></span>
+<span id="cb91-1030"><a href="#cb91-1030" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-1031"><a href="#cb91-1031" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
+<span id="cb91-1032"><a href="#cb91-1032" aria-hidden="true" tabindex="-1"></a><span class="in">  exactextractr::exact_extract(</span></span>
+<span id="cb91-1033"><a href="#cb91-1033" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
+<span id="cb91-1034"><a href="#cb91-1034" aria-hidden="true" tabindex="-1"></a><span class="in">    US_county,</span></span>
+<span id="cb91-1035"><a href="#cb91-1035" aria-hidden="true" tabindex="-1"></a><span class="in">    "mean",</span></span>
+<span id="cb91-1036"><a href="#cb91-1036" aria-hidden="true" tabindex="-1"></a><span class="in">    progress = F</span></span>
+<span id="cb91-1037"><a href="#cb91-1037" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-1038"><a href="#cb91-1038" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
+<span id="cb91-1039"><a href="#cb91-1039" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1040"><a href="#cb91-1040" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1041"><a href="#cb91-1041" aria-hidden="true" tabindex="-1"></a><span class="in">```{r prism_import_one_month_run, echo = F, eval = F}</span></span>
+<span id="cb91-1042"><a href="#cb91-1042" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-1043"><a href="#cb91-1043" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-1044"><a href="#cb91-1044" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- </span></span>
+<span id="cb91-1045"><a href="#cb91-1045" aria-hidden="true" tabindex="-1"></a><span class="in">  exactextractr::exact_extract(</span></span>
+<span id="cb91-1046"><a href="#cb91-1046" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
+<span id="cb91-1047"><a href="#cb91-1047" aria-hidden="true" tabindex="-1"></a><span class="in">    US_county,</span></span>
+<span id="cb91-1048"><a href="#cb91-1048" aria-hidden="true" tabindex="-1"></a><span class="in">    progress = F</span></span>
+<span id="cb91-1049"><a href="#cb91-1049" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-1050"><a href="#cb91-1050" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-1051"><a href="#cb91-1051" aria-hidden="true" tabindex="-1"></a><span class="in">log_prism_import_one_month_run &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-1052"><a href="#cb91-1052" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1053"><a href="#cb91-1053" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_prism_import_one_month_run, "Data/log_prism_import_one_month_run.rds")</span></span>
+<span id="cb91-1054"><a href="#cb91-1054" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1055"><a href="#cb91-1055" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1056"><a href="#cb91-1056" aria-hidden="true" tabindex="-1"></a><span class="in">```{r prism_import_one_month_show, echo = F, cache = TRUE}</span></span>
+<span id="cb91-1057"><a href="#cb91-1057" aria-hidden="true" tabindex="-1"></a><span class="in">log_prism_import_one_month_run &lt;- readRDS("Data/log_prism_import_one_month_run.rds")</span></span>
+<span id="cb91-1058"><a href="#cb91-1058" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_prism_import_one_month &lt;- log_prism_import_one_month_run[[1]]$toc - log_prism_import_one_month_run[[1]]$tic</span></span>
+<span id="cb91-1059"><a href="#cb91-1059" aria-hidden="true" tabindex="-1"></a><span class="in">time_elapsed_prism_import_one_month</span></span>
+<span id="cb91-1060"><a href="#cb91-1060" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-1061"><a href="#cb91-1061" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1062"><a href="#cb91-1062" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>parallelize over polygons (blocked) and do regular loop over year-month</span>
-<span id="cb91-1063"><a href="#cb91-1063" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>parallelize over year-month</span>
-<span id="cb91-1064"><a href="#cb91-1064" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1065"><a href="#cb91-1065" aria-hidden="true" tabindex="-1"></a><span class="fu">### Approach 1: parallelize over polygons and do regular loop over year-month</span></span>
+<span id="cb91-1062"><a href="#cb91-1062" aria-hidden="true" tabindex="-1"></a>Now, to process all the precipitation data from 2009-2018, we consider two approaches in this section are:</span>
+<span id="cb91-1063"><a href="#cb91-1063" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1064"><a href="#cb91-1064" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>parallelize over polygons (blocked) and do regular loop over year-month</span>
+<span id="cb91-1065"><a href="#cb91-1065" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>parallelize over year-month</span>
 <span id="cb91-1066"><a href="#cb91-1066" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1067"><a href="#cb91-1067" aria-hidden="true" tabindex="-1"></a>For this approach, let's measure the time spent on processing one year-month PRISM dataset and then guess how long it would take to process 120 year-month PRISM datasets.</span>
+<span id="cb91-1067"><a href="#cb91-1067" aria-hidden="true" tabindex="-1"></a><span class="fu">### Approach 1: parallelize over polygons and do regular loop over year-month</span></span>
 <span id="cb91-1068"><a href="#cb91-1068" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1069"><a href="#cb91-1069" aria-hidden="true" tabindex="-1"></a><span class="in">```{r by_state_block, eval = F}</span></span>
-<span id="cb91-1070"><a href="#cb91-1070" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
-<span id="cb91-1071"><a href="#cb91-1071" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(US_county) / num_cores)</span></span>
-<span id="cb91-1072"><a href="#cb91-1072" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1073"><a href="#cb91-1073" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define group id ---#</span></span>
-<span id="cb91-1074"><a href="#cb91-1074" aria-hidden="true" tabindex="-1"></a><span class="in">US_county &lt;- US_county %&gt;%</span></span>
-<span id="cb91-1075"><a href="#cb91-1075" aria-hidden="true" tabindex="-1"></a><span class="in">  mutate(</span></span>
-<span id="cb91-1076"><a href="#cb91-1076" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
-<span id="cb91-1077"><a href="#cb91-1077" aria-hidden="true" tabindex="-1"></a><span class="in">    poly_id = 1:nrow(.),</span></span>
-<span id="cb91-1078"><a href="#cb91-1078" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
-<span id="cb91-1079"><a href="#cb91-1079" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = poly_id %/% num_in_group + 1</span></span>
-<span id="cb91-1080"><a href="#cb91-1080" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-1081"><a href="#cb91-1081" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1082"><a href="#cb91-1082" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
-<span id="cb91-1083"><a href="#cb91-1083" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- exactextractr::exact_extract(</span></span>
-<span id="cb91-1084"><a href="#cb91-1084" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
-<span id="cb91-1085"><a href="#cb91-1085" aria-hidden="true" tabindex="-1"></a><span class="in">    dplyr::filter(US_county, group_id == i)</span></span>
-<span id="cb91-1086"><a href="#cb91-1086" aria-hidden="true" tabindex="-1"></a><span class="in">  ) %&gt;%</span></span>
-<span id="cb91-1087"><a href="#cb91-1087" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- combine the list of data.frames into one with polygon id ---#</span></span>
-<span id="cb91-1088"><a href="#cb91-1088" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist(idcol = "id_within_group") %&gt;%</span></span>
-<span id="cb91-1089"><a href="#cb91-1089" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- find the count of land use type values by polygon ---#</span></span>
-<span id="cb91-1090"><a href="#cb91-1090" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::melt(id.var = c("id_within_group", "coverage_fraction")) %&gt;%</span></span>
-<span id="cb91-1091"><a href="#cb91-1091" aria-hidden="true" tabindex="-1"></a><span class="in">    .[, sum(value * coverage_fraction) / sum(coverage_fraction), by = .(id_within_group, variable)]</span></span>
-<span id="cb91-1092"><a href="#cb91-1092" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1093"><a href="#cb91-1093" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
-<span id="cb91-1094"><a href="#cb91-1094" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-1095"><a href="#cb91-1095" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1096"><a href="#cb91-1096" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-1097"><a href="#cb91-1097" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)</span></span>
-<span id="cb91-1098"><a href="#cb91-1098" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
-<span id="cb91-1099"><a href="#cb91-1099" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1100"><a href="#cb91-1100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1101"><a href="#cb91-1101" aria-hidden="true" tabindex="-1"></a><span class="in">```{r by_state_block_run, echo = F, eval = F}</span></span>
-<span id="cb91-1102"><a href="#cb91-1102" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
-<span id="cb91-1103"><a href="#cb91-1103" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(US_county) / num_cores)</span></span>
-<span id="cb91-1104"><a href="#cb91-1104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1105"><a href="#cb91-1105" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define group id ---#</span></span>
-<span id="cb91-1106"><a href="#cb91-1106" aria-hidden="true" tabindex="-1"></a><span class="in">US_county &lt;- US_county %&gt;%</span></span>
-<span id="cb91-1107"><a href="#cb91-1107" aria-hidden="true" tabindex="-1"></a><span class="in">  mutate(</span></span>
-<span id="cb91-1108"><a href="#cb91-1108" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
-<span id="cb91-1109"><a href="#cb91-1109" aria-hidden="true" tabindex="-1"></a><span class="in">    poly_id = 1:nrow(.),</span></span>
-<span id="cb91-1110"><a href="#cb91-1110" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
-<span id="cb91-1111"><a href="#cb91-1111" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = poly_id %/% num_in_group + 1</span></span>
-<span id="cb91-1112"><a href="#cb91-1112" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-1113"><a href="#cb91-1113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1114"><a href="#cb91-1114" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
-<span id="cb91-1115"><a href="#cb91-1115" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- exactextractr::exact_extract(</span></span>
-<span id="cb91-1116"><a href="#cb91-1116" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
-<span id="cb91-1117"><a href="#cb91-1117" aria-hidden="true" tabindex="-1"></a><span class="in">    dplyr::filter(US_county, group_id == i),</span></span>
-<span id="cb91-1118"><a href="#cb91-1118" aria-hidden="true" tabindex="-1"></a><span class="in">    "mean"</span></span>
-<span id="cb91-1119"><a href="#cb91-1119" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
-<span id="cb91-1120"><a href="#cb91-1120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1121"><a href="#cb91-1121" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
-<span id="cb91-1122"><a href="#cb91-1122" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-1123"><a href="#cb91-1123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1124"><a href="#cb91-1124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1125"><a href="#cb91-1125" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-1126"><a href="#cb91-1126" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-1127"><a href="#cb91-1127" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)</span></span>
-<span id="cb91-1128"><a href="#cb91-1128" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-1129"><a href="#cb91-1129" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_state_block &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-1130"><a href="#cb91-1130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1131"><a href="#cb91-1131" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_txt_state_block, "Data/Ch6_log_txt_state_block.rds")</span></span>
-<span id="cb91-1132"><a href="#cb91-1132" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1133"><a href="#cb91-1133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1134"><a href="#cb91-1134" aria-hidden="true" tabindex="-1"></a><span class="in">```{r by_state_block_how, echo = F}</span></span>
-<span id="cb91-1135"><a href="#cb91-1135" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_state_block &lt;- readRDS("Data/Ch6_log_txt_state_block.rds")</span></span>
-<span id="cb91-1136"><a href="#cb91-1136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1137"><a href="#cb91-1137" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
-<span id="cb91-1138"><a href="#cb91-1138" aria-hidden="true" tabindex="-1"></a><span class="in">  log_txt_state_block_elapsed &lt;- log_txt_state_block[[1]]$toc - log_txt_state_block[[1]]$tic</span></span>
-<span id="cb91-1139"><a href="#cb91-1139" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-1140"><a href="#cb91-1140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1141"><a href="#cb91-1141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1142"><a href="#cb91-1142" aria-hidden="true" tabindex="-1"></a>Okay, this approach is not bad at all. If we are to process 10 years of daily PRISM data, then it would take roughly <span class="in">`r round(120 * log_txt_state_block_elapsed / 60, digits = 2)`</span> minutes. </span>
+<span id="cb91-1069"><a href="#cb91-1069" aria-hidden="true" tabindex="-1"></a>For this approach, let's measure the time spent on processing one year-month PRISM dataset and then guess how long it would take to process 120 year-month PRISM datasets.</span>
+<span id="cb91-1070"><a href="#cb91-1070" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1071"><a href="#cb91-1071" aria-hidden="true" tabindex="-1"></a><span class="in">```{r by_state_block, eval = F}</span></span>
+<span id="cb91-1072"><a href="#cb91-1072" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
+<span id="cb91-1073"><a href="#cb91-1073" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(US_county) / num_cores)</span></span>
+<span id="cb91-1074"><a href="#cb91-1074" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1075"><a href="#cb91-1075" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define group id ---#</span></span>
+<span id="cb91-1076"><a href="#cb91-1076" aria-hidden="true" tabindex="-1"></a><span class="in">US_county &lt;- US_county %&gt;%</span></span>
+<span id="cb91-1077"><a href="#cb91-1077" aria-hidden="true" tabindex="-1"></a><span class="in">  mutate(</span></span>
+<span id="cb91-1078"><a href="#cb91-1078" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
+<span id="cb91-1079"><a href="#cb91-1079" aria-hidden="true" tabindex="-1"></a><span class="in">    poly_id = 1:nrow(.),</span></span>
+<span id="cb91-1080"><a href="#cb91-1080" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
+<span id="cb91-1081"><a href="#cb91-1081" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = poly_id %/% num_in_group + 1</span></span>
+<span id="cb91-1082"><a href="#cb91-1082" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-1083"><a href="#cb91-1083" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1084"><a href="#cb91-1084" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
+<span id="cb91-1085"><a href="#cb91-1085" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- exactextractr::exact_extract(</span></span>
+<span id="cb91-1086"><a href="#cb91-1086" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
+<span id="cb91-1087"><a href="#cb91-1087" aria-hidden="true" tabindex="-1"></a><span class="in">    dplyr::filter(US_county, group_id == i)</span></span>
+<span id="cb91-1088"><a href="#cb91-1088" aria-hidden="true" tabindex="-1"></a><span class="in">  ) %&gt;%</span></span>
+<span id="cb91-1089"><a href="#cb91-1089" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- combine the list of data.frames into one with polygon id ---#</span></span>
+<span id="cb91-1090"><a href="#cb91-1090" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::rbindlist(idcol = "id_within_group") %&gt;%</span></span>
+<span id="cb91-1091"><a href="#cb91-1091" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- find the count of land use type values by polygon ---#</span></span>
+<span id="cb91-1092"><a href="#cb91-1092" aria-hidden="true" tabindex="-1"></a><span class="in">    data.table::melt(id.var = c("id_within_group", "coverage_fraction")) %&gt;%</span></span>
+<span id="cb91-1093"><a href="#cb91-1093" aria-hidden="true" tabindex="-1"></a><span class="in">    .[, sum(value * coverage_fraction) / sum(coverage_fraction), by = .(id_within_group, variable)]</span></span>
+<span id="cb91-1094"><a href="#cb91-1094" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1095"><a href="#cb91-1095" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
+<span id="cb91-1096"><a href="#cb91-1096" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-1097"><a href="#cb91-1097" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1098"><a href="#cb91-1098" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-1099"><a href="#cb91-1099" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)</span></span>
+<span id="cb91-1100"><a href="#cb91-1100" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
+<span id="cb91-1101"><a href="#cb91-1101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1102"><a href="#cb91-1102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1103"><a href="#cb91-1103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r by_state_block_run, echo = F, eval = F}</span></span>
+<span id="cb91-1104"><a href="#cb91-1104" aria-hidden="true" tabindex="-1"></a><span class="in">#--- number of polygons in a group ---#</span></span>
+<span id="cb91-1105"><a href="#cb91-1105" aria-hidden="true" tabindex="-1"></a><span class="in">num_in_group &lt;- floor(nrow(US_county) / num_cores)</span></span>
+<span id="cb91-1106"><a href="#cb91-1106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1107"><a href="#cb91-1107" aria-hidden="true" tabindex="-1"></a><span class="in">#--- define group id ---#</span></span>
+<span id="cb91-1108"><a href="#cb91-1108" aria-hidden="true" tabindex="-1"></a><span class="in">US_county &lt;- US_county %&gt;%</span></span>
+<span id="cb91-1109"><a href="#cb91-1109" aria-hidden="true" tabindex="-1"></a><span class="in">  mutate(</span></span>
+<span id="cb91-1110"><a href="#cb91-1110" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- create grid id ---#</span></span>
+<span id="cb91-1111"><a href="#cb91-1111" aria-hidden="true" tabindex="-1"></a><span class="in">    poly_id = 1:nrow(.),</span></span>
+<span id="cb91-1112"><a href="#cb91-1112" aria-hidden="true" tabindex="-1"></a><span class="in">    #--- assign group id  ---#</span></span>
+<span id="cb91-1113"><a href="#cb91-1113" aria-hidden="true" tabindex="-1"></a><span class="in">    group_id = poly_id %/% num_in_group + 1</span></span>
+<span id="cb91-1114"><a href="#cb91-1114" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-1115"><a href="#cb91-1115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1116"><a href="#cb91-1116" aria-hidden="true" tabindex="-1"></a><span class="in">extract_by_group &lt;- function(i) {</span></span>
+<span id="cb91-1117"><a href="#cb91-1117" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_return &lt;- exactextractr::exact_extract(</span></span>
+<span id="cb91-1118"><a href="#cb91-1118" aria-hidden="true" tabindex="-1"></a><span class="in">    terra::rast("Data/PRISM_ppt_y2009_m1.tif"),</span></span>
+<span id="cb91-1119"><a href="#cb91-1119" aria-hidden="true" tabindex="-1"></a><span class="in">    dplyr::filter(US_county, group_id == i),</span></span>
+<span id="cb91-1120"><a href="#cb91-1120" aria-hidden="true" tabindex="-1"></a><span class="in">    "mean"</span></span>
+<span id="cb91-1121"><a href="#cb91-1121" aria-hidden="true" tabindex="-1"></a><span class="in">  )</span></span>
+<span id="cb91-1122"><a href="#cb91-1122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1123"><a href="#cb91-1123" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp_return)</span></span>
+<span id="cb91-1124"><a href="#cb91-1124" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-1125"><a href="#cb91-1125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1126"><a href="#cb91-1126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1127"><a href="#cb91-1127" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-1128"><a href="#cb91-1128" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-1129"><a href="#cb91-1129" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)</span></span>
+<span id="cb91-1130"><a href="#cb91-1130" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-1131"><a href="#cb91-1131" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_state_block &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-1132"><a href="#cb91-1132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1133"><a href="#cb91-1133" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_txt_state_block, "Data/Ch6_log_txt_state_block.rds")</span></span>
+<span id="cb91-1134"><a href="#cb91-1134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1135"><a href="#cb91-1135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1136"><a href="#cb91-1136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r by_state_block_how, echo = F}</span></span>
+<span id="cb91-1137"><a href="#cb91-1137" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_state_block &lt;- readRDS("Data/Ch6_log_txt_state_block.rds")</span></span>
+<span id="cb91-1138"><a href="#cb91-1138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1139"><a href="#cb91-1139" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
+<span id="cb91-1140"><a href="#cb91-1140" aria-hidden="true" tabindex="-1"></a><span class="in">  log_txt_state_block_elapsed &lt;- log_txt_state_block[[1]]$toc - log_txt_state_block[[1]]$tic</span></span>
+<span id="cb91-1141"><a href="#cb91-1141" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-1142"><a href="#cb91-1142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-1143"><a href="#cb91-1143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1144"><a href="#cb91-1144" aria-hidden="true" tabindex="-1"></a><span class="fu">### Approach 2: parallelize over the temporal dimension (year-month)</span></span>
+<span id="cb91-1144"><a href="#cb91-1144" aria-hidden="true" tabindex="-1"></a>Okay, this approach is not bad at all. If we are to process 10 years of daily PRISM data, then it would take roughly <span class="in">`r round(120 * log_txt_state_block_elapsed / 60, digits = 2)`</span> minutes. </span>
 <span id="cb91-1145"><a href="#cb91-1145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1146"><a href="#cb91-1146" aria-hidden="true" tabindex="-1"></a>Instead of parallelize over polygons, let's parallelize over time (year-month). To do so, we first create a <span class="in">`data.frame`</span> that has all the year-month combinations we will work on.</span>
+<span id="cb91-1146"><a href="#cb91-1146" aria-hidden="true" tabindex="-1"></a><span class="fu">### Approach 2: parallelize over the temporal dimension (year-month)</span></span>
 <span id="cb91-1147"><a href="#cb91-1147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1148"><a href="#cb91-1148" aria-hidden="true" tabindex="-1"></a><span class="in">```{r month-year, eval = F}</span></span>
-<span id="cb91-1149"><a href="#cb91-1149" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
-<span id="cb91-1150"><a href="#cb91-1150" aria-hidden="true" tabindex="-1"></a><span class="in">  month_year_data &lt;- data.table::CJ(month = 1:12, year = 2009:2018)</span></span>
-<span id="cb91-1151"><a href="#cb91-1151" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-1152"><a href="#cb91-1152" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1153"><a href="#cb91-1153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1154"><a href="#cb91-1154" aria-hidden="true" tabindex="-1"></a>The following function extract data from a single year-month case:</span>
+<span id="cb91-1148"><a href="#cb91-1148" aria-hidden="true" tabindex="-1"></a>Instead of parallelize over polygons, let's parallelize over time (year-month). To do so, we first create a <span class="in">`data.frame`</span> that has all the year-month combinations we will work on.</span>
+<span id="cb91-1149"><a href="#cb91-1149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1150"><a href="#cb91-1150" aria-hidden="true" tabindex="-1"></a><span class="in">```{r month-year, eval = F}</span></span>
+<span id="cb91-1151"><a href="#cb91-1151" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
+<span id="cb91-1152"><a href="#cb91-1152" aria-hidden="true" tabindex="-1"></a><span class="in">  month_year_data &lt;- data.table::CJ(month = 1:12, year = 2009:2018)</span></span>
+<span id="cb91-1153"><a href="#cb91-1153" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-1154"><a href="#cb91-1154" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-1155"><a href="#cb91-1155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1156"><a href="#cb91-1156" aria-hidden="true" tabindex="-1"></a><span class="in">```{r get-prism-function-year-month}</span></span>
-<span id="cb91-1157"><a href="#cb91-1157" aria-hidden="true" tabindex="-1"></a><span class="in">get_prism_by_month &lt;- function(i, vector) {</span></span>
-<span id="cb91-1158"><a href="#cb91-1158" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_month &lt;- month_year_data[i, month] # month to work on</span></span>
-<span id="cb91-1159"><a href="#cb91-1159" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_year &lt;- month_year_data[i, year] # year to work on</span></span>
-<span id="cb91-1160"><a href="#cb91-1160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1161"><a href="#cb91-1161" aria-hidden="true" tabindex="-1"></a><span class="in">  #--- import raster data ---#</span></span>
-<span id="cb91-1162"><a href="#cb91-1162" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_raster &lt;- terra::rast(paste0("Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif"))</span></span>
-<span id="cb91-1163"><a href="#cb91-1163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1164"><a href="#cb91-1164" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- exactextractr::exact_extract(temp_raster, vector, "mean")</span></span>
+<span id="cb91-1156"><a href="#cb91-1156" aria-hidden="true" tabindex="-1"></a>The following function extract data from a single year-month case:</span>
+<span id="cb91-1157"><a href="#cb91-1157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1158"><a href="#cb91-1158" aria-hidden="true" tabindex="-1"></a><span class="in">```{r get-prism-function-year-month}</span></span>
+<span id="cb91-1159"><a href="#cb91-1159" aria-hidden="true" tabindex="-1"></a><span class="in">get_prism_by_month &lt;- function(i, vector) {</span></span>
+<span id="cb91-1160"><a href="#cb91-1160" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_month &lt;- month_year_data[i, month] # month to work on</span></span>
+<span id="cb91-1161"><a href="#cb91-1161" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_year &lt;- month_year_data[i, year] # year to work on</span></span>
+<span id="cb91-1162"><a href="#cb91-1162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1163"><a href="#cb91-1163" aria-hidden="true" tabindex="-1"></a><span class="in">  #--- import raster data ---#</span></span>
+<span id="cb91-1164"><a href="#cb91-1164" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_raster &lt;- terra::rast(paste0("Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif"))</span></span>
 <span id="cb91-1165"><a href="#cb91-1165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1166"><a href="#cb91-1166" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp)</span></span>
+<span id="cb91-1166"><a href="#cb91-1166" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- exactextractr::exact_extract(temp_raster, vector, "mean")</span></span>
 <span id="cb91-1167"><a href="#cb91-1167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1168"><a href="#cb91-1168" aria-hidden="true" tabindex="-1"></a><span class="in">  gc()</span></span>
-<span id="cb91-1169"><a href="#cb91-1169" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-1170"><a href="#cb91-1170" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1171"><a href="#cb91-1171" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1172"><a href="#cb91-1172" aria-hidden="true" tabindex="-1"></a>We then loop over the rows of <span class="in">`month_year_data`</span> in parallel. </span>
+<span id="cb91-1168"><a href="#cb91-1168" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp)</span></span>
+<span id="cb91-1169"><a href="#cb91-1169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1170"><a href="#cb91-1170" aria-hidden="true" tabindex="-1"></a><span class="in">  gc()</span></span>
+<span id="cb91-1171"><a href="#cb91-1171" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-1172"><a href="#cb91-1172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-1173"><a href="#cb91-1173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1174"><a href="#cb91-1174" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loop_over_time, eval = F}</span></span>
-<span id="cb91-1175"><a href="#cb91-1175" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-1176"><a href="#cb91-1176" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;-</span></span>
-<span id="cb91-1177"><a href="#cb91-1177" aria-hidden="true" tabindex="-1"></a><span class="in">   parallel::mclapply(</span></span>
-<span id="cb91-1178"><a href="#cb91-1178" aria-hidden="true" tabindex="-1"></a><span class="in">     1:nrow(month_year_data),</span></span>
-<span id="cb91-1179"><a href="#cb91-1179" aria-hidden="true" tabindex="-1"></a><span class="in">     \(x) get_prism_by_month(x, US_county),</span></span>
-<span id="cb91-1180"><a href="#cb91-1180" aria-hidden="true" tabindex="-1"></a><span class="in">     mc.cores = num_cores</span></span>
-<span id="cb91-1181"><a href="#cb91-1181" aria-hidden="true" tabindex="-1"></a><span class="in">   )</span></span>
-<span id="cb91-1182"><a href="#cb91-1182" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
-<span id="cb91-1183"><a href="#cb91-1183" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1184"><a href="#cb91-1184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1185"><a href="#cb91-1185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1186"><a href="#cb91-1186" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loop_over_time_run, echo = F, eval = F}</span></span>
-<span id="cb91-1187"><a href="#cb91-1187" aria-hidden="true" tabindex="-1"></a><span class="in">month_year_data &lt;- data.table::CJ(month = 1:12, year = 2009:2018)</span></span>
-<span id="cb91-1188"><a href="#cb91-1188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1189"><a href="#cb91-1189" aria-hidden="true" tabindex="-1"></a><span class="in">get_prism_by_month &lt;- function(i, vector) {</span></span>
-<span id="cb91-1190"><a href="#cb91-1190" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_month &lt;- month_year_data[i, month]</span></span>
-<span id="cb91-1191"><a href="#cb91-1191" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_year &lt;- month_year_data[i, year]</span></span>
-<span id="cb91-1192"><a href="#cb91-1192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1193"><a href="#cb91-1193" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_raster &lt;- terra::rast(paste0("Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif"))</span></span>
+<span id="cb91-1174"><a href="#cb91-1174" aria-hidden="true" tabindex="-1"></a>We then loop over the rows of <span class="in">`month_year_data`</span> in parallel. </span>
+<span id="cb91-1175"><a href="#cb91-1175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1176"><a href="#cb91-1176" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loop_over_time, eval = F}</span></span>
+<span id="cb91-1177"><a href="#cb91-1177" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-1178"><a href="#cb91-1178" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;-</span></span>
+<span id="cb91-1179"><a href="#cb91-1179" aria-hidden="true" tabindex="-1"></a><span class="in">   parallel::mclapply(</span></span>
+<span id="cb91-1180"><a href="#cb91-1180" aria-hidden="true" tabindex="-1"></a><span class="in">     1:nrow(month_year_data),</span></span>
+<span id="cb91-1181"><a href="#cb91-1181" aria-hidden="true" tabindex="-1"></a><span class="in">     \(x) get_prism_by_month(x, US_county),</span></span>
+<span id="cb91-1182"><a href="#cb91-1182" aria-hidden="true" tabindex="-1"></a><span class="in">     mc.cores = num_cores</span></span>
+<span id="cb91-1183"><a href="#cb91-1183" aria-hidden="true" tabindex="-1"></a><span class="in">   )</span></span>
+<span id="cb91-1184"><a href="#cb91-1184" aria-hidden="true" tabindex="-1"></a><span class="in">toc()</span></span>
+<span id="cb91-1185"><a href="#cb91-1185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1186"><a href="#cb91-1186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1187"><a href="#cb91-1187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1188"><a href="#cb91-1188" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loop_over_time_run, echo = F, eval = F}</span></span>
+<span id="cb91-1189"><a href="#cb91-1189" aria-hidden="true" tabindex="-1"></a><span class="in">month_year_data &lt;- data.table::CJ(month = 1:12, year = 2009:2018)</span></span>
+<span id="cb91-1190"><a href="#cb91-1190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1191"><a href="#cb91-1191" aria-hidden="true" tabindex="-1"></a><span class="in">get_prism_by_month &lt;- function(i, vector) {</span></span>
+<span id="cb91-1192"><a href="#cb91-1192" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_month &lt;- month_year_data[i, month]</span></span>
+<span id="cb91-1193"><a href="#cb91-1193" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_year &lt;- month_year_data[i, year]</span></span>
 <span id="cb91-1194"><a href="#cb91-1194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1195"><a href="#cb91-1195" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- exactextractr::exact_extract(temp_raster, vector, "mean")</span></span>
-<span id="cb91-1196"><a href="#cb91-1196" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
-<span id="cb91-1197"><a href="#cb91-1197" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp)</span></span>
-<span id="cb91-1198"><a href="#cb91-1198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1199"><a href="#cb91-1199" aria-hidden="true" tabindex="-1"></a><span class="in">  gc()</span></span>
-<span id="cb91-1200"><a href="#cb91-1200" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
-<span id="cb91-1201"><a href="#cb91-1201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1202"><a href="#cb91-1202" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
-<span id="cb91-1203"><a href="#cb91-1203" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
-<span id="cb91-1204"><a href="#cb91-1204" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:nrow(month_year_data), function(x) get_prism_by_month(x, US_county), mc.cores = num_cores)</span></span>
-<span id="cb91-1205"><a href="#cb91-1205" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
-<span id="cb91-1206"><a href="#cb91-1206" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_all_by_month_par &lt;- tic.log(format = FALSE)</span></span>
-<span id="cb91-1207"><a href="#cb91-1207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1208"><a href="#cb91-1208" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
-<span id="cb91-1209"><a href="#cb91-1209" aria-hidden="true" tabindex="-1"></a><span class="in">  log_txt_all_by_month_par_elapsed &lt;- log_txt_all_by_month_par[[1]]$toc - log_txt_all_by_month_par[[1]]$tic</span></span>
-<span id="cb91-1210"><a href="#cb91-1210" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-1211"><a href="#cb91-1211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1212"><a href="#cb91-1212" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_txt_all_by_month_par, "Data/ch6_log_txt_all_by_month_par.rds")</span></span>
-<span id="cb91-1213"><a href="#cb91-1213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1214"><a href="#cb91-1214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1215"><a href="#cb91-1215" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loop_over_time_show, echo = F}</span></span>
-<span id="cb91-1216"><a href="#cb91-1216" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_all_by_month_par &lt;- readRDS("Data/ch6_log_txt_all_by_month_par.rds")</span></span>
-<span id="cb91-1217"><a href="#cb91-1217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1218"><a href="#cb91-1218" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
-<span id="cb91-1219"><a href="#cb91-1219" aria-hidden="true" tabindex="-1"></a><span class="in">  log_txt_all_by_month_par_elapsed &lt;- log_txt_all_by_month_par[[1]]$toc - log_txt_all_by_month_par[[1]]$tic</span></span>
-<span id="cb91-1220"><a href="#cb91-1220" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb91-1221"><a href="#cb91-1221" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb91-1222"><a href="#cb91-1222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1223"><a href="#cb91-1223" aria-hidden="true" tabindex="-1"></a>It took <span class="in">`r round(log_txt_all_by_month_par_elapsed/60, digits = 2)`</span> minutes. So, Approach 2 is the clear winner. </span>
+<span id="cb91-1195"><a href="#cb91-1195" aria-hidden="true" tabindex="-1"></a><span class="in">  temp_raster &lt;- terra::rast(paste0("Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif"))</span></span>
+<span id="cb91-1196"><a href="#cb91-1196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1197"><a href="#cb91-1197" aria-hidden="true" tabindex="-1"></a><span class="in">  temp &lt;- exactextractr::exact_extract(temp_raster, vector, "mean")</span></span>
+<span id="cb91-1198"><a href="#cb91-1198" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb91-1199"><a href="#cb91-1199" aria-hidden="true" tabindex="-1"></a><span class="in">  return(temp)</span></span>
+<span id="cb91-1200"><a href="#cb91-1200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1201"><a href="#cb91-1201" aria-hidden="true" tabindex="-1"></a><span class="in">  gc()</span></span>
+<span id="cb91-1202"><a href="#cb91-1202" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb91-1203"><a href="#cb91-1203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1204"><a href="#cb91-1204" aria-hidden="true" tabindex="-1"></a><span class="in">tic.clearlog()</span></span>
+<span id="cb91-1205"><a href="#cb91-1205" aria-hidden="true" tabindex="-1"></a><span class="in">tic()</span></span>
+<span id="cb91-1206"><a href="#cb91-1206" aria-hidden="true" tabindex="-1"></a><span class="in">temp &lt;- parallel::mclapply(1:nrow(month_year_data), function(x) get_prism_by_month(x, US_county), mc.cores = num_cores)</span></span>
+<span id="cb91-1207"><a href="#cb91-1207" aria-hidden="true" tabindex="-1"></a><span class="in">toc(log = TRUE, quiet = TRUE)</span></span>
+<span id="cb91-1208"><a href="#cb91-1208" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_all_by_month_par &lt;- tic.log(format = FALSE)</span></span>
+<span id="cb91-1209"><a href="#cb91-1209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1210"><a href="#cb91-1210" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
+<span id="cb91-1211"><a href="#cb91-1211" aria-hidden="true" tabindex="-1"></a><span class="in">  log_txt_all_by_month_par_elapsed &lt;- log_txt_all_by_month_par[[1]]$toc - log_txt_all_by_month_par[[1]]$tic</span></span>
+<span id="cb91-1212"><a href="#cb91-1212" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-1213"><a href="#cb91-1213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1214"><a href="#cb91-1214" aria-hidden="true" tabindex="-1"></a><span class="in">saveRDS(log_txt_all_by_month_par, "Data/ch6_log_txt_all_by_month_par.rds")</span></span>
+<span id="cb91-1215"><a href="#cb91-1215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb91-1216"><a href="#cb91-1216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1217"><a href="#cb91-1217" aria-hidden="true" tabindex="-1"></a><span class="in">```{r loop_over_time_show, echo = F}</span></span>
+<span id="cb91-1218"><a href="#cb91-1218" aria-hidden="true" tabindex="-1"></a><span class="in">log_txt_all_by_month_par &lt;- readRDS("Data/ch6_log_txt_all_by_month_par.rds")</span></span>
+<span id="cb91-1219"><a href="#cb91-1219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1220"><a href="#cb91-1220" aria-hidden="true" tabindex="-1"></a><span class="in">(</span></span>
+<span id="cb91-1221"><a href="#cb91-1221" aria-hidden="true" tabindex="-1"></a><span class="in">  log_txt_all_by_month_par_elapsed &lt;- log_txt_all_by_month_par[[1]]$toc - log_txt_all_by_month_par[[1]]$tic</span></span>
+<span id="cb91-1222"><a href="#cb91-1222" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb91-1223"><a href="#cb91-1223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb91-1224"><a href="#cb91-1224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1225"><a href="#cb91-1225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1226"><a href="#cb91-1226" aria-hidden="true" tabindex="-1"></a><span class="fu">### Memory consideration</span></span>
+<span id="cb91-1225"><a href="#cb91-1225" aria-hidden="true" tabindex="-1"></a>It took <span class="in">`r round(log_txt_all_by_month_par_elapsed/60, digits = 2)`</span> minutes. So, Approach 2 is the clear winner. </span>
+<span id="cb91-1226"><a href="#cb91-1226" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb91-1227"><a href="#cb91-1227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1228"><a href="#cb91-1228" aria-hidden="true" tabindex="-1"></a>So far, we have not addressed the memory footprint of the parallelized processes, but it becomes crucial when working with many large datasets. Approaches 1 and 2 differ significantly in their memory usage.</span>
+<span id="cb91-1228"><a href="#cb91-1228" aria-hidden="true" tabindex="-1"></a><span class="fu">### Memory consideration</span></span>
 <span id="cb91-1229"><a href="#cb91-1229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1230"><a href="#cb91-1230" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**Approach 1**: divides the polygons into groups and parallelizes over these groups when extracting raster values.</span>
-<span id="cb91-1231"><a href="#cb91-1231" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**Approach 2**: extracts and holds raster values for r num_cores of the entire U.S. polygons at once.</span>
-<span id="cb91-1232"><a href="#cb91-1232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1233"><a href="#cb91-1233" aria-hidden="true" tabindex="-1"></a>Clearly, Approach 1 has a smaller memory footprint. Approach 2, on the other hand, used about 40 GB of memory, nearly maxing out my computer's 64 GB of RAM (with other processes also consuming memory). As long as you stay within the memory limits, Approach 2 is more efficient. However, if I had only 32 GB of RAM, Approach 2 would have experienced a significant performance drop, while Approach 1 would not. Similarly, if the raster data had twice as many cells within the same spatial extent, Approach 2 would suffer, whereas Approach 1 would not.</span>
+<span id="cb91-1230"><a href="#cb91-1230" aria-hidden="true" tabindex="-1"></a>So far, we have not addressed the memory footprint of the parallelized processes, but it becomes crucial when working with many large datasets. Approaches 1 and 2 differ significantly in their memory usage.</span>
+<span id="cb91-1231"><a href="#cb91-1231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1232"><a href="#cb91-1232" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**Approach 1**: divides the polygons into groups and parallelizes over these groups when extracting raster values.</span>
+<span id="cb91-1233"><a href="#cb91-1233" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>**Approach 2**: extracts and holds raster values for r num_cores of the entire U.S. polygons at once.</span>
 <span id="cb91-1234"><a href="#cb91-1234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1235"><a href="#cb91-1235" aria-hidden="true" tabindex="-1"></a>It's easy to imagine situations where Approach 1 is preferable. For example, if you have multiple 10-GB raster layers and only 16 GB of RAM, Approach 2 would clearly be impractical, making Approach 1 the better, and perhaps only, choice—far better than not parallelizing at all.</span>
+<span id="cb91-1235"><a href="#cb91-1235" aria-hidden="true" tabindex="-1"></a>Clearly, Approach 1 has a smaller memory footprint. Approach 2, on the other hand, used about 40 GB of memory, nearly maxing out my computer's 64 GB of RAM (with other processes also consuming memory). As long as you stay within the memory limits, Approach 2 is more efficient. However, if I had only 32 GB of RAM, Approach 2 would have experienced a significant performance drop, while Approach 1 would not. Similarly, if the raster data had twice as many cells within the same spatial extent, Approach 2 would suffer, whereas Approach 1 would not.</span>
 <span id="cb91-1236"><a href="#cb91-1236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1237"><a href="#cb91-1237" aria-hidden="true" tabindex="-1"></a>In summary, while processing larger datasets with each core can improve performance, you must be cautious not to exceed your computer’s RAM limits.</span>
+<span id="cb91-1237"><a href="#cb91-1237" aria-hidden="true" tabindex="-1"></a>It's easy to imagine situations where Approach 1 is preferable. For example, if you have multiple 10-GB raster layers and only 16 GB of RAM, Approach 2 would clearly be impractical, making Approach 1 the better, and perhaps only, choice—far better than not parallelizing at all.</span>
 <span id="cb91-1238"><a href="#cb91-1238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1239"><a href="#cb91-1239" aria-hidden="true" tabindex="-1"></a>:::{.callout-note title="Summary"}</span>
-<span id="cb91-1240"><a href="#cb91-1240" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Parallelize over time rathe than space as long as your RAM memory allows it</span>
-<span id="cb91-1241"><a href="#cb91-1241" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Parallelizing over space is still better than not parallelizing at all</span>
-<span id="cb91-1242"><a href="#cb91-1242" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb91-1243"><a href="#cb91-1243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1244"><a href="#cb91-1244" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- ```{r by_year, eval = F}</span></span>
-<span id="cb91-1245"><a href="#cb91-1245" aria-hidden="true" tabindex="-1"></a><span class="co">save_tif &lt;- function(y) {</span></span>
-<span id="cb91-1246"><a href="#cb91-1246" aria-hidden="true" tabindex="-1"></a><span class="co">  temp_ml &lt;- terra::rast(stack(paste0("Data/PRISM/PRISM_ppt_y", y, "_m", 1:12, ".tif")))</span></span>
-<span id="cb91-1247"><a href="#cb91-1247" aria-hidden="true" tabindex="-1"></a><span class="co">  writeRaster(temp_ml, paste0("Data/PRISM/PRISM_ppt_y", y, ".tif"), overwrite = T)</span></span>
-<span id="cb91-1248"><a href="#cb91-1248" aria-hidden="true" tabindex="-1"></a><span class="co">}</span></span>
-<span id="cb91-1249"><a href="#cb91-1249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1250"><a href="#cb91-1250" aria-hidden="true" tabindex="-1"></a><span class="co">mclapply(2009:2018, save_tif, mc.cores = 10)</span></span>
+<span id="cb91-1239"><a href="#cb91-1239" aria-hidden="true" tabindex="-1"></a>In summary, while processing larger datasets with each core can improve performance, you must be cautious not to exceed your computer’s RAM limits.</span>
+<span id="cb91-1240"><a href="#cb91-1240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1241"><a href="#cb91-1241" aria-hidden="true" tabindex="-1"></a>:::{.callout-note title="Summary"}</span>
+<span id="cb91-1242"><a href="#cb91-1242" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Parallelize over time rathe than space as long as your RAM memory allows it</span>
+<span id="cb91-1243"><a href="#cb91-1243" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Parallelizing over space is still better than not parallelizing at all</span>
+<span id="cb91-1244"><a href="#cb91-1244" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb91-1245"><a href="#cb91-1245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1246"><a href="#cb91-1246" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- ```{r by_year, eval = F}</span></span>
+<span id="cb91-1247"><a href="#cb91-1247" aria-hidden="true" tabindex="-1"></a><span class="co">save_tif &lt;- function(y) {</span></span>
+<span id="cb91-1248"><a href="#cb91-1248" aria-hidden="true" tabindex="-1"></a><span class="co">  temp_ml &lt;- terra::rast(stack(paste0("Data/PRISM/PRISM_ppt_y", y, "_m", 1:12, ".tif")))</span></span>
+<span id="cb91-1249"><a href="#cb91-1249" aria-hidden="true" tabindex="-1"></a><span class="co">  writeRaster(temp_ml, paste0("Data/PRISM/PRISM_ppt_y", y, ".tif"), overwrite = T)</span></span>
+<span id="cb91-1250"><a href="#cb91-1250" aria-hidden="true" tabindex="-1"></a><span class="co">}</span></span>
 <span id="cb91-1251"><a href="#cb91-1251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1252"><a href="#cb91-1252" aria-hidden="true" tabindex="-1"></a><span class="co">temp_ml &lt;- stack(paste0("Data/PRISM/PRISM_ppt_y2009.tif"))</span></span>
+<span id="cb91-1252"><a href="#cb91-1252" aria-hidden="true" tabindex="-1"></a><span class="co">mclapply(2009:2018, save_tif, mc.cores = 10)</span></span>
 <span id="cb91-1253"><a href="#cb91-1253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb91-1254"><a href="#cb91-1254" aria-hidden="true" tabindex="-1"></a><span class="co">tic()</span></span>
-<span id="cb91-1255"><a href="#cb91-1255" aria-hidden="true" tabindex="-1"></a><span class="co">temp &lt;- exactextractr::exact_extract(temp_ml, US_county)</span></span>
-<span id="cb91-1256"><a href="#cb91-1256" aria-hidden="true" tabindex="-1"></a><span class="co">toc()</span></span>
-<span id="cb91-1257"><a href="#cb91-1257" aria-hidden="true" tabindex="-1"></a><span class="co">```--&gt;</span></span>
+<span id="cb91-1254"><a href="#cb91-1254" aria-hidden="true" tabindex="-1"></a><span class="co">temp_ml &lt;- stack(paste0("Data/PRISM/PRISM_ppt_y2009.tif"))</span></span>
+<span id="cb91-1255"><a href="#cb91-1255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-1256"><a href="#cb91-1256" aria-hidden="true" tabindex="-1"></a><span class="co">tic()</span></span>
+<span id="cb91-1257"><a href="#cb91-1257" aria-hidden="true" tabindex="-1"></a><span class="co">temp &lt;- exactextractr::exact_extract(temp_ml, US_county)</span></span>
+<span id="cb91-1258"><a href="#cb91-1258" aria-hidden="true" tabindex="-1"></a><span class="co">toc()</span></span>
+<span id="cb91-1259"><a href="#cb91-1259" aria-hidden="true" tabindex="-1"></a><span class="co">```--&gt;</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

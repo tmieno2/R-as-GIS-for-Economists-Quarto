@@ -3,8 +3,8 @@ engine: knitr
 webr:
   # packages: ['dplyr', 'ggplot2', 'sf']
   cell-options:
-    editor-font-scale: 0.7
-    out-width: 100%
+    editor-font-scale: 0.8
+    out-width: 70%
 filters:
   - webr
 ---
@@ -71,6 +71,8 @@ theme_update(
 In this chapter, we explore the spatial interactions between two `sf` objects. We begin by examining topological relations—how two spatial objects relate to each other—focusing on `sf::st_intersects()` and `sf::st_is_within_distance()`. `sf::st_intersects()` is particularly important as it is the most commonly used topological relation and serves as the default for spatial subsetting and joining in `sf`.
 
 Next, we cover spatial subsetting, which involves filtering spatial data based on the geographic features of another dataset. Finally, we will discuss spatial joining, where attribute values from one spatial dataset are assigned to another based on their topological relationship^[For those familiar with the `sp` package, these operations are similar to `sp::over()`.]. 
+
+To test your knowledge, you can work on coding exercises at @sec-exercises-int-vv.
 
 ### Direction for replication {-}
 
@@ -439,7 +441,7 @@ As you can see, the `st_crop()` operation cut the parts of `hpa` that are not in
 Please note that we did not explicilty crop `hpa` to the bouding box of `KS_wells` (`bbox_KS_wells`) above. That is, we just run `hpa_cropped_to_KS <- sf::st_crop(hpa, KS_wells)` instead of `hpa_cropped_to_KS <- sf::st_crop(hpa, bbox_KS_wells)`. When `sf::st_crop()` is used, it automatically finds the bounding box of the `sf` as second argument and implements cropping.
 :::
 
-## Spatial subsetting
+## Spatial subsetting {#sec-sf-subset}
 
 Spatial subsetting refers to operations that narrow down the geographic scope of a spatial object (source data) based on another spatial object (target data). We illustrate spatial subsetting using Kansas county borders (`KS_counties`), the boundary of the Kansas portion of the High-Plains Aquifer (`hpa_cropped_to_KS`), and agricultural irrigation wells in Kansas (`KS_wells`).
 
@@ -1117,5 +1119,309 @@ HUC_aw_acres <-
   dplyr::summarize(aw_acres = sum(weight * acres))
 )
 ```
+
+## Exercises {#sec-exercises-int-vv}
+
+:::{.callout-important}
+Before working on exercises, please run the following codes by hitting the **Run Code** button.
+
+```{webr-r}
+#| message: false
+#| warning: false
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(tigris)
+install.packages(
+  "r.spatial.workshop.datasets", 
+  repos = c("https://tmieno2.r-universe.dev")
+)
+library(r.spatial.workshop.datasets)
+```
+:::
+
+:::{.callout-note title="Tips for working with an `webr` session"}
++ Hit the **Run Code** button to run all the codes in the code area.
++ To run only parts of the code, highlight the section you want to execute with your cursor and then press **Cmd + Return** (Mac) or **Ctrl + Enter** (Windows).
++ All the code blocks are interconnected and R objects defined in one R code block is available in another R code block.
+:::
+
+
+### Exercise 1: Spatially intersecting objects
+
+Find the points in `mower_sensor_sf` that are intersecting with any of the polygons in `fairway_grid`.^[Hint: see @sec-sf-subset]
+
+::: {.panel-tabset}
+
+### Work here
+```{webr-r}
+data(fairway_grid)
+data(mower_sensor)
+mower_sensor_sf <- 
+  sf::st_as_sf(
+    mower_sensor, 
+    coords = c("LNG", "LAT"),
+    crs = sf::st_crs(fairway_grid)
+  )
+
+#--- write codes below  ---#
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+intersecting_points <- mower_sensor_sf[fairway_grid, ]
+```
+
+:::
+
+### Exercise 2: Spatial subset and cropping
+
+Run the following codes first and get the sense of their spatial positions:
+
+```{webr-r}
+data(hp_boundary)
+data(co_counties)
+
+ggplot() +
+  geom_sf(data = hp_boundary, fill = "blue", alpha = 0.3) +
+  geom_sf(data = co_counties, fill = NA) +
+  theme_void()
+```
+
+::: {.panel-tabset}
+
+### Problem 1
+
+Find the counties in Colorado that are intersecting with the High-Plains aquifer (`hp_boundary`) and name the resulting R object `subset_co_counties`. If you know how to create a map from `sf` objects using `ggplot2` (@sec-create-maps), then create a map of the intersecting Colorado counties.
+
+::: {.panel-tabset}
+
+#### Work here
+
+```{webr-r}
+#--- write codes below  ---#
+
+
+
+
+
+```
+
+#### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+subset_co_counties <- co_counties[hp_boundary, ]
+
+ggplot(subset_co_counties) +
+  geom_sf() +
+  theme_void()
+```
+
+:::
+
+### Problem 2
+
+Crop the Colorado counties to `hpa_boundary` and name it `cropped_co_counties` If you know how to create a map from `sf` objects using `ggplot2` (@sec-create-maps), then create a map of the cropped Colorado counties (with `aes(fill = "blue, alpha = 0.3)`) on top of all the Colorado counties.
+
+::: {.panel-tabset}
+
+#### Work here
+
+```{webr-r}
+#--- write codes below  ---#
+
+
+
+
+
+```
+
+#### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+cropped_co_counties <- sf::st_crop(co_counties, hp_boundary)
+
+ggplot() +
+  geom_sf(data = co_counties) +
+  geom_sf(data = cropped_co_counties, fill = "blue", alpha = 0.3) +
+  theme_void()
+```
+
+:::
+
+### Problem 3
+
+Find the area of counties in `co_counties` (name the column `area`) and `cropped_co_counties` (name the column `area_cropped`). Then, join them together using `left_join` and filter the ones that satisfy `area_cropped < area` to find out which counties were chopped off.
+
+::: {.panel-tabset}
+
+#### Work here
+
+```{webr-r}
+#--- write codes below  ---#
+
+
+
+
+
+```
+
+#### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+subset_co_area <- 
+  co_counties %>%
+  dplyr::mutate(area = sf::st_area(geometry) %>% as.numeric()) %>%
+  #--- make it non-sf so it can be merged with left_join later  ---#
+  sf::st_drop_geometry() %>%
+  dplyr::select(area, COUNTYFP)
+
+cropped_co_area <- 
+  cropped_co_counties %>%
+  dplyr::mutate(area_cro = sf::st_area(geometry) %>% as.numeric()) %>%
+  #--- make it non-sf so it can be merged with left_join later  ---#
+  sf::st_drop_geometry() %>%
+  dplyr::select(area_cro, COUNTYFP)
+
+cut_off_counties <- 
+  dplyr::left_join(subset_co_area, cropped_co_area, by = "COUNTYFP") %>%
+  dplyr::filter(area < area_cro)
+```
+
+:::
+
+:::
+<!--end of panel-->
+
+### Exercise 3: Spatial join
+
+In this exercise, we will use Nebraska county boundaries (`ne_counties`) and irrigation wells in Nebraska (`wells_ne_sf`).
+
+```{webr-r}
+data(ne_counties)
+data(wells_ne_sf)
+
+#--- visualize ---#
+ggplot() +
+  geom_sf(data = ne_counties) +
+  geom_sf(data = wells_ne_sf) +
+  theme_void()
+```
+
+::: {.panel-tabset}
+
+### Problem 1
+
+Spatially join `ne_counties` with `wells_ne_sf` and then find the total amount of groundwater extracted (`gw_extracted`) per county.
+
+::: {.panel-tabset}
+
+### Work here
+
+```{webr-r}
+
+
+
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+sf::st_join(ne_counties, wells_ne_sf) %>%
+  #--- geometry no longer neded (makes summary faster later) ---#
+  st_drop_geometry() %>%
+  dplyr::group_by(countyfp) %>%
+  dplyr::summarize(tot_gw = sum(gw_extracted))
+
+```
+
+:::
+
+### Problem 2
+
+Use `aggregate()` instead to do the process implemented in Problem 1 in one step.
+
+::: {.panel-tabset}
+
+### Work here
+
+```{webr-r}
+
+
+
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+aggregate(wells_ne_sf, ne_counties, FUN = sum)
+```
+
+:::
+
+:::
+<!--end of panel-->
+
+
+
+
+### Exercise 3: Spatial join
+
+In this exercise, we use soybean yield (`soy_yield`) and as-applied seed rate (`as_applied_s_rate`) within a production field.
+
+```{webr-r}
+#--- soybean yield ---#
+data(soy_yield)
+
+#--- seed rate ---#
+data(as_applied_s_rate)
+
+#--- visualize ---#
+ggplot() +
+  geom_sf(data = soy_yield, size = 0.4, color = "red") +
+  geom_sf(data = as_applied_s_rate, size = 0.4, color = "darkgreen") +
+  theme_void()
+```
+
+For each of the yield points, find all the seed rate points within 10 meter. Then, find the average of the neighboring seed rates by yield point.
+
+::: {.panel-tabset}
+
+### Work here
+
+```{webr-r}
+
+
+
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+soy_seed <-
+  st_join(
+    soy_yield,
+    as_applied_s_rate,
+    join = \(x, y) st_is_within_distance(x, y, dist = 10)
+  )
+
+soy_seed %>%
+  st_drop_geometry() %>%
+  group_by(yield_id) %>%
+  summarize(avg_seed_rate = mean(seed_rate))
+```
+
+:::
+
+
 
 

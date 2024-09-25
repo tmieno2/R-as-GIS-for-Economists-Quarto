@@ -395,7 +395,7 @@ globalThis.qwebrCustomizedWebROptions = {
 };
 
 // Store cell data
-globalThis.qwebrCellDetails = [{"options":{"fig-cap":"","comment":"","warning":"false","fig-width":7,"dpi":72,"editor-max-height":"","context":"interactive","editor-quick-suggestions":"false","fig-height":5,"output":"true","results":"markup","autorun":"false","out-width":"100%","message":"false","editor-word-wrap":"true","classes":"","read-only":"false","out-height":"","label":"unnamed-chunk-1","editor-font-scale":"0.7"},"code":"library(dplyr)\nlibrary(ggplot2)\nlibrary(sf)\ninstall.packages(\"r.spatial.workshop.datasets\", repos = c(\"https://tmieno2.r-universe.dev\", \"https://cran.r-project.org\"))\nlibrary(r.spatial.workshop.datasets)","id":1},{"options":{"fig-cap":"","comment":"","warning":"true","fig-width":7,"dpi":72,"editor-max-height":"","context":"interactive","editor-quick-suggestions":"false","fig-height":5,"output":"true","results":"markup","autorun":"false","out-width":"100%","message":"true","editor-word-wrap":"true","classes":"","read-only":"false","out-height":"","label":"unnamed-chunk-2","editor-font-scale":"0.7"},"code":"data(fairway_grid)\n\n#--- write codes below  ---#\n","id":2},{"options":{"fig-cap":"","comment":"","warning":"true","fig-width":7,"dpi":72,"editor-max-height":"","context":"interactive","editor-quick-suggestions":"false","fig-height":5,"output":"true","results":"markup","autorun":"false","out-width":"100%","message":"true","editor-word-wrap":"true","classes":"","read-only":"false","out-height":"","label":"unnamed-chunk-3","editor-font-scale":"0.7"},"code":"data(mower_sensor)\n\n#--- write codes below  ---#\n","id":3},{"options":{"fig-cap":"","comment":"","warning":"true","fig-width":7,"dpi":72,"editor-max-height":"","context":"interactive","editor-quick-suggestions":"false","fig-height":5,"output":"true","results":"markup","autorun":"false","out-width":"100%","message":"true","editor-word-wrap":"true","classes":"","read-only":"false","out-height":"","label":"unnamed-chunk-4","editor-font-scale":"0.7"},"code":"data(fairway_grid)\nggplot(fairway_grid) +\n  geom_sf() +\n  theme_void()\n\n#--- write codes below  ---#\n","id":4}];
+globalThis.qwebrCellDetails = [{"code":"library(dplyr)\nlibrary(ggplot2)\nlibrary(sf)\ninstall.packages(\n  \"r.spatial.workshop.datasets\",\n  repos = c(\"https://tmieno2.r-universe.dev\")\n)\nlibrary(r.spatial.workshop.datasets)","id":1,"options":{"autorun":"false","comment":"","label":"unnamed-chunk-1","editor-font-scale":"0.8","classes":"","editor-quick-suggestions":"false","message":"false","fig-cap":"","out-height":"","dpi":72,"read-only":"false","results":"markup","context":"interactive","output":"true","editor-max-height":"","editor-word-wrap":"true","fig-height":5,"warning":"false","fig-width":7,"out-width":"70%"}},{"code":"data(fairway_grid)\n\n#--- write codes below  ---#\n","id":2,"options":{"autorun":"false","comment":"","label":"unnamed-chunk-2","editor-font-scale":"0.8","classes":"","editor-quick-suggestions":"false","message":"true","fig-cap":"","out-height":"","dpi":72,"read-only":"false","results":"markup","context":"interactive","output":"true","editor-max-height":"","editor-word-wrap":"true","fig-height":5,"warning":"true","fig-width":7,"out-width":"70%"}},{"code":"data(mower_sensor)\n\n#--- write codes below  ---#\n","id":3,"options":{"autorun":"false","comment":"","label":"unnamed-chunk-3","editor-font-scale":"0.8","classes":"","editor-quick-suggestions":"false","message":"true","fig-cap":"","out-height":"","dpi":72,"read-only":"false","results":"markup","context":"interactive","output":"true","editor-max-height":"","editor-word-wrap":"true","fig-height":5,"warning":"true","fig-width":7,"out-width":"70%"}},{"code":"data(fairway_grid)\nggplot(fairway_grid) +\n  geom_sf() +\n  theme_void()\n\n#--- write codes below  ---#\n","id":4,"options":{"autorun":"false","comment":"","label":"unnamed-chunk-4","editor-font-scale":"0.8","classes":"","editor-quick-suggestions":"false","message":"true","fig-cap":"","out-height":"","dpi":72,"read-only":"false","results":"markup","context":"interactive","output":"true","editor-max-height":"","editor-word-wrap":"true","fig-height":5,"warning":"true","fig-width":7,"out-width":"70%"}}];
 
 </script><script type="module">
 // Declare startupMessageQWebR globally
@@ -3862,16 +3862,28 @@ Figure&nbsp;2.19: Illinois county border simplified with ms_simplify()
 <p>You can see that internal borders are simplified in a way that does not create holes (see <a href="01-Demonstration.html#sec-demo-slave" class="quarto-xref"><span>Section 1.6</span></a> for an application that makes use of <code><a href="https://rdrr.io/pkg/rmapshaper/man/ms_simplify.html">rmapshaper::ms_simplify()</a></code>).</p>
 </section></section><section id="sec-sf-basics-exercises" class="level2 page-columns page-full" data-number="2.10"><h2 data-number="2.10" class="anchored" data-anchor-id="sec-sf-basics-exercises">
 <span class="header-section-number">2.10</span> Exercises</h2>
-<p>Before working on exercises, please run the following codes by hitting the <strong>Run Code</strong> button.</p>
-<div id="qwebr-insertion-location-1"></div>
-<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
-<div class="callout callout-style-default callout-note no-icon callout-titled" title="Tips for working with `webr` session">
+<div class="callout callout-style-default callout-important no-icon callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Tips for working with <code>webr</code> session
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Before working on exercises, please run the following codes by hitting the <strong>Run Code</strong> button.</p>
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</div>
+</div>
+<div class="callout callout-style-default callout-note no-icon callout-titled" title="Tips for working with an `webr` session">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tips for working with an <code>webr</code> session
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -4443,8 +4455,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb150-2"><a href="#cb150-2" aria-hidden="true" tabindex="-1"></a><span class="an">engine:</span><span class="co"> knitr</span></span>
 <span id="cb150-3"><a href="#cb150-3" aria-hidden="true" tabindex="-1"></a><span class="an">webr:</span></span>
 <span id="cb150-4"><a href="#cb150-4" aria-hidden="true" tabindex="-1"></a><span class="co">  cell-options:</span></span>
-<span id="cb150-5"><a href="#cb150-5" aria-hidden="true" tabindex="-1"></a><span class="co">    editor-font-scale: 0.7</span></span>
-<span id="cb150-6"><a href="#cb150-6" aria-hidden="true" tabindex="-1"></a><span class="co">    out-width: 100%</span></span>
+<span id="cb150-5"><a href="#cb150-5" aria-hidden="true" tabindex="-1"></a><span class="co">    editor-font-scale: 0.8</span></span>
+<span id="cb150-6"><a href="#cb150-6" aria-hidden="true" tabindex="-1"></a><span class="co">    out-width: 70%</span></span>
 <span id="cb150-7"><a href="#cb150-7" aria-hidden="true" tabindex="-1"></a><span class="an">filters:</span></span>
 <span id="cb150-8"><a href="#cb150-8" aria-hidden="true" tabindex="-1"></a><span class="co">  - webr</span></span>
 <span id="cb150-9"><a href="#cb150-9" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
@@ -5538,113 +5550,119 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb150-1143"><a href="#cb150-1143" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb150-1144"><a href="#cb150-1144" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises {#sec-sf-basics-exercises}</span></span>
 <span id="cb150-1145"><a href="#cb150-1145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1146"><a href="#cb150-1146" aria-hidden="true" tabindex="-1"></a>Before working on exercises, please run the following codes by hitting the **Run Code** button.</span>
-<span id="cb150-1147"><a href="#cb150-1147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1148"><a href="#cb150-1148" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
-<span id="cb150-1149"><a href="#cb150-1149" aria-hidden="true" tabindex="-1"></a><span class="in">#| message: false</span></span>
-<span id="cb150-1150"><a href="#cb150-1150" aria-hidden="true" tabindex="-1"></a><span class="in">#| warning: false</span></span>
-<span id="cb150-1151"><a href="#cb150-1151" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
-<span id="cb150-1152"><a href="#cb150-1152" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
-<span id="cb150-1153"><a href="#cb150-1153" aria-hidden="true" tabindex="-1"></a><span class="in">library(sf)</span></span>
-<span id="cb150-1154"><a href="#cb150-1154" aria-hidden="true" tabindex="-1"></a><span class="in">install.packages("r.spatial.workshop.datasets", repos = c("https://tmieno2.r-universe.dev", "https://cran.r-project.org"))</span></span>
-<span id="cb150-1155"><a href="#cb150-1155" aria-hidden="true" tabindex="-1"></a><span class="in">library(r.spatial.workshop.datasets)</span></span>
-<span id="cb150-1156"><a href="#cb150-1156" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb150-1157"><a href="#cb150-1157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1158"><a href="#cb150-1158" aria-hidden="true" tabindex="-1"></a>:::{.callout-note title="Tips for working with <span class="in">`webr`</span> session"}</span>
-<span id="cb150-1159"><a href="#cb150-1159" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Hit the **Run Code** button to run all the codes in the code area.</span>
-<span id="cb150-1160"><a href="#cb150-1160" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>To run only parts of the code, highlight the section you want to execute with your cursor and then press **Cmd + Return** (Mac) or **Ctrl + Enter** (Windows).</span>
-<span id="cb150-1161"><a href="#cb150-1161" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>All the code blocks are interconnected and R objects defined in one R code block is available in another R code block.</span>
-<span id="cb150-1162"><a href="#cb150-1162" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb150-1146"><a href="#cb150-1146" aria-hidden="true" tabindex="-1"></a>:::{.callout-important}</span>
+<span id="cb150-1147"><a href="#cb150-1147" aria-hidden="true" tabindex="-1"></a>Before working on exercises, please run the following codes by hitting the **Run Code** button.</span>
+<span id="cb150-1148"><a href="#cb150-1148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1149"><a href="#cb150-1149" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
+<span id="cb150-1150"><a href="#cb150-1150" aria-hidden="true" tabindex="-1"></a><span class="in">#| message: false</span></span>
+<span id="cb150-1151"><a href="#cb150-1151" aria-hidden="true" tabindex="-1"></a><span class="in">#| warning: false</span></span>
+<span id="cb150-1152"><a href="#cb150-1152" aria-hidden="true" tabindex="-1"></a><span class="in">library(dplyr)</span></span>
+<span id="cb150-1153"><a href="#cb150-1153" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
+<span id="cb150-1154"><a href="#cb150-1154" aria-hidden="true" tabindex="-1"></a><span class="in">library(sf)</span></span>
+<span id="cb150-1155"><a href="#cb150-1155" aria-hidden="true" tabindex="-1"></a><span class="in">install.packages(</span></span>
+<span id="cb150-1156"><a href="#cb150-1156" aria-hidden="true" tabindex="-1"></a><span class="in">  "r.spatial.workshop.datasets",</span></span>
+<span id="cb150-1157"><a href="#cb150-1157" aria-hidden="true" tabindex="-1"></a><span class="in">  repos = c("https://tmieno2.r-universe.dev")</span></span>
+<span id="cb150-1158"><a href="#cb150-1158" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb150-1159"><a href="#cb150-1159" aria-hidden="true" tabindex="-1"></a><span class="in">library(r.spatial.workshop.datasets)</span></span>
+<span id="cb150-1160"><a href="#cb150-1160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb150-1161"><a href="#cb150-1161" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb150-1162"><a href="#cb150-1162" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb150-1163"><a href="#cb150-1163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1164"><a href="#cb150-1164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1165"><a href="#cb150-1165" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 1: Projection</span></span>
-<span id="cb150-1166"><a href="#cb150-1166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1167"><a href="#cb150-1167" aria-hidden="true" tabindex="-1"></a>After running <span class="in">`data(fairway_grid)`</span>, check the CRS of <span class="in">`fairway_grid`</span> and then transform it using WGS84 (look up the EPSG code for WGS84).^<span class="co">[</span><span class="ot">Hint: see @sec-projection-sf</span><span class="co">]</span></span>
-<span id="cb150-1168"><a href="#cb150-1168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1169"><a href="#cb150-1169" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
+<span id="cb150-1164"><a href="#cb150-1164" aria-hidden="true" tabindex="-1"></a>:::{.callout-note title="Tips for working with an <span class="in">`webr`</span> session"}</span>
+<span id="cb150-1165"><a href="#cb150-1165" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>Hit the **Run Code** button to run all the codes in the code area.</span>
+<span id="cb150-1166"><a href="#cb150-1166" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>To run only parts of the code, highlight the section you want to execute with your cursor and then press **Cmd + Return** (Mac) or **Ctrl + Enter** (Windows).</span>
+<span id="cb150-1167"><a href="#cb150-1167" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>All the code blocks are interconnected and R objects defined in one R code block is available in another R code block.</span>
+<span id="cb150-1168"><a href="#cb150-1168" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb150-1169"><a href="#cb150-1169" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb150-1170"><a href="#cb150-1170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1171"><a href="#cb150-1171" aria-hidden="true" tabindex="-1"></a><span class="fu">### Work here</span></span>
+<span id="cb150-1171"><a href="#cb150-1171" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 1: Projection</span></span>
 <span id="cb150-1172"><a href="#cb150-1172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1173"><a href="#cb150-1173" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
-<span id="cb150-1174"><a href="#cb150-1174" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
-<span id="cb150-1175"><a href="#cb150-1175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1176"><a href="#cb150-1176" aria-hidden="true" tabindex="-1"></a><span class="in">#--- write codes below  ---#</span></span>
-<span id="cb150-1177"><a href="#cb150-1177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1173"><a href="#cb150-1173" aria-hidden="true" tabindex="-1"></a>After running <span class="in">`data(fairway_grid)`</span>, check the CRS of <span class="in">`fairway_grid`</span> and then transform it using WGS84 (look up the EPSG code for WGS84).^<span class="co">[</span><span class="ot">Hint: see @sec-projection-sf</span><span class="co">]</span></span>
+<span id="cb150-1174"><a href="#cb150-1174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1175"><a href="#cb150-1175" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
+<span id="cb150-1176"><a href="#cb150-1176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1177"><a href="#cb150-1177" aria-hidden="true" tabindex="-1"></a><span class="fu">### Work here</span></span>
 <span id="cb150-1178"><a href="#cb150-1178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1179"><a href="#cb150-1179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb150-1180"><a href="#cb150-1180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1181"><a href="#cb150-1181" aria-hidden="true" tabindex="-1"></a><span class="fu">### Answer</span></span>
-<span id="cb150-1182"><a href="#cb150-1182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1183"><a href="#cb150-1183" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval = FALSE}</span></span>
-<span id="cb150-1184"><a href="#cb150-1184" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
-<span id="cb150-1185"><a href="#cb150-1185" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
-<span id="cb150-1186"><a href="#cb150-1186" aria-hidden="true" tabindex="-1"></a><span class="in">sf::st_crs(fairway_grid)</span></span>
-<span id="cb150-1187"><a href="#cb150-1187" aria-hidden="true" tabindex="-1"></a><span class="in">sf::st_transform(fairway_grid, 4326)</span></span>
-<span id="cb150-1188"><a href="#cb150-1188" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb150-1189"><a href="#cb150-1189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1190"><a href="#cb150-1190" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb150-1191"><a href="#cb150-1191" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--end of panel--&gt;</span></span>
-<span id="cb150-1192"><a href="#cb150-1192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1193"><a href="#cb150-1193" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 2: Turn a `data.frame` of points into an `sf`</span></span>
-<span id="cb150-1194"><a href="#cb150-1194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1195"><a href="#cb150-1195" aria-hidden="true" tabindex="-1"></a>Using the <span class="in">`LAT`</span> (latitude) and <span class="in">`LNG`</span> (longitude) columns in <span class="in">`mower_sensor`</span>, turn the <span class="in">`tibble`</span> into an <span class="in">`sf`</span>, and then assign the CRS of WGS 84 using its EPSG code.^<span class="co">[</span><span class="ot">Hint: see @sec-df-to-sf</span><span class="co">]</span> </span>
-<span id="cb150-1196"><a href="#cb150-1196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1197"><a href="#cb150-1197" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
+<span id="cb150-1179"><a href="#cb150-1179" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
+<span id="cb150-1180"><a href="#cb150-1180" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
+<span id="cb150-1181"><a href="#cb150-1181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1182"><a href="#cb150-1182" aria-hidden="true" tabindex="-1"></a><span class="in">#--- write codes below  ---#</span></span>
+<span id="cb150-1183"><a href="#cb150-1183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1184"><a href="#cb150-1184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1185"><a href="#cb150-1185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb150-1186"><a href="#cb150-1186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1187"><a href="#cb150-1187" aria-hidden="true" tabindex="-1"></a><span class="fu">### Answer</span></span>
+<span id="cb150-1188"><a href="#cb150-1188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1189"><a href="#cb150-1189" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval = FALSE}</span></span>
+<span id="cb150-1190"><a href="#cb150-1190" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
+<span id="cb150-1191"><a href="#cb150-1191" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
+<span id="cb150-1192"><a href="#cb150-1192" aria-hidden="true" tabindex="-1"></a><span class="in">sf::st_crs(fairway_grid)</span></span>
+<span id="cb150-1193"><a href="#cb150-1193" aria-hidden="true" tabindex="-1"></a><span class="in">sf::st_transform(fairway_grid, 4326)</span></span>
+<span id="cb150-1194"><a href="#cb150-1194" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb150-1195"><a href="#cb150-1195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1196"><a href="#cb150-1196" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb150-1197"><a href="#cb150-1197" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!--end of panel--&gt;</span></span>
 <span id="cb150-1198"><a href="#cb150-1198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1199"><a href="#cb150-1199" aria-hidden="true" tabindex="-1"></a><span class="fu">### Work here</span></span>
+<span id="cb150-1199"><a href="#cb150-1199" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 2: Turn a `data.frame` of points into an `sf`</span></span>
 <span id="cb150-1200"><a href="#cb150-1200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1201"><a href="#cb150-1201" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
-<span id="cb150-1202"><a href="#cb150-1202" aria-hidden="true" tabindex="-1"></a><span class="in">data(mower_sensor)</span></span>
-<span id="cb150-1203"><a href="#cb150-1203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1204"><a href="#cb150-1204" aria-hidden="true" tabindex="-1"></a><span class="in">#--- write codes below  ---#</span></span>
-<span id="cb150-1205"><a href="#cb150-1205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1201"><a href="#cb150-1201" aria-hidden="true" tabindex="-1"></a>Using the <span class="in">`LAT`</span> (latitude) and <span class="in">`LNG`</span> (longitude) columns in <span class="in">`mower_sensor`</span>, turn the <span class="in">`tibble`</span> into an <span class="in">`sf`</span>, and then assign the CRS of WGS 84 using its EPSG code.^<span class="co">[</span><span class="ot">Hint: see @sec-df-to-sf</span><span class="co">]</span> </span>
+<span id="cb150-1202"><a href="#cb150-1202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1203"><a href="#cb150-1203" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
+<span id="cb150-1204"><a href="#cb150-1204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1205"><a href="#cb150-1205" aria-hidden="true" tabindex="-1"></a><span class="fu">### Work here</span></span>
 <span id="cb150-1206"><a href="#cb150-1206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1207"><a href="#cb150-1207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb150-1208"><a href="#cb150-1208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1209"><a href="#cb150-1209" aria-hidden="true" tabindex="-1"></a><span class="fu">### Answer</span></span>
-<span id="cb150-1210"><a href="#cb150-1210" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval = FALSE}</span></span>
-<span id="cb150-1211"><a href="#cb150-1211" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
-<span id="cb150-1212"><a href="#cb150-1212" aria-hidden="true" tabindex="-1"></a><span class="in">st_as_sf(</span></span>
-<span id="cb150-1213"><a href="#cb150-1213" aria-hidden="true" tabindex="-1"></a><span class="in">  mower_sensor,</span></span>
-<span id="cb150-1214"><a href="#cb150-1214" aria-hidden="true" tabindex="-1"></a><span class="in">  coords = c("LNG", "LAT"),</span></span>
-<span id="cb150-1215"><a href="#cb150-1215" aria-hidden="true" tabindex="-1"></a><span class="in">  crs = 4326</span></span>
-<span id="cb150-1216"><a href="#cb150-1216" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
-<span id="cb150-1217"><a href="#cb150-1217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb150-1218"><a href="#cb150-1218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1219"><a href="#cb150-1219" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb150-1220"><a href="#cb150-1220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1221"><a href="#cb150-1221" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 3: Centroid and distance</span></span>
-<span id="cb150-1222"><a href="#cb150-1222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1223"><a href="#cb150-1223" aria-hidden="true" tabindex="-1"></a>Find the centroid of the polygons in <span class="in">`fairway_grid`</span> and then calculate the distance between the centroids. Which polygon is the closest to the first polygon recorded in <span class="in">`fairway_grid`</span>?^<span class="co">[</span><span class="ot">Hint: see @sec-centroid and @sec-distance</span><span class="co">]</span></span>
+<span id="cb150-1207"><a href="#cb150-1207" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
+<span id="cb150-1208"><a href="#cb150-1208" aria-hidden="true" tabindex="-1"></a><span class="in">data(mower_sensor)</span></span>
+<span id="cb150-1209"><a href="#cb150-1209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1210"><a href="#cb150-1210" aria-hidden="true" tabindex="-1"></a><span class="in">#--- write codes below  ---#</span></span>
+<span id="cb150-1211"><a href="#cb150-1211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1212"><a href="#cb150-1212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1213"><a href="#cb150-1213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb150-1214"><a href="#cb150-1214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1215"><a href="#cb150-1215" aria-hidden="true" tabindex="-1"></a><span class="fu">### Answer</span></span>
+<span id="cb150-1216"><a href="#cb150-1216" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval = FALSE}</span></span>
+<span id="cb150-1217"><a href="#cb150-1217" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
+<span id="cb150-1218"><a href="#cb150-1218" aria-hidden="true" tabindex="-1"></a><span class="in">st_as_sf(</span></span>
+<span id="cb150-1219"><a href="#cb150-1219" aria-hidden="true" tabindex="-1"></a><span class="in">  mower_sensor,</span></span>
+<span id="cb150-1220"><a href="#cb150-1220" aria-hidden="true" tabindex="-1"></a><span class="in">  coords = c("LNG", "LAT"),</span></span>
+<span id="cb150-1221"><a href="#cb150-1221" aria-hidden="true" tabindex="-1"></a><span class="in">  crs = 4326</span></span>
+<span id="cb150-1222"><a href="#cb150-1222" aria-hidden="true" tabindex="-1"></a><span class="in">)</span></span>
+<span id="cb150-1223"><a href="#cb150-1223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb150-1224"><a href="#cb150-1224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1225"><a href="#cb150-1225" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
+<span id="cb150-1225"><a href="#cb150-1225" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb150-1226"><a href="#cb150-1226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1227"><a href="#cb150-1227" aria-hidden="true" tabindex="-1"></a><span class="fu">### Work here</span></span>
+<span id="cb150-1227"><a href="#cb150-1227" aria-hidden="true" tabindex="-1"></a><span class="fu">### Exercise 3: Centroid and distance</span></span>
 <span id="cb150-1228"><a href="#cb150-1228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1229"><a href="#cb150-1229" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
-<span id="cb150-1230"><a href="#cb150-1230" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
-<span id="cb150-1231"><a href="#cb150-1231" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fairway_grid) +</span></span>
-<span id="cb150-1232"><a href="#cb150-1232" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_sf() +</span></span>
-<span id="cb150-1233"><a href="#cb150-1233" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_void()</span></span>
+<span id="cb150-1229"><a href="#cb150-1229" aria-hidden="true" tabindex="-1"></a>Find the centroid of the polygons in <span class="in">`fairway_grid`</span> and then calculate the distance between the centroids. Which polygon is the closest to the first polygon recorded in <span class="in">`fairway_grid`</span>?^<span class="co">[</span><span class="ot">Hint: see @sec-centroid and @sec-distance</span><span class="co">]</span></span>
+<span id="cb150-1230"><a href="#cb150-1230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1231"><a href="#cb150-1231" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
+<span id="cb150-1232"><a href="#cb150-1232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1233"><a href="#cb150-1233" aria-hidden="true" tabindex="-1"></a><span class="fu">### Work here</span></span>
 <span id="cb150-1234"><a href="#cb150-1234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1235"><a href="#cb150-1235" aria-hidden="true" tabindex="-1"></a><span class="in">#--- write codes below  ---#</span></span>
-<span id="cb150-1236"><a href="#cb150-1236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1237"><a href="#cb150-1237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1238"><a href="#cb150-1238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb150-1239"><a href="#cb150-1239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1240"><a href="#cb150-1240" aria-hidden="true" tabindex="-1"></a><span class="fu">### Answer</span></span>
-<span id="cb150-1241"><a href="#cb150-1241" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval = FALSE}</span></span>
-<span id="cb150-1242"><a href="#cb150-1242" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
-<span id="cb150-1243"><a href="#cb150-1243" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
-<span id="cb150-1244"><a href="#cb150-1244" aria-hidden="true" tabindex="-1"></a><span class="in">centroids &lt;- sf::st_centroid(fairway_grid)</span></span>
-<span id="cb150-1245"><a href="#cb150-1245" aria-hidden="true" tabindex="-1"></a><span class="in">dist_mat &lt;- sf::st_distance(centroids)</span></span>
-<span id="cb150-1246"><a href="#cb150-1246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1247"><a href="#cb150-1247" aria-hidden="true" tabindex="-1"></a><span class="in">which.min(dist_mat[1, ][-1]) + 1</span></span>
-<span id="cb150-1248"><a href="#cb150-1248" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb150-1249"><a href="#cb150-1249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb150-1250"><a href="#cb150-1250" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb150-1251"><a href="#cb150-1251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1235"><a href="#cb150-1235" aria-hidden="true" tabindex="-1"></a><span class="in">```{webr-r}</span></span>
+<span id="cb150-1236"><a href="#cb150-1236" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
+<span id="cb150-1237"><a href="#cb150-1237" aria-hidden="true" tabindex="-1"></a><span class="in">ggplot(fairway_grid) +</span></span>
+<span id="cb150-1238"><a href="#cb150-1238" aria-hidden="true" tabindex="-1"></a><span class="in">  geom_sf() +</span></span>
+<span id="cb150-1239"><a href="#cb150-1239" aria-hidden="true" tabindex="-1"></a><span class="in">  theme_void()</span></span>
+<span id="cb150-1240"><a href="#cb150-1240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1241"><a href="#cb150-1241" aria-hidden="true" tabindex="-1"></a><span class="in">#--- write codes below  ---#</span></span>
+<span id="cb150-1242"><a href="#cb150-1242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1243"><a href="#cb150-1243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1244"><a href="#cb150-1244" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb150-1245"><a href="#cb150-1245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1246"><a href="#cb150-1246" aria-hidden="true" tabindex="-1"></a><span class="fu">### Answer</span></span>
+<span id="cb150-1247"><a href="#cb150-1247" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, eval = FALSE}</span></span>
+<span id="cb150-1248"><a href="#cb150-1248" aria-hidden="true" tabindex="-1"></a><span class="in">#| code-fold: true</span></span>
+<span id="cb150-1249"><a href="#cb150-1249" aria-hidden="true" tabindex="-1"></a><span class="in">data(fairway_grid)</span></span>
+<span id="cb150-1250"><a href="#cb150-1250" aria-hidden="true" tabindex="-1"></a><span class="in">centroids &lt;- sf::st_centroid(fairway_grid)</span></span>
+<span id="cb150-1251"><a href="#cb150-1251" aria-hidden="true" tabindex="-1"></a><span class="in">dist_mat &lt;- sf::st_distance(centroids)</span></span>
 <span id="cb150-1252"><a href="#cb150-1252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1253"><a href="#cb150-1253" aria-hidden="true" tabindex="-1"></a><span class="in">which.min(dist_mat[1, ][-1]) + 1</span></span>
+<span id="cb150-1254"><a href="#cb150-1254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb150-1255"><a href="#cb150-1255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1256"><a href="#cb150-1256" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb150-1257"><a href="#cb150-1257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb150-1258"><a href="#cb150-1258" aria-hidden="true" tabindex="-1"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

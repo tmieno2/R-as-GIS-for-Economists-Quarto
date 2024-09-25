@@ -1,25 +1,7 @@
 # Spatial Interactions of Vector and Raster Data {#sec-int-RV}
 
-```{r chap5_setup}
-#| include: false
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  cache = FALSE,
-  # cache = TRUE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-
-library(here)
-opts_knit$set(root.dir = here())
-```
-
 ```{r , eval = FALSE, echo = FALSE}
-setwd(here())
+setwd(here::here("chapters"))
 ```
 
 ```{r}
@@ -31,6 +13,7 @@ library(exactextractr)
 library(prism)
 library(sf)
 library(terra)
+library(tidyterra)
 library(stars)
 library(raster)
 library(tidyverse)
@@ -121,6 +104,7 @@ Run the following code to install or load (if already installed) the `pacman` pa
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(
   terra, # handle raster data
+  tidyterra, # handle and visualize raster data
   raster, # handle raster data
   exactextractr, # fast extractions
   sf, # vector data operations
@@ -164,9 +148,17 @@ prism_tmax_0701_sr <- terra::rast(prism_file)
 #| label: fig-prism-tmax-map
 #| fig-cap: "Map of PRISM tmax data on July 1, 2018"
 #| code-fold: true
-tm_shape(prism_tmax_0701_sr) +
-  tm_raster() +
-  tm_layout(frame = NA)
+
+ggplot() +
+  geom_spatraster(data = prism_tmax_0701_sr) +
+  scale_fill_whitebox_c(
+    name = "tmax",
+    palette = "muted",
+    labels = scales::label_number(suffix = "º"),
+    n.breaks = 12,
+    guide = guide_legend(reverse = TRUE)
+  ) +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->
@@ -194,9 +186,9 @@ KS_county_sf <-
 #| code-fold: true
 
 #--- gen map ---#
-tm_shape(KS_county_sf) +
-  tm_polygons() +
-  tm_layout(frame = NA)
+ggplot() +
+  geom_sf(data = KS_county_sf, fill = NA, color = "blue") +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->
@@ -222,17 +214,24 @@ prism_tmax_0701_KS_sr <-
   )
 ```
 
-The figure below (@fig-prism-ks-viz) shows the PRISM tmax raster data cropped to the geographic extent of Kansas. Notice that the cropped raster layer extends beyond the outer boundary of Kansas state boundary (it is a bit hard to see, but look at the upper right corner).  
+@fig-prism-ks-viz shows the PRISM tmax raster data cropped to the geographic extent of Kansas. Notice that the cropped raster layer extends beyond the outer boundary of Kansas state boundary (it is a bit hard to see, but look at the upper right corner).  
 
 ```{r}
 #| label: fig-prism-ks-viz
 #| fig-cap: "PRISM tmax raster data cropped to the geographic extent of Kansas"
 #| code-fold: true
 
-tm_shape(prism_tmax_0701_KS_sr) +
-  tm_raster() +
-  tm_shape(KS_county_sf) +
-  tm_borders(col = "blue")
+ggplot() +
+  geom_spatraster(data = prism_tmax_0701_KS_sr) +
+  geom_sf(data = KS_county_sf, fill = NA, color = "blue") +
+  scale_fill_whitebox_c(
+    name = "tmax",
+    palette = "muted",
+    labels = scales::label_number(suffix = "º"),
+    n.breaks = 12,
+    guide = guide_legend(reverse = TRUE)
+  ) +
+  theme_void()
 ```
 
 ## Extracting Values from Raster Layers for Vector Data {#sec-extract-raster-to-vector}

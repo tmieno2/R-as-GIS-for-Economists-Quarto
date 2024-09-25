@@ -2,8 +2,8 @@
 engine: knitr
 webr:
   cell-options:
-    editor-font-scale: 0.7
-    out-width: 100%
+    editor-font-scale: 0.8
+    out-width: 70%
 filters:
   - webr
 ---
@@ -1097,6 +1097,7 @@ You can see that internal borders are simplified in a way that does not create h
 
 ## Exercises {#sec-sf-basics-exercises}
 
+:::{.callout-important}
 Before working on exercises, please run the following codes by hitting the **Run Code** button.
 
 ```{webr-r}
@@ -1105,11 +1106,16 @@ Before working on exercises, please run the following codes by hitting the **Run
 library(dplyr)
 library(ggplot2)
 library(sf)
-install.packages("r.spatial.workshop.datasets", repos = c("https://tmieno2.r-universe.dev", "https://cran.r-project.org"))
+install.packages(
+  "r.spatial.workshop.datasets",
+  repos = c("https://tmieno2.r-universe.dev")
+)
 library(r.spatial.workshop.datasets)
 ```
+:::
 
-:::{.callout-note title="Tips for working with `webr` session"}
+
+:::{.callout-note title="Tips for working with an `webr` session"}
 + Hit the **Run Code** button to run all the codes in the code area.
 + To run only parts of the code, highlight the section you want to execute with your cursor and then press **Cmd + Return** (Mac) or **Ctrl + Enter** (Windows).
 + All the code blocks are interconnected and R objects defined in one R code block is available in another R code block.

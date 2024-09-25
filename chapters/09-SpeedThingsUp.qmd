@@ -597,6 +597,8 @@ toc()
 
 ```{r time_ee_run, echo = F}
 #| cache: false
+# Note: need to keep cache: false, otherwise you will get an error at the time of building the book
+
 tic.clearlog()
 tic()
 temp <- 
