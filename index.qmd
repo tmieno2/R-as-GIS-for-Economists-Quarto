@@ -11,15 +11,15 @@ I am an Associate Professor in the Department of Agricultural Economics at the U
 Here is the list of contributors to the book and the parts they contributed to: 
 
 + **Kyle Butts**, PhD candidate, University of Colorado Boulder
-  * Section \@ref(demo-slave), \@ref(demo-tri), and \@ref(demo-tsetse)
+  * Section @sec-demo-slave, @sec-demo-tri, and @sec-demo-tsetse
 + **Bowen Chen**, Data Scientist, Bunge, Missouri
-	* Section \@ref(CropScapeR)
-+ **Shinya Uryu**, Assistant Professor, Center for Design-Oriented AI Education and Research, Tokushima University, Japan (github account: <https://github.com/uribo>)  
-	* Section \@ref(create-maps)
+	* Section @sec-CropScapeR
++ **Shinya Uryu**, Assistant Professor, Center for Design-Oriented AI Education and Research, Tokushima University, Japan (Github account: <https://github.com/uribo>)  
+	* Section @sec-create-maps
 + **Gal Koss**, Graduate Student, Colorado State University   
-	* Section \@ref(work-with-netcdf) and \@ref(gridMET)
+	* Section @sec-work-with-netcdf and @sec-gridMET
 + **Jude Bayham**, Assistant Professor, Colorado State University
-	* Section \@ref(work-with-netcdf) and \@ref(gridMET)
+	* Section @sec-work-with-netcdf and @sec-gridMET
 
 **Comments and Suggestions?**
 
