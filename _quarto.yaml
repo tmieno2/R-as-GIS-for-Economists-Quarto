@@ -16,28 +16,28 @@ book:
     - text: "---"
     - part: "Demonstrations"
       chapters:
-        - 01-Demonstration.qmd
+        - chapters/01-Demonstration.qmd
     - text: "---"
     - part: "Foundations"
       chapters:
-        - 02-VectorDataBasics.qmd
-        - 03-SpatialInteractionVectorVector.qmd
-        - 04-RasterDataBasics.qmd
-        - 05-SpatialInteractionVectorRaster.qmd
+        - chapters/02-VectorDataBasics.qmd
+        - chapters/03-SpatialInteractionVectorVector.qmd
+        - chapters/04-RasterDataBasics.qmd
+        - chapters/05-SpatialInteractionVectorRaster.qmd
     - text: "---"
     - part: "Extensions"
       chapters:
-        - 07-stars.qmd
-        - 08-CreateMaps-ggplot.qmd
-        - 09-DownloadSpatialData.qmd
+        - chapters/06-stars.qmd
+        - chapters/07-CreateMaps-ggplot.qmd
+        - chapters/08-DownloadSpatialData.qmd
     - text: "---"
     - part: "(slightly) Advanced Topics"
       chapters:
-        - 06-SpeedThingsUp.qmd
+        - chapters/09-SpeedThingsUp.qmd
     - text: "---"
   appendices:
-    - A1-ParallelComputing.qmd
-    - A2-ggplot2-appendix.qmd
+    - chapters/A1-ParallelComputing.qmd
+    - chapters/A2-ggplot2-appendix.qmd
 
 bibliography: RGIS.bib
 reference-location: margin
@@ -51,8 +51,8 @@ format:
     toc: true
     toc-depth: 3
     grid:
-      sidebar-width: 400px
-      body-width: 900px
+      sidebar-width: 300px
+      body-width: 1000px
       margin-width: 520px
       gutter-width: 1rem
     number-sections: true

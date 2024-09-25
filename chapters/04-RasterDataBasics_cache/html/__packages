@@ -1,0 +1,13 @@
+knitr
+here
+data.table
+stringr
+sp
+raster
+terra
+lubridate
+sf
+tictoc
+pacman
+mapview
+dplyr
