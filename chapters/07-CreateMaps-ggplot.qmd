@@ -1,19 +1,3 @@
-```{r ch8-setup, include = FALSE, cache = FALSE}
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  cache = TRUE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-
-library(here)
-opts_knit$set(root.dir = here())
-```
-
 # Creating Maps using `ggplot2` {#sec-create-maps}
 
 
@@ -984,24 +968,26 @@ ggplot() +
 
 ```{r pw-ex}
 #--- tmax ---#
+tmax_20000101 <- terra::rast("Data/PRISM/PRISM_tmax_stable_4kmD2_20000101_bil/PRISM_tmax_stable_4kmD2_20000101_bil.bil")
+
 (
   g_tmax <- 
     ggplot() +
-    geom_raster(data = tmax_df, aes(x = x, y = y, fill = value)) +
-    scale_fill_viridis() +
+    geom_spatraster(data = tmax_20000101) +
+    scale_fill_viridis_c() +
     theme_void() +
-    coord_equal() +
     theme(legend.position = "bottom")
 )
 
 #--- ppt ---#
+ppt_20000101 <- terra::rast("Data/PRISM/PRISM_ppt_stable_4kmD2_20000101_bil/PRISM_ppt_stable_4kmD2_20000101_bil.bil")
+
 (
   g_ppt <- 
     ggplot() +
-    geom_raster(data = ppt_df, aes(x = x, y = y, fill = value)) +
-    scale_fill_viridis() +
+    geom_spatraster(data = ppt_20000101) +
+    scale_fill_viridis_c() +
     theme_void() +
-    coord_equal() +
     theme(legend.position = "bottom")
 )
 ```

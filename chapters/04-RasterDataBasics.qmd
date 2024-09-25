@@ -1,22 +1,5 @@
 # Raster Data Handling {#sec-raster-basics}
 
-```{r chap_4_setup, echo = FALSE, results = "hide", cache = FALSE}
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  cache = FALSE,
-  # cache = TRUE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-
-suppressMessages(library(here))
-opts_knit$set(root.dir = here())
-```
-
 ```{r , eval = FALSE, echo = FALSE}
 setwd(here())
 ```

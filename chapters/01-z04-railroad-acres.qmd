@@ -120,9 +120,9 @@ Let's import the U.S. railroad data and reproject to the CRS of `IL_corn_planted
 
 ```{r Demo5_rail, dependson = "get_quicknass", cache = FALSE}
 rail_roads <-
-  st_read("Data/tl_2015_us_rails.shp") %>%
+  sf::st_read("Data/tl_2015_us_rails.shp") %>%
   #--- reproject to the CRS of IL_corn_planted ---#
-  st_transform(st_crs(IL_corn_planted))
+  sf::st_transform(st_crs(IL_corn_planted))
 ```
 
 @fig-Demo5-rail-plot shows is what it looks like:

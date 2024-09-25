@@ -1,3 +1,13 @@
+---
+engine: knitr
+webr:
+  cell-options:
+    editor-font-scale: 0.7
+    out-width: 100%
+filters:
+  - webr
+---
+
 # Vector Data Handling with `sf` {#sec-vector-basics}
 
 ```{r chap2_setup, echo = FALSE, cache = FALSE}
@@ -53,6 +63,8 @@ In this chapter we learn how to use the `sf` package to handle and operate on sp
   * find the area of polygons
   * find the centroid of polygons
   * calculate the length of lines
+
+To test your knowledge, you can work on coding exercises at @sec-sf-basics-exercises.
 
 ### Direction for replication {-}
 
@@ -160,7 +172,7 @@ The `sf` package uses a class of `sfg` (simple feature geometry) objects to repr
 + `POLYGON`: geometry with a positive area (e.g., county, state, country)
 + `MULTIPOLYGON`: collection of polygons to represent a single object (e.g., countries with islands: U.S., Japan)
 
----
+#### `POINT`
 
 `POINT` is the simplest geometry type and is represented by a vector of two numeric values. An example below shows how a `POINT` feature can be made from scratch:
 
@@ -178,7 +190,7 @@ class(a_point)
 
 you can see that it's indeed a `POINT` object. But, it's also an `sfg` object. So, `a_point` is an `sfg` object of type `POINT`. 
 
----
+#### `LINESTRING`
 
 A `LINESTRING` objects are represented by a sequence of points:  
 
@@ -207,7 +219,7 @@ plot(a_linestring)
 
 As you can see, each pair of consecutive points in the matrix are connected by a straight line to form a line. 
 
----
+#### `POLYGON`
 
 A `POLYGON` is very similar to `LINESTRING` in the manner it is represented. 
 
@@ -226,7 +238,7 @@ class(a_polygon)
 ```
 
 @fig-polygon shows what the polygon looks like.
- 
+
 ```{r}
 #| label: fig-polygon
 #| fig-cap: "Polygon" 
@@ -251,7 +263,7 @@ a_plygon_with_a_hole <- sf::st_polygon(list(p1, p2))
 plot(a_plygon_with_a_hole)
 ```
 
----
+#### `MULTIPOLYGON`
 
 You can create a `MULTIPOLYGON` object in a similar manner. The only difference is that you supply a list of lists of matrices, with each inner list representing a polygon. An example below: 
 
@@ -270,9 +282,7 @@ a_multipolygon <- sf::st_multipolygon(list(list(p1, p2), list(p3)))
 plot(a_multipolygon)
 ```
 
-
 Each of `list(p1,p2)` and `list(p3)` represents a polygon. You supply a list of these lists to the `st_multipolygon()` function to make a `MULTIPOLYGON` object.
-
 
 ### Create simple feature geometry list-column (`sfc`) and simple feature (`sf`) from scratch
 
@@ -283,7 +293,7 @@ To make a simple feature geometry list-column (`sfc`), you can simply supply a l
 sfc_ex <- sf::st_sfc(list(a_point, a_linestring, a_polygon, a_multipolygon))
 ```
 
-To create an `sf` object, you first add an `sfc` as a column to a `data.frame`.  
+To create an `sf` object, you first add an `sfc` as a column to a `data.frame`.
 
 ```{r add_sfc_to_df}
 #--- create a data.frame ---#
@@ -400,7 +410,7 @@ The use of rds files can be particularly attractive when the dataset is large be
 #/*=================================================*/ 
 -->
 
-## Projection with a different Coordinate Reference Systems
+## Projection with a different Coordinate Reference Systems {#sec-projection-sf}
 
 You often need to reproject an `sf` using a different coordinate reference system (CRS) because you need it to have the same CRS as an `sf` object that you are interacting it with (spatial join) or mapping it with. In order to check the current CRS for an `sf` object, you can use the `sf::st_crs()` function. 
 
@@ -537,7 +547,7 @@ Note that once you change the view mode to "view", then the evaluation of all `t
 #/*=================================================*/ 
 -->
 
-## Turning a `data.frame` of points into an `sf`
+## Turning a `data.frame` of points into an `sf` {#sec-df-to-sf}
 
 Often times, you have a dataset with geographic coordinates as variables in a csv or other formats, which would not be recognized as a spatial dataset by R immediately when it is read into R. In this case, you need to identify which variables represent the geographic coordinates from the data set, and create an `sf` yourself. Fortunately, it is easy to do so using the `st_as_sf()` function. Let's first read a dataset (irrigation wells in Nebraska):
 
@@ -584,7 +594,6 @@ head(wells_sf[, 1:5])
 
 You may find instances where `sp` objects are necessary or desirable. For example, some old spatial packages only accept `sp` objects. In such a case, it is good to know how to convert an `sf` object to an `sp` object, vice versa. You can convert an `sf` object to its `sp` counterpart using `as(sf_object, "Spatial")`:
 
-
 ```{r as_spatial}
 #--- conversion ---#
 wells_sp <- as(wells_sf, "Spatial")
@@ -593,14 +602,6 @@ wells_sp <- as(wells_sf, "Spatial")
 class(wells_sp)
 ```
 
-<!-- ```{r }
-list(a_point, a_polygon) %>%
-  sf::st_sfc() %>%
-  sf::st_as_sf() %>%
-  as("Spatial")
-```
-
- -->
 As you can see `wells_sp` is a class of `SpatialPointsDataFrame`, points with a `data.frame` supported by the `sp` package. The above syntax works for converting an `sf` of polygons into `SpatialPolygonsDataFrame` as well^[The function does not work for an `sf` object that consists of different geometry types (e.g., POINT and POLYGON). This is because `sp` objects do not allow different types of geometries in the single `sp` object. For example, `SpatialPointsDataFrame` consists only of points data.].     
 
 You can revert `wells_sp` back to an `sf` object using the `st_as_sf()` function, as follows:
@@ -867,7 +868,7 @@ So, let's turn it into double.
 
 `sf::st_area()` is useful when you want to find area-weighted average of characteristics after spatially joining two polygon layers using the `st_intersection()` function (See @sec-polygon-polygon).
 
-### `sf::st_centroid()`
+### `sf::st_centroid()` {#sec-centroid}
 
 The `sf::st_centroid()` function finds the centroid of each polygon (@fig-map-centroids).
 
@@ -930,16 +931,13 @@ It uses geodetic coordinate system. Let's calculate the great circle distance of
 )
 ```
 
+### `sf::st_distance()` {#sec-distance}
 
-
-<!-- ## st_distance
-
-The `st_distance` function calculates distances between spatial objects. Its output is the matrix of distances whose $i,j$ element is the distance between the $i$th `sfg` of the first `sf` and $j$th `sfg` of the second `sf`. The following code find the distance between the first 10 wells in `urnrd_wells_sf`.
+`sf::st_distance` calculates distances between `sfg`s. Its output is the matrix of distances whose $i,j$ element is the distance between the $i$th `sfg` of the first `sf` and $j$th `sfg` of the second `sf`. The following code find the distance between the first 10 wells in `urnrd_wells_sf`.
 
 ```{r st_distance}
 st_distance(urnrd_wells_sf[1:10, ], urnrd_wells_sf[1:10, ])
 ```
- -->
 
 ### `sf::st_union()` and `sf::st_combine()`
 
@@ -1096,4 +1094,114 @@ ggplot(IL_counties_mssimplified) +
 ```
 
 You can see that internal borders are simplified in a way that does not create holes (see @sec-demo-slave for an application that makes use of `rmapshaper::ms_simplify()`).
+
+## Exercises {#sec-sf-basics-exercises}
+
+Before working on exercises, please run the following codes by hitting the **Run Code** button.
+
+```{webr-r}
+#| message: false
+#| warning: false
+library(dplyr)
+library(ggplot2)
+library(sf)
+install.packages("r.spatial.workshop.datasets", repos = c("https://tmieno2.r-universe.dev", "https://cran.r-project.org"))
+library(r.spatial.workshop.datasets)
+```
+
+:::{.callout-note title="Tips for working with `webr` session"}
++ Hit the **Run Code** button to run all the codes in the code area.
++ To run only parts of the code, highlight the section you want to execute with your cursor and then press **Cmd + Return** (Mac) or **Ctrl + Enter** (Windows).
++ All the code blocks are interconnected and R objects defined in one R code block is available in another R code block.
+:::
+
+
+### Exercise 1: Projection
+
+After running `data(fairway_grid)`, check the CRS of `fairway_grid` and then transform it using WGS84 (look up the EPSG code for WGS84).^[Hint: see @sec-projection-sf]
+
+::: {.panel-tabset}
+
+### Work here
+
+```{webr-r}
+data(fairway_grid)
+
+#--- write codes below  ---#
+
+
+```
+
+### Answer
+
+```{r, eval = FALSE}
+#| code-fold: true
+data(fairway_grid)
+sf::st_crs(fairway_grid)
+sf::st_transform(fairway_grid, 4326)
+```
+
+:::
+<!--end of panel-->
+
+### Exercise 2: Turn a `data.frame` of points into an `sf`
+
+Using the `LAT` (latitude) and `LNG` (longitude) columns in `mower_sensor`, turn the `tibble` into an `sf`, and then assign the CRS of WGS 84 using its EPSG code.^[Hint: see @sec-df-to-sf] 
+
+::: {.panel-tabset}
+
+### Work here
+
+```{webr-r}
+data(mower_sensor)
+
+#--- write codes below  ---#
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+st_as_sf(
+  mower_sensor,
+  coords = c("LNG", "LAT"),
+  crs = 4326
+)
+```
+
+:::
+
+### Exercise 3: Centroid and distance
+
+Find the centroid of the polygons in `fairway_grid` and then calculate the distance between the centroids. Which polygon is the closest to the first polygon recorded in `fairway_grid`?^[Hint: see @sec-centroid and @sec-distance]
+
+::: {.panel-tabset}
+
+### Work here
+
+```{webr-r}
+data(fairway_grid)
+ggplot(fairway_grid) +
+  geom_sf() +
+  theme_void()
+
+#--- write codes below  ---#
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+data(fairway_grid)
+centroids <- sf::st_centroid(fairway_grid)
+dist_mat <- sf::st_distance(centroids)
+
+which.min(dist_mat[1, ][-1]) + 1
+```
+
+:::
+
+
 

@@ -1,24 +1,7 @@
 # R as GIS: Demonstrations {#sec-demo}
 
-```{r setup, include = FALSE, cache = FALSE}
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  # cache = TRUE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-
-library(here)
-opts_knit$set(root.dir = here())
-options(knitr.duplicate.label = "allow")
-```
-
 ```{r ch01-setwd, eval = FALSE, echo = FALSE}
-setwd(here())
+setwd(here::here("chapters"))
 ```
 
 ```{r, include = FALSE, cache = FALSE}

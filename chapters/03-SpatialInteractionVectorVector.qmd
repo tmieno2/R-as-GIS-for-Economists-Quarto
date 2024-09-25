@@ -11,22 +11,6 @@ filters:
 
 # Spatial Interactions of Vector Data: Subsetting and Joining {#sec-int-vv}
 
-```{r chap3_setup, include = FALSE}
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  # cache = TRUE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-
-library(here)
-opts_knit$set(root.dir = here())
-```
-
 ```{r setwd, eval = FALSE, echo = FALSE}
 setwd(here::here())
 ```

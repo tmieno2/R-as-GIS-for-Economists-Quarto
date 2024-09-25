@@ -1,18 +1,5 @@
 # Extraction Speed Considerations {#sec-EE}
 
-```{r Chap6_setup, echo = FALSE, results = "hide"}
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  cache = TRUE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-```
-
 ```{r}
 #| include: false
 #| cache: false
@@ -824,11 +811,6 @@ temp <-
   )
 ```
 
-```{r size_list, cache = TRUE}
-#--- the size of the list of data returned by the first core ---#
-object.size(temp[[1]]) %>% format(units = "GB")
-```
-
 In total, about 2.3GB of data has to be collated into one list from `r num_cores` cores. It turns out, this process is costly. To see this, take a look at the following example where the same `exactextractr::exact_extrct()` processes are run, yet nothing is returned by each core.
 
 ```{r nothing_returned, eval = F}
@@ -963,7 +945,7 @@ However, imagine processing CDL data for all U.S. states from 2009 to 2020. The 
 :::
 
 
-## Many multi-layer raster files {#sec-many-multi-layer}
+## Parallelization on many multi-layer raster files {#sec-many-multi-layer}
 
 In this section, we discuss various methods to parallelize the process of extracting values from many multi-layer raster files.
 

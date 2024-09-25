@@ -1,6 +1,5 @@
-knitr
-here
 data.table
+here
 stringr
 sf
 ggplot2

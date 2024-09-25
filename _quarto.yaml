@@ -12,7 +12,7 @@ book:
   sharing: [twitter, facebook, linkedin]
   chapters:
     - index.qmd
-    - preface.qmd
+    - chapters/00-preface.qmd
     - text: "---"
     - part: "Demonstrations"
       chapters:
@@ -46,7 +46,7 @@ footnotes-hover: true
 format:
   html: 
     include-in-header:
-      - analytics.html
+      - non-chapter-files/analytics.html
     css: style.css
     toc: true
     toc-depth: 3

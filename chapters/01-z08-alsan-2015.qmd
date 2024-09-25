@@ -128,16 +128,13 @@ To generate the data, we first download historical weather data in 1871 from [NO
 
 #--- temperature ---#
 (
-  temp_raw <- stars::read_ncdf(
-    here::here("data/alsan_2015/air.sig995.1871.nc")
-  )
+  temp_raw <- stars::read_ncdf("data/alsan_2015/air.sig995.1871.nc")
 )
 
 #--- humidity ---#
 (
-  humidity_raw <- stars::read_ncdf(
-    here::here("data/alsan_2015/rhum.sig995.1871.nc")
-  )
+  humidity_raw <- stars::read_ncdf("data/alsan_2015/rhum.sig995.1871.nc")
+  
 )
 ```
 
@@ -182,7 +179,7 @@ tribes <-
 
 # Africa
 africa <-
-  sf::st_read(here::here("data/alsan_2015/africa.geojson")) %>%
+  sf::st_read("Data/alsan_2015/africa.geojson") %>%
   #--- reproject to the CRS of temp_raw ---#
   st_transform(st_crs(temp_raw))
 ```

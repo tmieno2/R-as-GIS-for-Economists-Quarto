@@ -76,7 +76,7 @@ We first read all the GIS data we will be using in this demonstration and then r
 
 ```{r}
 coast <-
-  sf::st_read(here::here("Data/nunn_2008/10m-coastline/10m_coastline.shp")) %>%
+  sf::st_read("Data/nunn_2008/10m-coastline/10m_coastline.shp") %>%
   st_transform(3857)
 ```
 
@@ -86,7 +86,7 @@ coast <-
 
 ```{r}
 countries <-
-  sf::st_read(here::here("Data/nunn_2008/gadm36_africa/gadm36_africa.shp")) %>%
+  sf::st_read("Data/nunn_2008/gadm36_africa/gadm36_africa.shp") %>%
   st_transform(3857)
 ```
 
@@ -96,11 +96,11 @@ countries <-
 
 ```{r}
 ethnic_regions <-
-  sf::st_read(here::here("Data/nunn_2008/Murdock_shapefile/borders_tribes.shp")) %>%
+  sf::st_read("Data/nunn_2008/Murdock_shapefile/borders_tribes.shp") %>%
   st_transform(3857)
 
 # lat/long for slave trade centers
-trade_centers <- read_csv(here::here("Data/nunn_2008/nunn2008.csv"))
+trade_centers <- read_csv("Data/nunn_2008/nunn2008.csv")
 ```
 
 #### Calculate the distance to the nearest trade center

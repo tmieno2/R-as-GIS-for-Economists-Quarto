@@ -33,7 +33,6 @@ pacman::p_load(
   daymetr, # download Daymet data
   ggplot2, # make maps
   ggthemes, # ggplot themes
-  tmap, # make maps
   future.apply, # parallel processing
   CropScapeR, # download CDL data
   prism, # download PRISM data
@@ -506,12 +505,10 @@ At this point, the data does not indicate which value corresponds to which crop.
 
 ```{r}
 #--- load the crop code reference data ---#
-data("linkdata")
-```
+data("linkdata", package = "CropScapeR")
 
-```{r echo = F}
-library(DT)
-datatable(linkdata)
+#--- take a look ---#
+head(linkdata)
 ```
 
 You can merge the two data sets using `value` from the CDL data and `MasterCat` from `linkdata` as the merging keys:

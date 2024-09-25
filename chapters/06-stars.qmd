@@ -1,21 +1,5 @@
 # Spatiotemporal Raster Data Handling with `stars` {#sec-stars-basics}
 
-```{r chap_7_setup, include = FALSE}
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  cache = FALSE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-
-library(here)
-opts_knit$set(root.dir = here())
-```
-
 ```{r , eval = FALSE, echo = FALSE}
 setwd(here::here())
 ```
