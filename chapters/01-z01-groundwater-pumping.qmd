@@ -43,7 +43,7 @@ where $y_{i,t}$ is the depth to groundwater table^[the distance from the surface
 * identify irrigation wells located inside the buffers and calculate total pumping
   - use `sf::st_join()`
 + create maps 
-  * use the `tmap` package 
+  * use the `ggplot2` package 
 
 ---
 
@@ -58,7 +58,6 @@ pacman::p_load(
   dplyr, # data wrangling
   dataRetrieval, # download USGS NWIS data
   lubridate, # Date object handling
-  modelsummary, # regression table generation
   lfe, # fast regression with many fixed effects
   tmap # mapping
 )
@@ -97,11 +96,10 @@ three_counties <-
 #| fig-cap: "The location of Chase, Dundy, and Perkins County in Nebraska"
 #| code-fold: true
 #--- map the three counties ---#
-tm_shape(NE_county) +
-  tm_polygons() +
-  tm_shape(three_counties) +
-  tm_polygons(col = "blue", alpha = 0.3) +
-  tm_layout(frame = FALSE)
+ggplot() +
+  geom_sf(data = NE_county) +
+  geom_sf(data = three_counties, fill = "blue", alpha = 0.3) +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->
@@ -135,11 +133,12 @@ urnrd_gw_sf
 ```{r, echo = F}
 #| label: fig-sp-dist-wells
 #| fig-cap: "Spatial distribution of irrigation wells"
-tm_shape(three_counties) +
-  tm_polygons() +
-  tm_shape(unique(urnrd_gw_sf, by = "well_id")) +
-  tm_symbols(size = 0.1, col = "blue") +
-  tm_layout(frame = FALSE)
+#| code-fold: true
+
+ggplot() +
+  geom_sf(data = three_counties) +
+  geom_sf(data = unique(urnrd_gw_sf, by = "well_id"), color = "blue", size = 0.5) +
+  theme_void() 
 ```
 :::
 <!--end of column-margin-->  
@@ -156,7 +155,8 @@ Here are the rest of the steps we will take to create a regression-ready dataset
 
 Let's download groundwater level data from NWIS first. The following code downloads groundwater level data for Nebraska from Jan 1, 1990, through Jan 1, 2016 (This would take a while if you try to run this yourself).
 
-```{r gwl_data_download, eval = F}
+```{r gwl_data_download}
+#| eval: false
 #--- download groundwater level data ---#
 NE_gwl <-
   lapply(
@@ -239,14 +239,13 @@ buffers <- sf::st_buffer(sites_info, dist = 2 * 1609.34) # in meter
 ```{r}
 #| label: fig-buffer-map
 #| fig-cap: "2-mile buffers around USGS monitoring wells"
+#| code-fold: true
 
-tm_shape(three_counties) +
-  tm_polygons() +
-  tm_shape(buffers) +
-  tm_polygons(col = "red", alpha = 0, 2) +
-  tm_shape(sites_info) +
-  tm_symbols(size = 0.1) +
-  tm_layout(frame = FALSE)
+ggplot() +
+  geom_sf(data = three_counties) +
+  geom_sf(data = sites_info, size = 0.5) +
+  geom_sf(data = buffers, fill = NA, col = "red") +
+  theme_void()
 ```
 
 We now identify which irrigation wells are inside each of the buffers and get the associated groundwater pumping values. The `sf::st_join()` function from the `sf` package will do the trick.
@@ -259,7 +258,7 @@ pumping_nearby <- sf::st_join(buffers, urnrd_gw_sf)
 Let's take a look at a USGS monitoring well (`site_no` = $400012101323401$).
 
 ```{r take_a_look}
-filter(pumping_nearby, site_no == 400012101323401, year == 2010)
+dplyr::filter(pumping_nearby, site_no == 400012101323401, year == 2010)
 ```
 
 As you can see, this well has seven irrigation wells within its 2-mile radius in 2010.   
@@ -270,6 +269,7 @@ Now, we will get total nearby pumping by monitoring well and year.
 (
   total_pumping_nearby <-
     pumping_nearby %>%
+    sf::st_drop_geometry() %>%
     #--- calculate total pumping by monitoring well ---#
     dplyr::group_by(site_no, year) %>%
     dplyr::summarize(nearby_pumping = sum(vol_af, na.rm = TRUE)) %>%
@@ -312,20 +312,13 @@ Finally, we estimate the model using `fixest::feols()` from the `fixest` package
 
 ```{r Demo_reg_dwt}
 #--- OLS with site_no and year FEs (error clustered by site_no) ---#
+(
 reg_dwt <-
   fixest::feols(
     dwt_dif ~ nearby_pumping | site_no + year,
     cluster = "site_no",
     data = reg_data
   )
-```
-
-Here is the regression result.
-
-```{r reg_dwt_disp}
-modelsummary::msummary(
-  reg_dwt,
-  stars = TRUE,
-  gof_omit = "IC|Log|Adj|Within|Pseudo"
 )
 ```
+

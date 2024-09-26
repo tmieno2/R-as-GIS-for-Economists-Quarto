@@ -15,8 +15,6 @@ These `geom_*()` functions enable the visualization of both vector and raster da
 
 Finally, another great package for mapping is the `tmap` package ([package website](https://r-tmap.github.io/tmap/)). It also follows the grammar of graphics like `ggplot2`, and those who are already familiar with `ggplot2` will find it very intuitive to use. Given that the package website and [Chapter 9](https://r-tmap.github.io/tmap/) of [Geocomputation with R](https://r.geocompx.org/) already have great treatments of how to create maps with the package. This book does not cover this topic.
 
-Another excellent package for mapping is the `tmap` package ([package website](https://r-tmap.github.io/tmap/)). Like `ggplot2`, it follows the grammar of graphics, making it intuitive for users familiar with `ggplot2`. Since the package website and [Chapter 9 of Geocomputation with R](https://r-tmap.github.io/tmap/) already provide excellent guides on creating maps with `tmap`, this book does not cover the topic.
-
 :::{.callout-note}
 Although this chapter does not require extensive knowledge of `ggplot2`, having a basic understanding of it will be extremely helpful. If you are unfamiliar with `ggplot2` or feel that your knowledge is insufficient, Appendix @sec-ggplot2-minimals offers a minimal introduction to data visualization using the `ggplot2` package. This should provide enough background to help you follow along with the content in this chapter.
 [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/) provides a fuller treatment of how `ggplot2` works 
@@ -74,7 +72,7 @@ This section explains how to create maps from vector data stored as an `sf` obje
 
 The following datasets will be used for illustrations.
 
-**Points**
+**Wells in Kansas as points** (@fig-ks-wells-only)
 
 + `well_id`: well ID
 + `af_used`: total annual groundwater pumping at individual irrigation wells
@@ -87,7 +85,19 @@ The following datasets will be used for illustrations.
 )
 ```
 
-**Polygons**
+::: {.column-margin}
+```{r}
+#| label: fig-ks-wells-only
+#| fig-cap: "Map of wells in Kansas"
+#| context: output
+ggplot(gw_KS_sf) +
+  geom_sf(size = 0.5) +
+  theme_void()
+```
+:::
+<!--end of column-margin-->
+
+**Kansas county border as polygons** (@fig-ks-borders-only)
 
 + `COUNTYFP`: county FIPs code
 + `NAME`: county name
@@ -95,7 +105,7 @@ The following datasets will be used for illustrations.
 ```{r county-KS}
 #| cache: true
 (
-  KS_county <- 
+  KS_county <-
     tigris::counties(state = "Kansas", cb = TRUE, progress_bar = FALSE) %>%
     sf::st_as_sf() %>%
     sf::st_transform(st_crs(gw_KS_sf)) %>%
@@ -103,20 +113,45 @@ The following datasets will be used for illustrations.
 )
 ```
 
-**Lines**
+::: {.column-margin}
+```{r}
+#| label: fig-ks-borders-only
+#| fig-cap: "Map of Kansas county borders" 
+#| code-fold: true
+ggplot(KS_county) + 
+  geom_sf() +
+  theme_void()
+```
+:::
+<!--end of column-margin-->
+
+**Railroads as lines** (@fig-railroads-only)
 
 ```{r import-railroads}
 #| cache: true
 #| results: "hide"
 (
   KS_railroads <- 
-    sf::st_read(dsn = "Data/", layer = "tl_2015_us_rails") %>%
+    sf::st_read("Data/tl_2015_us_rails.shp") %>%
     sf::st_crop(KS_county)
 )
 ```
 
+::: {.column-margin}
+```{r}
+#| label: fig-railroads-only
+#| code-fold: true
+#| fig-cap: "Map of railroads"
+ggplot(KS_railroads) +
+  geom_sf() +
+  theme_void()
+```
+:::
+<!--end of column-margin-->
+
 ```{r show-railroads}
 #| cache: true
+#| echo: false
 KS_railroads
 ```
 
@@ -1226,11 +1261,31 @@ Visit the [`ggmapinset` website](https://cidm-ph.github.io/ggmapinset/index.html
 
 You can also use `ggplotGrob()` and `annotation_custom()` to create an inset map. The steps to achieve this are as follows:
 
-+ create a map of the area of interest and turn it into a `grob` object using `ggplotGrob()`
-+ create a map of the region that includes the area of interest and turn it into a `grob` object using `ggplotGrob()`
-+ combine the two using `annotation_custom()`
+1. create a map of the area of interest and turn it into a `grob` object using `ggplotGrob()`
+2. create a map of the region that includes the area of interest and turn it into a `grob` object using `ggplotGrob()`
+3. combine the two using `annotation_custom()`
 
-```{r grob-start}
+**Step 1**
+
+Let's first create a map of the area of interest (@fig-map-interest).
+
+```{r}
+#| label: fig-map-interest
+#| fig-cap: "Map of the area of interest"
+
+#--- Create a map of the area of interest ---#
+(
+g_three_counties <-
+  ggplot() +
+  geom_sf(data = three_counties) +
+  geom_sf_text(data = three_counties, aes(label = NAME)) +
+  theme_void()
+)
+```
+
+Let's now convert `g_three_counties` to a `grob` object using `ggplotGrob()`.
+
+```{r}
 #--- convert the ggplot into a grob ---#
 grob_aoi <- ggplotGrob(g_three_counties)
 
@@ -1238,21 +1293,37 @@ grob_aoi <- ggplotGrob(g_three_counties)
 class(grob_aoi)
 ```
 
-```{r ks-region-map}
+---
+
+**Step 2**
+
+Create a map of the region that include the area of interest (@fig-map-large) and then turn it into a `grob`.
+
+```{r}
+#| label: fig-map-large
+#| fig-cap: "Map of the region that include the area of interest"
+
 #--- create a map of Kansas ---#
-g_region <- 
+(
+g_region <-
   ggplot() +
   geom_sf(data = KS_county) +
   geom_sf(data = three_counties, fill = "blue", color = "red", alpha = 0.5) +
   theme_void()
+)
 
 #--- convert to a grob ---#
 grob_region <- ggplotGrob(g_region)
 ```
 
+---
+
+**Step 3**
+
 Now that we have two maps, we can now put them on the same map using `annotation_custom()`. The first task is to initiate a `ggplot` with `coord_equal()` as follows:
 
-```{r inset-map}
+```{r}
+#| label: inset-map-initiate
 (
   g_inset <- 
     ggplot() +
@@ -1262,7 +1333,8 @@ Now that we have two maps, we can now put them on the same map using `annotation
 
 You now have a blank canvas to put the images on. Let's add a layer to the canvas using `annotation_custom()` in which you provide the `grob` object (a map) and specify the range of the canvas the map occupies. Since the extent of x and y are set to [0, 1] above with `coord_equal(xlim = c(0, 1), ylim = c(0, 1), expand = FALSE)`, the following code put the `grob_aoi` to cover the entire y range and up to 0.8 of x from 0.
 
-```{r inset-annotation-1}
+```{r}
+#| label: inset-annotation-custom-1
 g_inset +
   annotation_custom(grob_aoi,
     xmin = 0, xmax = 0.8, ymin = 0,
@@ -1272,7 +1344,8 @@ g_inset +
 
 Similarly, we can add `grob_region` using `annotation_custom()`. Let's put it at the right lower corner of the map.
 
-```{r inset-annotation-2}
+```{r}
+#| label: inset-annotation-custom-2
 g_inset +
   annotation_custom(grob_aoi,
     xmin = 0, xmax = 0.8, ymin = 0,
@@ -1286,7 +1359,8 @@ g_inset +
 
 Note that the resulting map still has the default theme because it does not inherit the theme of maps added by `annotation_custom()`. So, you can add `theme_void()` to the map to make the border disappear.
 
-```{r add-void-custom}
+```{r}
+#| label: add-void-custom-complete
 g_inset +
   annotation_custom(grob_aoi,
     xmin = 0, xmax = 0.8, ymin = 0,

@@ -55,7 +55,6 @@ pacman::p_load(
   sf, # vector data operations
   dplyr, # data wrangling
   ggplot2, # for map creation
-  modelsummary, # regression table generation
   keyring # API management
 )
 ```
@@ -201,12 +200,8 @@ reg_data <- left_join(IL_corn_planted, rail_length_county, by = "county_code")
 ```
 
 ```{r rail-reg-table}
-lm(Value ~ length_in_m, data = reg_data) %>%
-  modelsummary(
-    stars = TRUE,
-    gof_omit = "IC|Log|Adj|Within|Pseudo"
-  )
+(
+fixest::feols(Value ~ length_in_m, data = reg_data)
+)
 ```
-
----
 

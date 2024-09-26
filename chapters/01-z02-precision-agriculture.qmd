@@ -55,7 +55,7 @@ pacman::p_load(
   sf, # vector data operations
   dplyr, # data wrangling
   ggplot2, # for map creation
-  modelsummary, # regression table generation
+  fixest, # OLS regression
   patchwork # arrange multiple plots
 )
 ```
@@ -272,12 +272,8 @@ g_sub_yield / g_sub_NH3 / g_sub_ec
 Let's estimate the model and see the results:
 
 ```{r Demo2_results, dependson = "Demo2_merge_join", cache = TRUE}
-ols_res <- lm(yield ~ aa_NH3 + I(aa_NH3^2) + I(aa_NH3 * ec) + I(aa_NH3^2 * ec), data = reg_data)
-
-modelsummary::msummary(
-  ols_res,
-  stars = TRUE,
-  gof_omit = "IC|Log|Adj|Within|Pseudo"
+(
+fixest::feols(yield ~ aa_NH3 + I(aa_NH3^2) + I(aa_NH3 * ec) + I(aa_NH3^2 * ec), data = reg_data)
 )
 ```
 

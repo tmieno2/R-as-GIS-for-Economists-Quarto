@@ -48,8 +48,7 @@ pacman::p_load(
   ggplot2, # for map creation
   RhpcBLASctl, # to get the number of available cores
   future.apply, # parallelization
-  lfe, # fast regression with many fixed effects
-  modelsummary # regression table generation
+  lfe # fast regression with many fixed effects
 )
 ```
 
@@ -212,6 +211,7 @@ Let's run regression and display the results.
 
 ```{r Demo5_reg_display}
 #--- run FE ---#
+(
 reg_results <-
   fixest::feols(
     af_used ~ # dependent variable
@@ -221,12 +221,6 @@ reg_results <-
     cluster = "well_id",
     data = reg_data
   )
-
-#--- display regression results ---#
-modelsummary::modelsummary(
-  reg_results,
-  stars = TRUE,
-  gof_omit = "IC|Log|Adj|Within|Pseudo"
 )
 ```
 

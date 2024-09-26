@@ -67,11 +67,11 @@ pacman::p_load(
   dplyr, # data wrangling
   lubridate, # Date object handling
   tmap, # for map creation
-  modelsummary, # regression table generation
   future.apply, # parallel computation
   CropScapeR, # download CDL data
   prism, # download PRISM data
-  stringr # string manipulation
+  stringr, # string manipulation
+  fixest # OLS regression
 )
 ```
 
@@ -384,18 +384,8 @@ Let's merge them and run regression.^[We can match on `grid_id` from `corn_soy` 
 reg_data <- corn_soy[precip_by_period, on = c(grid_id = "ID")]
 
 #--- OLS ---#
-reg_results <- lm(c_s_ratio ~ critical + non_critical, data = reg_data)
-```
-
-Here is the regression results table.
-
-
-```{r Demo-3-reg-table}
-#--- regression table ---#
-modelsummary::msummary(
-  reg_results,
-  stars = TRUE,
-  gof_omit = "IC|Log|Adj|Within|Pseudo"
+(
+reg_results <- fixest::feols(c_s_ratio ~ critical + non_critical, data = reg_data)
 )
 ```
 

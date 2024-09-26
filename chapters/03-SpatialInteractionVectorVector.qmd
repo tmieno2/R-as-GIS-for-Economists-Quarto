@@ -1422,6 +1422,53 @@ soy_seed %>%
 
 :::
 
+### Exercise 4: Spatial intersection
+
+In this exercise, you will work with Colorado county borders `co_counties` and the High-Plains aquifer boundary (`hp_boundary`).
+
+```{webr-r}
+data(hp_boundary)
+data(co_counties)
+
+ggplot() +
+  geom_sf(data = hp_boundary, fill = "blue", alpha = 0.3) +
+  geom_sf(data = co_counties, fill = NA) +
+  theme_void()
+```
+
+In your analysis, you want to retain only the counties that have at least 80% of their area overlapping with the aquifer. First, project them to WGS84 UTM Zone 13 (EPSG: 32613) using `sf::st_transform()`, identify these counties using `st_intersection()`, and then create a variable in `co_counties` that indicates whether the 80% overlapping condition is satisfied or not.
+
+::: {.panel-tabset}
+
+### Work here
+
+```{webr-r}
+#--- write codes here ---#
 
 
 
+
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+
+co_counties_utm13 <- st_transform(co_counties, 32613)
+hp_boundary_utm13 <- st_transform(hp_boundary, 32613)
+
+co_intersecting <-
+  sf::st_intersection(co_counties_utm13, hp_boundary_utm13) %>%
+  dplyr::mutate(area_int = st_area(geometry) %>% as.numeric()) %>%
+  sf::st_drop_geometry()
+
+co_counties <- 
+  co_counties %>%
+  dplyr::mutate(area = st_area(geometry) %>% as.numeric()) %>%
+  left_join(., co_intersecting, by = "name") %>%
+  dplyr::mutate(more_than_80 = ifelse(area_int > area * 0.8, TRUE, FALSE))
+```
+
+:::

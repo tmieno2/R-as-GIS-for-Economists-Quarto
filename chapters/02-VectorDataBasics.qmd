@@ -10,24 +10,8 @@ filters:
 
 # Vector Data Handling with `sf` {#sec-vector-basics}
 
-```{r chap2_setup, echo = FALSE, cache = FALSE}
-library(knitr)
-knitr::opts_chunk$set(
-  echo = TRUE,
-  # cache = TRUE,
-  comment = NA,
-  message = FALSE,
-  warning = FALSE,
-  tidy = FALSE,
-  cache.lazy = FALSE
-)
-
-suppressMessages(library(here))
-opts_knit$set(root.dir = here())
-```
-
 ```{r ch02-setwd, eval = FALSE, echo = FALSE}
-setwd(here())
+setwd(here::here("chapters"))
 ```
 
 ```{r, include = FALSE, cache = FALSE}
@@ -108,10 +92,9 @@ nc <- sf::st_read(system.file("shape/nc.shp", package = "sf"))
 #| fig-cap: "North Carolina county boundary"
 #| code-fold: true 
 
-library(tmap)
-tm_shape(nc) +
-  tm_polygons() +
-  tm_layout(frame = NA)
+ggplot(nc) +
+  geom_sf() +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->
@@ -763,9 +746,9 @@ urnrd_wells_sf <-
 #| fig-cap: "Map of the wells" 
 #| code-fold: true 
 
-tm_shape(urnrd_wells_sf) +
-  tm_symbols(col = "red", size = 0.1) +
-  tm_layout(frame = FALSE)
+ggplot(urnrd_wells_sf) +
+  geom_sf(size = 0.4, color = "red") +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->
@@ -783,11 +766,11 @@ As you can see, there are many circles around wells with the radius of $1,600$ m
 #| label: fig-buffer-points-map
 #| fig-cap: "Buffers around wells"
 #| code-fold: true 
-tm_shape(wells_buffer) +
-  tm_polygons(alpha = 0) +
-  tm_shape(urnrd_wells_sf) +
-  tm_symbols(col = "red", size = 0.1) +
-  tm_layout(frame = NA)
+ 
+ggplot() +
+  geom_sf(data = urnrd_wells_sf, size = 0.6, color = "red") +
+  geom_sf(data = wells_buffer, fill = NA) +
+  theme_void()
 ```
 
 A practical application of buffer creation can be seen in @sec-demo1.
@@ -799,7 +782,7 @@ We now create buffers around polygons. First, read county boundary data and sele
 ```{r ne_counties}
 NE_counties <-
   readRDS("Data/NE_county_borders.rds") %>%
-  filter(NAME %in% c("Perkins", "Dundy", "Chase")) %>%
+  dplyr::filter(NAME %in% c("Perkins", "Dundy", "Chase")) %>%
   sf::st_transform(32614)
 ```
 
@@ -808,12 +791,11 @@ NE_counties <-
 #| label: fig-map-three-counties
 #| fig-cap: "Map of the three counties"
 #| code-fold: true
-tm_shape(NE_counties) +
-  tm_polygons("NAME", palette = "RdYlGn", contrast = .3, title = "County") +
-  tm_layout(
-    legend.outside = TRUE,
-    frame = FALSE
-  )
+
+ggplot(NE_counties) +
+  geom_sf(aes(fill = NAME)) +
+  scale_fill_brewer(name = "County", palette = "RdYlGn") +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->
@@ -829,14 +811,12 @@ NE_buffer <- sf::st_buffer(NE_counties, dist = 2000)
 #| label: fig-buffer-county
 #| fig-cap: "Buffers around the three counties"
 #| code-fold: true
-tm_shape(NE_buffer) +
-  tm_polygons(col = "blue", alpha = 0.2) +
-  tm_shape(NE_counties) +
-  tm_polygons("NAME", palette = "RdYlGn", contrast = .3, title = "County") +
-  tm_layout(
-    legend.outside = TRUE,
-    frame = FALSE
-  )
+
+ggplot() +
+  geom_sf(data = NE_buffer, fill = "blue", alpha = 0.3) +
+  geom_sf(data = NE_counties, aes(fill = NAME)) +
+  scale_fill_brewer(name = "County", palette = "RdYlGn") +
+  theme_void()
 ```
 
 For example, this can be useful to identify observations which are close to the border of political boundaries when you want to take advantage of spatial discontinuity of policies across adjacent political boundaries.
@@ -883,14 +863,11 @@ The `sf::st_centroid()` function finds the centroid of each polygon (@fig-map-ce
 #| label: fig-map-centroids
 #| fig-cap: "The centroids of the polygons"
 #| code-fold: true
-tm_shape(NE_counties) +
-  tm_polygons() +
-  tm_shape(NE_centroids) +
-  tm_symbols(size = 0.5) +
-  tm_layout(
-    legend.outside = TRUE,
-    frame = FALSE
-  )
+
+ggplot() +
+  geom_sf(data = NE_counties) +
+  geom_sf(data = NE_centroids) +
+  theme_void()
 ```
 
 It can be useful when creating a map with labels because the centroid of polygons tend to be a good place to place labels (@fig-cent-label).^[When creating maps with the ggplot2 package, you can use `geom_sf_text()` or `geom_sf_label()`, which automatically finds where to put texts. See some examples [here](https://yutani.rbind.io/post/geom-sf-text-and-geom-sf-label-are-coming/).]
@@ -899,14 +876,11 @@ It can be useful when creating a map with labels because the centroid of polygon
 #| label: fig-cent-label
 #| fig-cap: "County names placed at the centroids of the counties"
 #| code-fold: true
-tm_shape(NE_counties) +
-  tm_polygons() +
-  tm_shape(NE_centroids) +
-  tm_text("NAME") +
-  tm_layout(
-    legend.outside = TRUE,
-    frame = FALSE
-  )
+
+ggplot() +
+  geom_sf(data = NE_counties) +
+  geom_sf_text(data = NE_centroids, aes(label = NAME)) +
+  theme_void()
 ```
 
 ### `sf::st_length()`
