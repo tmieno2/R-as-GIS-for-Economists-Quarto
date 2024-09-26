@@ -48,7 +48,7 @@ where $CS_i$ is the area share of corn divided by that of soy in 2015 for grid $
 + assign crop share and weather data to each of the generated IA grids (parallelized)
   * use `exactextractr::exact_extract()` and `future.apply::future_lapply()`
 + create maps 
-  * use the `tmap` package 
+  * use the `ggplot2` package 
 
 ---
 
@@ -66,7 +66,7 @@ pacman::p_load(
   data.table, # data wrangling
   dplyr, # data wrangling
   lubridate, # Date object handling
-  tmap, # for map creation
+  ggplot2, # for map creation
   future.apply, # parallel computation
   CropScapeR, # download CDL data
   prism, # download PRISM data
@@ -90,9 +90,9 @@ IA_boundary <- sf::st_as_sf(tigris::counties(state = "Iowa", cb = TRUE, progress
 #| fig-cap: "Iowa state boundary"
 #| code-fold: true
 #--- map IA state border ---#
-tm_shape(IA_boundary) +
-  tm_polygons() +
-  tm_layout(frame = FALSE)
+ggplot(IA_boundary) +
+  geom_sf() +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->
@@ -121,11 +121,11 @@ IA_grids <-
 #| fig-cap: "Map of regular grids generated over IA"
 #| code-fold: true
 #--- plot the grids over the IA state border ---#
-tm_shape(IA_boundary) +
-  tm_borders(col = "red", lwd = 2) +
-  tm_shape(IA_grids) +
-  tm_borders(col = "blue") +
-  tm_layout(frame = FALSE)
+
+ggplot() +
+  geom_sf(data = IA_boundary, color = "red", linewidth = 1.1) +
+  geom_sf(data = IA_grids, color = "blue", fill = NA) +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->

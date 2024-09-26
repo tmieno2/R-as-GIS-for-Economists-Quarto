@@ -1,7 +1,7 @@
 # Spatiotemporal Raster Data Handling with `stars` {#sec-stars-basics}
 
 ```{r , eval = FALSE, echo = FALSE}
-setwd(here::here())
+setwd(here::here("chapters"))
 ```
 
 ```{r, include = FALSE, warning=FALSE, cache = FALSE}
@@ -19,7 +19,6 @@ library(tidyr)
 library(viridis)
 library(tictoc)
 library(stars)
-library(tmap)
 ```
 
 ## Before you start {.unnumbered}
@@ -53,7 +52,6 @@ pacman::p_load(
   sf, # vector data handling
   tidyverse, # data wrangling
   cubelyr, # handle raster data
-  tmap, # make maps
   mapview, # make maps
   exactextractr, # fast raster data extraction
   lubridate, # handle dates

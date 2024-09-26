@@ -2,6 +2,10 @@ chapters/Data/*
 *cache/*
 chapters/*cache/*
 chapters/*files/*
+chapters/*/*cache/*
+chapters/*/*files/*
+chapters/*/*/*cache/*
+chapters/*/*/*files/*
 /Codes/*
 /q/*
 /ReplicationData/*

@@ -30,7 +30,6 @@ library(raster)
 library(tidyverse)
 library(DT)
 library(tictoc)
-library(tmap)
 library(parallel)
 ```
 
@@ -126,8 +125,7 @@ pacman::p_load(
   data.table, # data wrangling
   prism, # download PRISM data
   tictoc, # timing codes
-  tigris, # to get county sf
-  tmap # for mapping
+  tigris # to get county sf
 )
 ```
 
@@ -387,15 +385,11 @@ Here is how the wells are spatially distributed over the PRISM grids and Kansas 
 #| code-fold: true
 #| fig-cap: "Map of Kansas county borders, irrigation wells, and PRISM tmax" 
 #| label: fig-tmax-prism-wells
-tm_shape(KS_county_sf) +
-  tm_polygons(alpha = 0) +
-  tm_shape(KS_wells) +
-  tm_symbols(size = 0.02) +
-  tm_layout(
-    frame = FALSE,
-    legend.outside = TRUE,
-    legend.outside.position = "bottom"
-  )
+
+ggplot()  +
+  geom_sf(data = KS_county_sf, fill = NA) +
+  geom_sf(data = KS_wells, size = 0.05) +
+  theme_void()
 ```
 
 ### Extracting to Points

@@ -29,7 +29,9 @@
 * calculate TRI 
   - use `terra::focal()`
 + create maps 
+  * use the `ggplot2` package 
   * use the `tmap` package 
+  * use the `tidyterra` package 
 
 ---
 
@@ -43,7 +45,7 @@ pacman::p_load(
   sf, # vector data operations
   tidyverse, # data wrangling
   stars,
-  tmap,
+  tidyterra,
   raster,
   rnaturalearth,
   skimr
@@ -55,25 +57,39 @@ pacman::p_load(
 We first read the world elevation data using `terra::rast()`.
 
 ```{r read-dem}
+#| cache: false
 (
   dem <- terra::rast("Data/nunn_2012/GDEM-10km-BW.tif")
 )
 ```
 
-```{r map-world-elev, cache = TRUE}
-tm_shape(dem) +
-  tm_raster()
+```{r map-world-elev}
+#| message: false
+#| warning: false
+#| code-fold: true
+
+ggplot() +
+  geom_spatraster(data = dem) +
+  scale_fill_whitebox_c(palette = "muted") +
+  theme_void()
 ```
 
 In this dataset, the elevation of the ocean floor is recorded as 0, so let's replace an elevation of 0 with `NA`s. This avoids a problem associated with calculating TRI later. 
 
 ```{r replace-zero}
+#| cache: false
 dem <- terra::subst(dem, 0, NA)
 ```
 
-```{r map-world-elev-no-zero, cache = TRUE}
-tm_shape(dem) +
-  tm_raster()
+```{r map-world-elev-no-zero}
+#| message: false
+#| warning: false
+#| code-fold: true
+
+ggplot() +
+  geom_spatraster(data = dem) +
+  scale_fill_whitebox_c(palette = "muted") +
+  theme_void()
 ```
 
 Now, since our interest is in Africa, let's just crop the raster data to its African portion. To do so, we first get the world map using `rnaturalearth::ne_countries()` and filter out the non-African countries.
@@ -89,14 +105,20 @@ africa_sf <-
 We can now apply `terra::crop()` to `dem` based on the bounding box of `africa_sf`.
 
 ```{r crop-to-africa}
+#| cache: false
 africa_dem <- terra::crop(dem, africa_sf)
 ```
 
 Here is a map of the crop data.
 
 ```{r map-africa-elev, cache = TRUE}
-tm_shape(africa_dem) +
-  tm_raster()
+#| message: false
+#| warning: false
+#| code-fold: true
+ggplot() +
+  geom_spatraster(data = africa_dem) +
+  scale_fill_whitebox_c(palette = "muted") +
+  theme_void()
 ```
 
 Now, we are ready to calculte TRI, which is defined as
@@ -121,6 +143,7 @@ calc_tri <- function(matr) {
 Now, let's calculate TRI.
 
 ```{r calc-tri}
+#| cache: false
 tri_africa <-
   terra::focal(
     africa_dem,
@@ -132,8 +155,13 @@ tri_africa <-
 Here is the map of the calculated TRI.
 
 ```{r map-tri}
-tm_shape(tri_africa) +
-  tm_raster()
+#| message: false
+#| warning: false
+#| code-fold: true
+ggplot() +
+  geom_spatraster(data = tri_africa) +
+  scale_fill_whitebox_c(palette = "muted") +
+  theme_void()
 ```
 
 

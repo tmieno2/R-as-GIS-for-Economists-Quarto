@@ -1,5 +1,8 @@
 # Creating Maps using `ggplot2` {#sec-create-maps}
 
+```{r setwd, eval = FALSE, echo = FALSE}
+setwd(here::here("chapters"))
+```
 
 ## Before you start {-}
 
@@ -656,6 +659,10 @@ ggplot() +
   facet_wrap(~ lyr, ncol = 2)
 ```
 
+:::{.callout-note}
+Note that you always have `lyr` as the faceting variable with `geom_spatraster()` as there is no other variable to be faceted with in a multi-layer `SpatRaster` object.
+:::
+
 Since this is built within the `ggplot2` framework, you can easily customize the figure if you are familiar with `ggplot2`.
 
 ```{r}
@@ -663,19 +670,24 @@ Since this is built within the `ggplot2` framework, you can easily customize the
 ggplot() +
   geom_spatraster(data = tmax_Jan_09_sr) +
   facet_wrap(~ lyr, ncol = 2) +
-  scale_fill_whitebox_c(
-    palette = "muted",
-    labels = scales::label_number(suffix = "º"),
-    n.breaks = 20,
-    guide = guide_legend(reverse = TRUE)
-  ) +
-  labs(fill = "")
+  scale_fill_viridis_c(labels = scales::label_number(suffix = "º")) +
+  theme_void()
 ```
 
+Right now, gray color is assigned to the cells with NA. To make them disappear, add `na.value = "transparent"` in the `scale_fill_*()` function like below:
 
-:::{.callout-note}
-Note that you always have `lyr` as the faceting variable with `geom_spatraster()` as there is no other variable to be faceted with in a multi-layer `SpatRaster` object.
-:::
+```{r}
+#| label: viz-spatraster-facet-style-na
+ggplot() +
+  geom_spatraster(data = tmax_Jan_09_sr) +
+  facet_wrap(~ lyr, ncol = 2) +
+  scale_fill_viridis_c(
+    labels = scales::label_number(suffix = "º"),
+    na.value = "transparent"
+  ) +
+  theme_void()
+```
+
 
 ### Visualize `stars` with `geom_stars()`
 
@@ -704,9 +716,9 @@ ggplot() +
   theme_void()
 ```
 
-### adding `geom_sf()` layers
+## Combine `geom_sf()` and `geom_spatraster()`/`geom_stars()` layers
 
-You can easily add `geom_sf()` layers to a map created with `geom_spatraster()` and `geom_stars()`. Let's crop the tmax data to Kansas and create a map of tmax values displayed on top of the Kansas county borders.
+You can easily combine layers based on vector and raster data. Let's crop the tmax data to Kansas and create a map of tmax values displayed on top of the Kansas county borders.
 
 ```{r add-sf, results = "hide"}
 #| cache: false
@@ -719,7 +731,7 @@ KS_tmax_Jan_09_sr <-
 as(KS_tmax_Jan_09_stars, "SpatRaster")
 ```
 
-Mixing either `geom_spatraster()` or `geom_stars()` layers with `geom_sf()` layers is not any different from mixing different non-spatial `geom_*()`s under the `ggplot2` framework. You can easily see in the example below that mixes `geom_stars()` and `geom_sf()` layers:
+Mixing either `geom_spatraster()` or `geom_stars()` layers with `geom_sf()` layers is no different from combining various non-spatial `geom_*()` layers within the `ggplot2` framework. The example below demonstrates how to mix them:
 
 **with `geom_stars()`**
 

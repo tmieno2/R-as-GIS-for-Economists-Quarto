@@ -12,7 +12,7 @@ filters:
 # Spatial Interactions of Vector Data: Subsetting and Joining {#sec-int-vv}
 
 ```{r setwd, eval = FALSE, echo = FALSE}
-setwd(here::here())
+setwd(here::here("chapters"))
 ```
 
 ```{r, include = FALSE, cache = FALSE}
@@ -26,7 +26,6 @@ library(raster)
 library(tidyverse)
 library(tictoc)
 library(stargazer)
-library(tmap)
 library(future.apply)
 library(lubridate)
 ```
@@ -96,8 +95,7 @@ pacman::p_load(
   sf, # vector data operations
   dplyr, # data wrangling
   data.table, # data wrangling
-  ggplot2, # for map creation
-  tmap # for map creation
+  ggplot2 # for map creation
 )
 ```
 
@@ -622,11 +620,10 @@ As you can see in @fig-map-rail-ks below, only the railroads that intersect with
 #| fig-cap: "Railroads that intersect Kansas county boundaries"
 #| code-fold: true
 
-tm_shape(railroads_KS) +
-  tm_lines(col = "blue") +
-tm_shape(KS_counties) +
-  tm_polygons(alpha = 0)  +
-  tm_layout(frame = FALSE) 
+ggplot() +
+  geom_sf(data = railroads_KS, color = "blue") +
+  geom_sf(data = KS_counties, fill = NA) +
+  theme_void()
 ```
 
 If you would like the lines beyond the state boundary to be cut out but the intersecting parts of those lines to remain, use `sf::st_intersection()`, which is explained in @sec-st-intersection.

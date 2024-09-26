@@ -1276,7 +1276,7 @@ CS_i = \alpha + \beta_1 PrN_{i} + \beta_2 PrC_{i} + v_i
 </li>
 <li>create maps
 <ul>
-<li>use the <code>tmap</code> package</li>
+<li>use the <code>ggplot2</code> package</li>
 </ul>
 </li>
 </ul>
@@ -1295,7 +1295,7 @@ CS_i = \alpha + \beta_1 PrN_{i} + \beta_2 PrC_{i} + v_i
 <span>  <span class="va">data.table</span>, <span class="co"># data wrangling</span></span>
 <span>  <span class="va">dplyr</span>, <span class="co"># data wrangling</span></span>
 <span>  <span class="va">lubridate</span>, <span class="co"># Date object handling</span></span>
-<span>  <span class="va">tmap</span>, <span class="co"># for map creation</span></span>
+<span>  <span class="va">ggplot2</span>, <span class="co"># for map creation</span></span>
 <span>  <span class="va">future.apply</span>, <span class="co"># parallel computation</span></span>
 <span>  <span class="va">CropScapeR</span>, <span class="co"># download CDL data</span></span>
 <span>  <span class="va">prism</span>, <span class="co"># download PRISM data</span></span>
@@ -1315,9 +1315,9 @@ CS_i = \alpha + \beta_1 PrN_{i} + \beta_2 PrC_{i} + v_i
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- map IA state border ---#</span></span>
-<span><span class="fu">tm_shape</span><span class="op">(</span><span class="va">IA_boundary</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_polygons</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_layout</span><span class="op">(</span>frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">IA_boundary</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
 <div id="fig-IA-map" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-IA-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1350,11 +1350,11 @@ Figure&nbsp;1.8: Iowa state boundary
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="cell">
 <details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- plot the grids over the IA state border ---#</span></span>
-<span><span class="fu">tm_shape</span><span class="op">(</span><span class="va">IA_boundary</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_borders</span><span class="op">(</span>col <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_shape</span><span class="op">(</span><span class="va">IA_grids</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_borders</span><span class="op">(</span>col <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_layout</span><span class="op">(</span>frame <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">IA_boundary</span>, color <span class="op">=</span> <span class="st">"red"</span>, linewidth <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">IA_grids</span>, color <span class="op">=</span> <span class="st">"blue"</span>, fill <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
 <div id="fig-Demo-3-IA-grids-map" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-Demo-3-IA-grids-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -2736,7 +2736,9 @@ Projected CRS: WGS 84 / Pseudo-Mercator
 </li>
 <li>create maps
 <ul>
+<li>use the <code>ggplot2</code> package</li>
 <li>use the <code>tmap</code> package</li>
+<li>use the <code>tidyterra</code> package</li>
 </ul>
 </li>
 </ul>
@@ -2749,7 +2751,7 @@ Projected CRS: WGS 84 / Pseudo-Mercator
 <span>  <span class="va">sf</span>, <span class="co"># vector data operations</span></span>
 <span>  <span class="va">tidyverse</span>, <span class="co"># data wrangling</span></span>
 <span>  <span class="va">stars</span>,</span>
-<span>  <span class="va">tmap</span>,</span>
+<span>  <span class="va">tidyterra</span>,</span>
 <span>  <span class="va">raster</span>,</span>
 <span>  <span class="va">rnaturalearth</span>,</span>
 <span>  <span class="va">skimr</span></span>
@@ -2773,9 +2775,11 @@ name        : GDEM-10km-BW </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb127"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tm_shape</span><span class="op">(</span><span class="va">dem</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_raster</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb127"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_spatraster</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dem</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_whitebox_c</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"muted"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="01-Demonstration_files/figure-html/map-world-elev-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
@@ -2787,9 +2791,11 @@ name        : GDEM-10km-BW </code></pre>
 <div class="sourceCode" id="cb128"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">dem</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/subst.html">subst</a></span><span class="op">(</span><span class="va">dem</span>, <span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb129"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tm_shape</span><span class="op">(</span><span class="va">dem</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_raster</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb129"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_spatraster</span><span class="op">(</span>data <span class="op">=</span> <span class="va">dem</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_whitebox_c</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"muted"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="01-Demonstration_files/figure-html/map-world-elev-no-zero-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
@@ -2810,9 +2816,11 @@ name        : GDEM-10km-BW </code></pre>
 </div>
 <p>Here is a map of the crop data.</p>
 <div class="cell">
-<div class="sourceCode" id="cb132"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tm_shape</span><span class="op">(</span><span class="va">africa_dem</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_raster</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb132"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_spatraster</span><span class="op">(</span>data <span class="op">=</span> <span class="va">africa_dem</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_whitebox_c</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"muted"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="01-Demonstration_files/figure-html/map-africa-elev-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
@@ -2844,9 +2852,11 @@ name        : GDEM-10km-BW </code></pre>
 </div>
 <p>Here is the map of the calculated TRI.</p>
 <div class="cell">
-<div class="sourceCode" id="cb135"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tm_shape</span><span class="op">(</span><span class="va">tri_africa</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">tm_raster</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb135"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_spatraster</span><span class="op">(</span>data <span class="op">=</span> <span class="va">tri_africa</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_whitebox_c</span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"muted"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
 <div>
 <figure class="figure"><p><img src="01-Demonstration_files/figure-html/map-tri-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
