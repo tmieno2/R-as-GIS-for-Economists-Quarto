@@ -1,3 +1,14 @@
+---
+engine: knitr
+webr:
+  # packages: ['dplyr', 'ggplot2', 'sf']
+  cell-options:
+    editor-font-scale: 0.8
+    out-width: 70%
+filters:
+  - webr
+---
+
 # Spatial Interactions of Vector and Raster Data {#sec-int-RV}
 
 ```{r , eval = FALSE, echo = FALSE}
@@ -83,6 +94,8 @@ In this chapter we learn the spatial interactions of a vector and raster dataset
 + **Polygons**: For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon
 
 We will show how we can use `terra::extract()` for both cases. But, we will also see that for polygons, `exactextractr::exact_extract()` from the `exactextractr` package is often considerably faster than `terra::extract()`.
+
+To test your knowledge, you can work on coding exercises at @sec-exercises-int-rv.
 
 ### Direction for replication {-}
 
@@ -908,4 +921,151 @@ toc()
 ```
 
 The reduction in computation time for both methods makes sense. Since both layers have exactly the same geographic extent and resolution, finding the polygons-cells correspondence is done once and then it can be used repeatedly across the layers for the multi-layer `SparRaster` and `RasterStack`. This clearly suggests that when you are processing many layers of the same spatial resolution and extent, you should first stack them and then extract values at the same time instead of processing them one by one as long as your memory allows you to do so. 
+
+## Exercises {#sec-exercises-int-rv}
+
+:::{.callout-important}
+Before working on exercises, please run the following codes by hitting the **Run Code** button.
+
+```{webr-r}
+#| message: false
+#| warning: false
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(stars)
+library(terra)
+install.packages(
+  "r.spatial.workshop.datasets", 
+  repos = c("https://tmieno2.r-universe.dev")
+)
+library(r.spatial.workshop.datasets)
+```
+:::
+
+:::{.callout-note title="Tips for working with an `webr` session"}
++ Hit the **Run Code** button to run all the codes in the code area.
++ To run only parts of the code, highlight the section you want to execute with your cursor and then press **Cmd + Return** (Mac) or **Ctrl + Enter** (Windows).
++ All the code blocks are interconnected and R objects defined in one R code block is available in another R code block.
+:::
+
+### Exercise 1: Extraction to points
+
+In this exercise, we will use corn yield points data as `sf` and NDRE value as a `SpatRaster` (@fig-corn-ndre shows the map of the two spatial objects). Please run the following codes first to make them avaialable.
+
+```{webr-r}
+data(corn_yield)
+data(NDRE)
+NDRE <- terra::rast(NDRE)
+```
+
+::: {.column-margin}
+```{r}
+#| label: fig-corn-ndre
+#| fig-cap: "Map of corn yield data points and NDRE values"
+#| code-fold: true
+library(r.spatial.workshop.datasets)
+data(corn_yield)
+data(NDRE)
+NDRE <- terra::rast(NDRE)
+
+ggplot() +
+  geom_spatraster(data = NDRE) +
+  geom_sf(data = corn_yield, size = 0.03) +
+  scale_fill_viridis_c(name = "NDRE")
+```
+:::
+<!--end of column-margin-->
+
+Extract NDRE values to corn yield data points using `terra::extract()` and find the correlation between corn yield (`yield`) and NDRE using `cor()`. 
+
+::: {.panel-tabset}
+
+### Work here
+```{webr-r}
+#--- work here ---#
+
+
+
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+ndre_extracted <- terra::extract(NDRE, corn_yield)
+corn_yield$ndre <- ndre_extracted$NDRE
+cor(corn_yield$yield, corn_yield$ndre)
+```
+
+:::
+
+### Exercise 2: Extraction to polygons
+
+In this exercise, we will use Nebraska's county borders as an `sf` object and the aggregated version of the PRISM precipitation data from August 1st, 2012 as a `SpatRaster` (see @fig-prism-ne for their maps). Run the following codes first.
+
+```{webr-r}
+data(ne_counties)
+data(prism_us)
+prism_us <- terra::rast(prism_us)
+```
+
+::: {.column-margin}
+```{r}
+#| label: fig-prism-ne 
+#| code-fold: true 
+#| fig-cap: "PRISM precipitation data and Nebrask's county borders"
+data(ne_counties)
+data(prism_us)
+prism_us <- terra::rast(prism_us)
+
+ggplot() +
+  geom_spatraster(data = prism_us) +
+  geom_sf(data = ne_counties, color = "red", fill = NA) +
+  scale_fill_whitebox_c(name = "Precipitation", na.value = "transparent", palette = "muted") +
+  theme_void()
+```
+:::
+<!--end of column-margin-->
+
+
+Extract precipitation values from `prism_us` to `ne_counties` and find the average precipitation by county. You can use either `terra::extract()` or `exactextractr::exact_extract()`. Then, merge the precipitation data with `ne_counties`.
+
+::: {.panel-tabset}
+
+### Work here
+```{webr-r}
+#--- work here ---#
+
+
+
+
+
+
+```
+
+### Answer
+```{r, eval = FALSE}
+#| code-fold: true
+
+#--- terra ---#
+prcp_data <- terra::extract(prism_us, ne_counties, fun = "mean")
+ne_counties$prcp <- prcp_data$PRISM_ppt_stable_4kmD2_20120801_bil
+
+#--- exactextractr ---#
+prcp_data <-
+  exactextractr::exact_extract(
+    prism_us,
+    ne_counties,
+    "mean",
+    append_cols = "name"
+  )
+
+left_join(ne_counties, prcp_data, by = "name")
+```
+
+:::
+
+
 

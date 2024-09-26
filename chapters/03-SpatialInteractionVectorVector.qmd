@@ -270,7 +270,7 @@ sf::st_intersects(polygons, polygons)
 Clearly, all of them interact with all the polygons (including themselves) in this case.
 
 
-### `sf::st_is_within_distance()`
+### `sf::st_is_within_distance()` {#sec-is-within-distance}
 
 This function identifies whether two spatial objects are within the distance you specify^[For example, this function can be useful to identify neighbors. For example, you may want to find irrigation wells located around well $i$ to label them as well $i$'s neighbor.].
 
@@ -707,13 +707,9 @@ Below is a list of the types of spatial joins we will cover:
 2. polygons (target) against points (source)
 3. polygons (target) against polygons (source)
 
-<!-- 
-#=========================================
-# Spatial Joining 
-#=========================================
--->
+---
 
-### Syntax
+### Spatial join with `sf::st_join()`
 
 To perform spatial join, we can use the `sf::st_join()` function, with the following syntax:
 
@@ -724,7 +720,7 @@ sf::st_join(target_sf, source_sf)
 
 Similar to spatial subsetting, the default topological relation is `sf::st_intersects()`.
 
-### Case 1: points (target) vs polygons (source)
+#### Case 1: points (target) vs polygons (source)
 
 In this case, for each observation (point) in the target data, it identifies which polygon in the source data it intersects with and then assigns the value associated with the polygon to the point.^[A practical example of this case is shown in Demonstration 1 of @sec-demo.]
 
@@ -793,7 +789,7 @@ KS_corn_price %>%
   dplyr::pull(corn_price)
 ```
 
-### Case 2: polygons (target) vs points (source) {#sec-polygons-points}
+#### Case 2: polygons (target) vs points (source) {#sec-polygons-points}
 
 In this case, for each observation (polygon) in the target data, it identifies which observations (points) in the source data intersect with it, and then assigns the values associated with those points to the polygon (A practical example of this case is shown in Demonstration 2 of @sec-demo.).
 
@@ -834,7 +830,7 @@ KS_County_wells %>%
 It is just as easy to get other types of statistics by simply modifying the `dplyr::summarize()` part.
 
 
-### Case 3: polygons (target) vs polygons (source) {#sec-polygon-polygon}
+#### Case 3: polygons (target) vs polygons (source) {#sec-polygon-polygon}
 
 In this case, `sf::st_join(target_sf, source_sf)` returns all the unique polygon-polygon intersections, with the attributes from `source_sf` attached to the intersecting polygons.
 
@@ -959,7 +955,7 @@ So, all four observations have identical geometry, which corresponds to the geom
 
 If you are calculating a simple average of corn acres and are not concerned with the degree of spatial overlap, this method works just fine. However, if you want to compute an area-weighted average, the information provided is insufficient. You will learn how to calculate the area-weighted average in the next subsection.
 
-## Spatial join and summary in one step
+### Spatial join and summary in one step
 
 In @sec-polygons-points, we first joined `KS_counties` and `KS_wells` uusing `sf::st_join()` and then applied `dplyr::summarize()` to find total groundwater use per county. This two-step procedure can be done in one step using `aggregate()` with the summarizing function specified for the `FUN` option.
 
@@ -980,6 +976,62 @@ Notice that the `sum()` function was applied to all the columns in `KS_wells`, i
 ```{r agg_select}
 aggregate(dplyr::select(KS_wells, af_used), KS_counties, FUN = sum)
 ```
+
+### Spatial join with other topological relations
+
+By default, `sf::st_join()` uses `sf::st_intersects()` as the topological relationship. We can use a different topological relationshiop like below:
+
+```{r}
+#| eval: false
+sf::st_join(sf_1, sf_2, join = \(x, y) st_*(x, y, ...))
+```
+
+where `x` and `y` refer to `sf_1` and `sf_2`, respectively. At `...`, you can specify options for `st_*()` you are using. For example, if you are using `st_is_within_distance()`, you need to specificy the `dist` option like below:
+
+```{r}
+#| eval: false
+sf::st_join(sf_1, sf_2, join = \(x, y) st_is_within_distance(x, y, dist = 5))
+```
+
+For demonstration, let's use `points_set_1` and `points_set_2` similar to what we used in @sec-is-within-distance (@fig-map-points-points-join shows which points in `points_set_2` are within 0.2 length of the points in `points_set_1`.). 
+
+```{r}
+set.seed(29841)
+
+points_set_1 <-
+  lapply(1:5, function(x) sf::st_point(runif(2))) %>%
+  sf::st_sfc() %>%
+  sf::st_as_sf() %>%
+  dplyr::mutate(id_1 = 1:nrow(.))
+
+points_set_2 <-
+  lapply(1:5, function(x) sf::st_point(runif(2))) %>%
+  sf::st_sfc() %>%
+  sf::st_as_sf() %>%
+  dplyr::mutate(id_2 = 1:nrow(.))
+```
+
+::: {.column-margin}
+```{r}
+#| code-fold: true
+#| label: fig-map-points-points-join
+#| fig-cap: "The locations of the set of points"
+
+ggplot() +
+  geom_sf(data = sf::st_buffer(points_set_1, dist = 0.2), color = "red", fill = NA) +
+  geom_sf_text(data = points_set_1, aes(label = id_1), color = "red") +
+  geom_sf_text(data = points_set_2, aes(label = id_2), color = "blue")
+```
+:::
+<!--end of column-margin-->
+
+Let's join `points_set_2` with `points_set_1` with the following code:
+
+```{r}
+sf::st_join(points_set_1, points_set_2, join = \(x, y) st_is_within_distance(x, y, dist = 0.2))
+```
+
+As you can see the 1st and 3rd points in `points_set_1` are within 0.2 distance from the 5th point in `points_set_2` and are joined together. The 5th point in `points_set_1` is matched with the 3rd and 4th points in `points_set_2`. The join results are consistent with the visual inspection of @fig-map-points-points-join.
 
 ## Spatial intersection (cropping join)
 
@@ -1131,7 +1183,6 @@ Before working on exercises, please run the following codes by hitting the **Run
 library(dplyr)
 library(ggplot2)
 library(sf)
-library(tigris)
 install.packages(
   "r.spatial.workshop.datasets", 
   repos = c("https://tmieno2.r-universe.dev")
@@ -1369,10 +1420,7 @@ aggregate(wells_ne_sf, ne_counties, FUN = sum)
 :::
 <!--end of panel-->
 
-
-
-
-### Exercise 3: Spatial join
+### Exercise 3: Spatial join with a topological relationship other than `sf::st_intersects()`
 
 In this exercise, we use soybean yield (`soy_yield`) and as-applied seed rate (`as_applied_s_rate`) within a production field.
 
