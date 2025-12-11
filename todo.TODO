@@ -1,5 +1,6 @@
 # Improvements and additions:
  ☐ another chapter (int-RR): talk about resample, mosaic
+ ☐ add SSURGO (see /Users/tmieno2/Dropbox/ResearchProjects/ClimateChange/whc/R/ssurgo.R)
  ✔ another section in data download chapter: gridMET @done (21-08-06 14:17)
 
 # Changes log

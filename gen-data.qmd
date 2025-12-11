@@ -3,8 +3,13 @@
 ```{r}
 library(sf)
 library(dplyr)
+library(terra)
+library(stars)
 library(ggplot2)
 library(lubridate)
+library(r.spatial.workshop.datasets)
+
+setwd(here::here("chaters"))
 ```
 
 ## Midwest railroads
@@ -143,3 +148,24 @@ lapply(
 )
 
 ```
+
+## NIR and RED
+
+```{r}
+data(NIR)
+terra::writeRaster(as(NIR, "SpatRaster"), "Data/NIR.tif")
+
+data(RED)
+terra::writeRaster(as(RED, "SpatRaster"), "Data/RED.tif")
+```
+
+## PRISM Saunders and 
+
+```{r}
+data(prism_saunders)
+data(prism_douglas)
+
+terra::writeRaster(as(prism_saunders, "SpatRaster"), "Data/prism_saunders.tif")
+terra::writeRaster(as(prism_douglas, "SpatRaster"), "Data/prism_douglas.tif")
+```
+  

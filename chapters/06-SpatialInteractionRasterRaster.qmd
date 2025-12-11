@@ -1,0 +1,396 @@
+---
+engine: knitr
+webr:
+  # packages: ['dplyr', 'ggplot2', 'sf']
+  cell-options:
+    editor-font-scale: 0.8
+    out-width: 70%
+filters:
+  - webr
+  - shinylive
+---
+
+# Spatial Interaction: Raster-Raster {#sec-int-RR}
+
+```{r , eval = FALSE, echo = FALSE}
+setwd(here::here("chapters"))
+```
+
+```{r}
+#| include: false
+#| cache: false
+#--- load packages ---#
+library(terra)
+library(tidyterra)
+library(patchwork)
+library(stars)
+library(raster)
+library(tidyverse)
+```
+
+```{r figure_setup}
+#| include: false
+theme_update(
+  axis.title.x = element_text(size = 12, angle = 0, hjust = .5, vjust = -0.3, face = "plain", family = "Times"),
+  axis.title.y = element_text(size = 12, angle = 90, hjust = .5, vjust = .9, face = "plain", family = "Times"),
+  axis.text.x = element_text(size = 10, angle = 0, hjust = .5, vjust = 1.5, face = "plain", family = "Times"),
+  axis.text.y = element_text(size = 10, angle = 0, hjust = 1, vjust = 0, face = "plain", family = "Times"),
+  axis.ticks = element_line(size = 0.3, linetype = "solid"),
+  # axis.ticks = element_blank(),
+  axis.ticks.length = unit(.15, "cm"),
+  # axis.ticks.margin = unit(.1,'cm'),
+  # axis.text = element_text(margin=unit(.1,'cm')),
+
+  #--- legend ---#
+  legend.text = element_text(size = 10, angle = 0, hjust = 0, vjust = 0, face = "plain", family = "Times"),
+  legend.title = element_text(size = 10, angle = 0, hjust = 0, vjust = 0, face = "plain", family = "Times"),
+  legend.key.size = unit(0.5, "cm"),
+
+  #--- strip (for faceting) ---#
+  strip.text = element_text(size = 10, family = "Times"),
+
+  #--- plot title ---#
+  plot.title = element_text(family = "Times", face = "bold", size = 12),
+
+  #--- margin ---#
+  # plot.margin = margin(0, 0, 0, 0, "cm"),
+
+  #--- panel ---#
+  panel.grid.major = element_blank(),
+  panel.grid.minor = element_blank(),
+  panel.background = element_blank(),
+  panel.border = element_rect(fill = NA)
+)
+```
+
+```{r ch05-define_theme}
+#| include: false
+theme_set(theme_bw())
+
+theme_for_map <- theme(
+  axis.ticks = element_blank(),
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  panel.border = element_blank(),
+  panel.grid.major = element_line(color = "transparent"),
+  panel.grid.minor = element_line(color = "transparent"),
+  panel.background = element_blank(),
+  plot.background = element_rect(fill = "transparent", color = "transparent")
+)
+```
+
+## Before you start {-}
+
+In this chapter we learn spatial operations that involve more than one raster objects using the `terra` package.
+
+### Direction for replication {-}
+
+**Datasets**
+
+All the datasets that you need to import are available [here](https://www.dropbox.com/sh/l84zfidaxmjrti9/AAB1GrDRoIlidJ3_zArMN24ua?dl=0). In this chapter, the path to files is set relative to my own working directory (which is hidden). To run the codes without having to mess with paths to the files, follow these steps:
+
++ set a folder (any folder) as the working directory using `setwd()`
++ create a folder called "Data" inside the folder designated as the working directory (if you have created a "Data" folder previously, skip this step)
++ download the pertinent datasets from [here](https://www.dropbox.com/sh/l84zfidaxmjrti9/AAB1GrDRoIlidJ3_zArMN24ua?dl=0) 
++ place all the files in the downloaded folder in the "Data" folder
+
+**Packages**
+
+Run the following code to install or load (if already installed) the `pacman` package, and then install or load (if already installed) the listed package inside the `pacman::p_load()` function.
+
+```{r packages-06}
+#| eval: false
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  terra, # handle raster data
+  tidyterra, # handle and visualize raster data
+  patchwork # ggplot arrangement
+)
+```
+
+## Crop
+
+```{r}
+# terra::crop()
+```
+
+
+## Merge
+
+Sometimes, you have two or more raster layers that have different spatial coverages. In such a case, you might want to merge them into a single raster layer.
+
+For demonstration purpose, we will use two SpatRaster objects: `prism_saunders` and `prism_douglas`. They are PRISM maximum temperature observed on 08/01/2012 in the Saunders and Douglas counties in Nebraska, which are adjacent to each other.
+
+```{r}
+#| cache: false
+prism_saunders <- terra::rast("Data/prism_saunders.tif")
+prism_douglas <- terra::rast("Data/prism_douglas.tif")
+```
+
+As @fig-prism-two shows, there are overlapping cells in the middle. They hold exactly the same values. 
+
+```{r}
+#| label: fig-prism-two
+#| fig-cap: ""
+#| code-fold: true
+
+ne_counties <-
+  tigris::counties(state = "Nebraska", cb = TRUE, progress_bar = FALSE) %>%
+  dplyr::filter(NAME %in% c("Douglas", "Saunders"))
+
+g_saunders <-
+  ggplot() +
+  geom_sf(data = ne_counties, color = "red", linewidth = 1) +
+  geom_sf_text(data = ne_counties, aes(label = NAME)) +
+  geom_spatraster(data = prism_saunders, alpha = 0.5) +
+  scale_fill_viridis_c(limits = c(35, 38)) +
+  theme_void()
+
+g_douglas <-
+  ggplot() +
+  geom_sf(data = ne_counties, color = "red", linewidth = 1) +
+  geom_sf_text(data = ne_counties, aes(label = NAME)) +
+  geom_spatraster(data = prism_douglas, alpha = 0.5) +
+  scale_fill_viridis_c(limits = c(35, 38)) +
+  theme_void()
+
+g_douglas / g_saunders
+```
+
+You can merge the two `SpatrRaster` objects using `terra::merge()`:
+
+```{r}
+prism_merged <- terra::merge(prism_saunders, prism_douglas)
+```
+
+@fig-prism-merged shows the map from `prism_merged`. Note that all the cells within the spatial extent of the merged `SpatRaster` has NA as their cell values.
+
+```{r}
+#| label: fig-prism-merged
+#| fig-cap: "Merged PRISM data"
+#| code-fold: true
+ggplot() +
+  geom_sf(data = ne_counties, color = "red", linewidth = 1) +
+  geom_sf_text(data = ne_counties, aes(label = NAME)) +
+  geom_spatraster(data = prism_merged, alpha = 0.5) +
+  scale_fill_viridis_c(limits = c(35, 38)) +
+  theme_void()
+```
+
+When merging two `SpatRaster` objects with overlapping spatial extents, the values from the first `SpatRaster` will take precedence for the overlapping cells. Let's run a small experiment: we will assign a high value to all cells in prism_saunders, making it easier to observe this effect.
+
+```{r}
+values(prism_saunders) <- 120 
+```
+
+**`prism_saunders` fist**
+
+```{r}
+merge(prism_saunders, prism_douglas) %>% plot()
+```
+
+**`prism_douglas` fist**
+
+```{r}
+merge(prism_douglas, prism_saunders) %>% plot()
+```
+
+## Resampling {#sec-resample}
+
+Suppose you have two raster layers that differ in any of the dimension and resolution and want to assign a value from one layer to each of the cells in the other layer so that you have consistent observation units for the variables from the two layers. One way to achieve this is **resampling**.
+
+In this section, we will use synthetic (fake) precipitation (pretend it is PRISM) and soil characteristic (pretend it is from SSURGO) data (@fig-fake-precip-soil shows their maps).
+
+**Precipitation data**
+
+```{r}
+#| include: false
+set.seed(289934)
+```
+
+```{r}
+#| label: precip-gen
+#| cache: false 
+precip <-
+  terra::rast(
+    xmin=1, xmax=11, ymin=1, ymax=11,
+    nrows=10, ncols = 10,
+    vals = rnorm(100),
+    crs = "EPSG:4326"
+  )
+```
+
+**Soil data**
+
+```{r}
+#| label: soil-gen
+#| cache: false  
+soil <- 
+  terra::rast(
+    xmin=0, xmax=12, ymin=0, ymax=12, 
+    nrows=26, ncols = 26, 
+    vals = 100 * runif(26 * 26), 
+    crs = "EPSG:4326"
+  )
+```
+
+::: {.column-margin}
+```{r}
+#| label: fig-fake-precip-soil
+#| code-fold: true
+#| fig-cap: "Map of (synthetic) precipitation and soil data"
+ 
+# precip_sf <- 
+#   stars::st_as_stars(precip) %>%
+#   sf::st_as_sf() %>%
+#   dplyr::mutate(type = "Precipitation")
+
+# soil_sf <- 
+#   stars::st_as_stars(soil) %>%
+#   sf::st_as_sf() %>%
+#   dplyr::mutate(type = "Soil")
+
+# precip_soil <- rbind(precip_sf, soil_sf)
+
+# ggplot() +
+#   geom_sf(data = precip_soil, aes(fill = lyr.1), col = "red", linewidth = 0.8) +
+#   facet_grid(. ~ type) +
+#   theme_void() 
+
+g_precip <- 
+  ggplot() +
+  geom_spatraster(data = precip, alpha = 0.7) +
+  scale_fill_whitebox_c(palette = "muted") +
+  theme_void() +
+  ggtitle("Precipitation")
+
+g_soil <- 
+  ggplot() +
+  geom_spatraster(data = soil, alpha = 0.7) +
+  scale_fill_whitebox_c(palette = "muted") +
+  theme_void() +
+  ggtitle("Soil")
+
+g_precip + g_soil
+```
+:::
+<!--end of column-margin-->
+
+
+@fig-grids-precip-soil shows grids from `precip` (red border) and `soil` (blue border). 
+
+```{r}
+#| label: fig-grids-precip-soil
+#| code-fold: true
+#| fig-cap: "Cells from the precipitation and soil layers" 
+precip_sf <- 
+  st_as_stars(precip) %>%
+  st_as_sf()
+
+soil_sf <- 
+  st_as_stars(soil) %>%
+  st_as_sf()
+
+ggplot() +
+  geom_sf(data = soil_sf, aes(fill = lyr.1)) +
+  geom_sf(data = precip_sf, fill = NA, col = "blue", linewidth = 0.8) +
+  geom_sf(data = precip_sf[1, ], fill = NA, col = "red", linewidth = 1) +
+  scale_fill_whitebox_c(name = "Soil", palette = "muted", alpha = 0.5) +
+  theme_void()
+```
+
+The grids from the two layers are not nicely aligned. The top left cell with red border is from the `precip` layer. Resampling of soil cell values to the precipitation cell finds a single soil value to the precipitation cell based on the value of the nearby cells from the `soil` layer using a user-specified method. Even though the name "resample" sounds like it is a random process, there is no randomness.
+
+Resampling is done with `terra::resample()` using the following syntax:
+
+```{r}
+#| eval: false
+resample(sr_1, sr_2, method)
+```
+
++ `sr_1`:	`SpatRaster` to be resampled (source layer) 
++ `sr_2`:	`SpatRaster` to which `sr_1` is resampled to (target layer)
++ `method`: method of assigning values  
+  + "near": nearest neighbor (Default)
+  + "cubicspline": cubic-spline interpolation
+  + "bilinear": bi-linear interpolation
+  + others (run `?terra::resample` to see all the `method` options)
+
+Here, since we are resampling values from the `soil` layer to the grids of `precip`,
+
+```{r}
+#| label: soil-precip-grids
+#| cache: false 
+soil_to_precip_grids <- terra::resample(soil, precip, method = "cubicspline")
+```
+
+@fig-resampled shows the map of resampled soil values.
+
+```{r}
+#| label: fig-resampled 
+#| code-fold: true 
+#| fig-cap: "Soil values resampled to the cells in the precipitation layer"
+
+ggplot() +
+  geom_spatraster(data = soil_to_precip_grids) +
+  scale_fill_whitebox_c(palette = "muted") +
+  theme_void()
+```
+
+
+```{shinylive-r}
+#| standalone: true
+#| viewerHeight: 600
+library(shiny)
+library(bslib)
+
+# Define UI for app that draws a histogram ----
+ui <- page_sidebar(
+  sidebar = sidebar(open = "open",
+    numericInput("n", "Sample count", 100),
+    checkboxInput("pause", "Pause", FALSE),
+  ),
+  plotOutput("plot", width=500)
+)
+
+server <- function(input, output, session) {
+  data <- reactive({
+    input$resample
+    if (!isTRUE(input$pause)) {
+      invalidateLater(1000)
+    }
+    rnorm(input$n)
+  })
+  
+  output$plot <- renderPlot({
+    hist(data(),
+      breaks = 40,
+      xlim = c(-2, 2),
+      ylim = c(0, 1),
+      lty = "blank",
+      xlab = "value",
+      freq = FALSE,
+      main = ""
+    )
+    
+    x <- seq(from = -2, to = 2, length.out = 500)
+    y <- dnorm(x)
+    lines(x, y, lwd=1.5)
+    
+    lwd <- 5
+    abline(v=0, col="red", lwd=lwd, lty=2)
+    abline(v=mean(data()), col="blue", lwd=lwd, lty=1)
+
+    legend(legend = c("Normal", "Mean", "Sample mean"),
+      col = c("black", "red", "blue"),
+      lty = c(1, 2, 1),
+      lwd = c(1, lwd, lwd),
+      x = 1,
+      y = 0.9
+    )
+  }, res=140)
+}
+
+# Create Shiny app ----
+shinyApp(ui = ui, server = server)
+```

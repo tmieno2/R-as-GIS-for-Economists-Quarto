@@ -134,11 +134,14 @@ ggplot() +
 
 Let's work on crop share data. You can download CDL data using the `CropScapeR::GetCDLData()` function.
 
-```{r IA_data_import, echo = F}
+```{r IA_data_import}
+#| echo: false
+#| cache: false
 IA_cdl_2015 <- terra::rast("Data/IA_cdl_2015.tif")
 ```
 
-```{r Demo-3_cdl_download, eval = F}
+```{r Demo-3_cdl_download}
+#| eval: false
 #--- download the CDL data for IA in 2015 ---#
 (
   cdl_IA_2015 <- CropScapeR::GetCDLData(aoi = 19, year = 2015, type = "f")

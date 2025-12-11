@@ -9,7 +9,7 @@ filters:
   - webr
 ---
 
-# Spatial Interactions of Vector and Raster Data {#sec-int-RV}
+# Spatial Interaction: Vector-Raster {#sec-int-RV}
 
 ```{r , eval = FALSE, echo = FALSE}
 setwd(here::here("chapters"))
@@ -351,7 +351,8 @@ There is a polygon overlaid on top of the cells along with their centroids repre
 
 **PRISM tmax data for 07/02/2018**
 
-```{r download_07022018, cache = F, results = "hide"}
+```{r download_07022018}
+#| eval: false
 #--- download PRISM precipitation data ---#
 prism::get_prism_dailys(
   type = "tmax",
@@ -360,6 +361,17 @@ prism::get_prism_dailys(
 )
 
 #--- the file name of the PRISM data just downloaded ---#
+prism_file <- "Data/PRISM_tmax_stable_4kmD2_20180702_bil/PRISM_tmax_stable_4kmD2_20180702_bil.bil"
+
+#--- read in the prism data and crop it to Kansas state border ---#
+prism_tmax_0702_KS_sr <-
+  terra::rast(prism_file) %>%
+  terra::crop(KS_county_sf)
+```
+
+```{r}
+#| echo: false
+#| cache: false
 prism_file <- "Data/PRISM_tmax_stable_4kmD2_20180702_bil/PRISM_tmax_stable_4kmD2_20180702_bil.bil"
 
 #--- read in the prism data and crop it to Kansas state border ---#
@@ -966,7 +978,8 @@ NDRE <- terra::rast(NDRE)
 ggplot() +
   geom_spatraster(data = NDRE) +
   geom_sf(data = corn_yield, size = 0.03) +
-  scale_fill_viridis_c(name = "NDRE")
+  scale_fill_viridis_c(name = "NDRE") +
+  theme_void()
 ```
 :::
 <!--end of column-margin-->

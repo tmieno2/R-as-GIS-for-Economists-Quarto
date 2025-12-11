@@ -8,13 +8,19 @@ filters:
   - webr
 ---
 
-# Vector Data Handling with `sf` {#sec-vector-basics}
+# Vector Data Basics with `sf` {#sec-vector-basics}
 
-```{r ch02-setwd, eval = FALSE, echo = FALSE}
+```{r ch02-setwd}
+#| eval: false
+#| echo: false
+ 
 setwd(here::here("chapters"))
 ```
 
 ```{r, include = FALSE, cache = FALSE}
+#| include: false
+#| cache: false
+
 #--- load packages ---#
 library(data.table)
 library(here)
@@ -332,7 +338,8 @@ When storing a spatial dataset, the information in the dataset is divided into s
 
 Writing an `sf` object as a shapefile is just as easy. You use the `sf::st_write()` function, with the first argument being the name of the `sf` object you are exporting, and the second being the path to the new shapefile. For example, the code below will export an `sf` object called `nc_loaded` as `nc2.shp` (along with other supporting files). 
 
-```{r write_nc, eval = FALSE}
+```{r write_nc}
+#| eval: false
 sf::st_write(
   nc_loaded,
   dsn = "Data/nc2.shp",
@@ -473,7 +480,7 @@ nc <- sf::st_read(system.file("shape/nc.shp", package = "sf"))
 
 tmap_leaflet(
   tm_shape(nc) + # what sf to use for creating a map
-    tm_polygons() # what type of geometry to put on the map
+  tm_polygons() # what type of geometry to put on the map
 )
 ```
 
@@ -499,7 +506,9 @@ This creates a static map of `nc` where county boundaries are drawn:
 
 ```{r statics-map}
 (
-  tm_nc_polygons <- tm_shape(nc) + tm_polygons()
+  tm_nc_polygons <- 
+    tm_shape(nc) + 
+    tm_polygons()
 )
 ```
 
@@ -998,7 +1007,7 @@ Here is the object size of `IL_counties`.
 object.size(IL_counties)
 ```
 
-When you focus on a single county, you can see that county borders in this data are fairly detaield. Let's look at the Cook county (@fig-cook-county-border).
+When you focus on a single county, you can see that county borders in this data are fairly detailed. Let's look at the Cook county (@fig-cook-county-border).
 
 ```{r}
 Cook <- filter(IL_counties, NAME == "Cook County")
@@ -1018,8 +1027,8 @@ Cook <- filter(IL_counties, NAME == "Cook County")
 
 You can see that its border with Lake Michigan has lots of non-linear segments. Let's simplify this using `sf::st_simplify()`. We can use the `dTolerance` option to specify the degree of simplification.
 
-```{r g-cook-simplified}
-Cook_simplify <- sf::st_simplify(Cook, dTolerance = 1000)
+```{r cook-simplified}
+Cook_simplified <- sf::st_simplify(Cook, dTolerance = 1000)
 ```
 
 @fig-g-cook-both below compares the original (left) and simplified (right) versions.
@@ -1028,9 +1037,9 @@ Cook_simplify <- sf::st_simplify(Cook, dTolerance = 1000)
 #| label: fig-g-cook-both
 #| fig-cap: "Before and after simplifying Cook County border" 
 #| code-fold: true
- #| 
+  
 g_cook_simplified <-
-  ggplot(Cook_simplify) +
+  ggplot(Cook_simplified) +
   geom_sf() +
   theme_void()
 

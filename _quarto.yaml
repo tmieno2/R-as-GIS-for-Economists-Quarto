@@ -21,19 +21,20 @@ book:
     - part: "Foundations"
       chapters:
         - chapters/02-VectorDataBasics.qmd
-        - chapters/03-SpatialInteractionVectorVector.qmd
-        - chapters/04-RasterDataBasics.qmd
+        - chapters/03-RasterDataBasics.qmd
+        - chapters/04-SpatialInteractionVectorVector.qmd
         - chapters/05-SpatialInteractionVectorRaster.qmd
+        # - chapters/06-SpatialInteractionRasterRaster.qmd
     - text: "---"
     - part: "Extensions"
       chapters:
-        - chapters/06-stars.qmd
-        - chapters/07-CreateMaps-ggplot.qmd
-        - chapters/08-DownloadSpatialData.qmd
+        - chapters/07-stars.qmd
+        - chapters/08-CreateMaps-ggplot.qmd
+        - chapters/09-DownloadSpatialData.qmd
     - text: "---"
     - part: "(slightly) Advanced Topics"
       chapters:
-        - chapters/09-SpeedThingsUp.qmd
+        - chapters/10-SpeedThingsUp.qmd
     - text: "---"
   appendices:
     - chapters/A1-ParallelComputing.qmd

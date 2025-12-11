@@ -60,21 +60,6 @@ pacman::p_load(
 )
 ```
 
-+ Run the following code to define the theme for map:
-
-```{r define_theme}
-theme_for_map <-
-  theme(
-    axis.ticks = element_blank(),
-    axis.text = element_blank(),
-    axis.line = element_blank(),
-    panel.border = element_blank(),
-    panel.grid = element_line(color = "transparent"),
-    panel.background = element_blank(),
-    plot.background = element_rect(fill = "transparent", color = "transparent")
-  )
-```
-
 ### Project Demonstration
 
 We have already run a whole-field randomized nitrogen experiment on a 80-acre field. Let's import the trial design data
@@ -93,7 +78,7 @@ trial_design_16 <- readRDS("Data/trial_design.rds")
 ggplot(data = trial_design_16) +
   geom_sf(aes(fill = factor(NRATE))) +
   scale_fill_brewer(name = "N", palette = "OrRd", direction = 1) +
-  theme_for_map
+  theme_void()
 ```
 
 ---
@@ -125,7 +110,7 @@ g_yield <-
   geom_sf(data = trial_design_16) +
   geom_sf(data = yield, aes(color = yield), size = 0.5) +
   scale_color_distiller(name = "Yield", palette = "OrRd", direction = 1) +
-  theme_for_map
+  theme_void()
 
 #--- NH3 map ---#
 g_NH3 <-
@@ -133,7 +118,7 @@ g_NH3 <-
   geom_sf(data = trial_design_16) +
   geom_sf(data = NH3_data, aes(color = aa_NH3), size = 0.5) +
   scale_color_distiller(name = "NH3", palette = "OrRd", direction = 1) +
-  theme_for_map
+  theme_void()
 
 #--- NH3 map ---#
 g_ec <-
@@ -141,7 +126,7 @@ g_ec <-
   geom_sf(data = trial_design_16) +
   geom_sf(data = ec, aes(color = ec), size = 0.5) +
   scale_color_distiller(name = "EC", palette = "OrRd", direction = 1) +
-  theme_for_map
+  theme_void()
 
 #--- stack the figures vertically and display (enabled by the patchwork package) ---#
 g_yield / g_NH3 / g_ec
@@ -219,7 +204,7 @@ subplots <-
 #--- here is what subplots look like ---#
 ggplot(subplots) +
   geom_sf() +
-  theme_for_map
+  theme_void()
 ```
 
 ---
@@ -250,19 +235,19 @@ g_sub_yield <-
   ggplot() +
   geom_sf(data = reg_data, aes(fill = yield), color = NA) +
   scale_fill_distiller(name = "Yield", palette = "OrRd", direction = 1) +
-  theme_for_map
+  theme_void()
 
 g_sub_NH3 <-
   ggplot() +
   geom_sf(data = reg_data, aes(fill = aa_NH3), color = NA) +
   scale_fill_distiller(name = "NH3", palette = "OrRd", direction = 1) +
-  theme_for_map
+  theme_void()
 
 g_sub_ec <-
   ggplot() +
   geom_sf(data = reg_data, aes(fill = ec), color = NA) +
   scale_fill_distiller(name = "EC", palette = "OrRd", direction = 1) +
-  theme_for_map
+  theme_void()
 
 g_sub_yield / g_sub_NH3 / g_sub_ec
 ```

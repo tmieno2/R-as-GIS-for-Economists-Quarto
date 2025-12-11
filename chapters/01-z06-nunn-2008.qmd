@@ -127,7 +127,10 @@ countries_centroid <- st_centroid(countries)
 ```
 
 The red points represent the centroids.
-```{r centroids-africa-nunn08, echo = F, cache = TRUE}
+
+```{r centroids-africa-nunn08}
+#| echo: false
+#| cache: true
 g_countries +
   geom_sf(data = countries_centroid, color = "red") +
   theme_void()

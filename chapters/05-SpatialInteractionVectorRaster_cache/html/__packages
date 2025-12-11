@@ -1,10 +1,9 @@
-knitr
-here
 data.table
 exactextractr
 prism
 sf
 terra
+tidyterra
 abind
 stars
 sp
@@ -21,6 +20,4 @@ forcats
 lubridate
 DT
 tictoc
-tmap
-tidyterra
 r.spatial.workshop.datasets

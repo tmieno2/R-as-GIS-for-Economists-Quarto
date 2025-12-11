@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.7.32">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>1&nbsp; R as GIS: Demonstrations – R as GIS for Economists</title>
 <style>
@@ -18,8 +18,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -30,7 +31,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -80,15 +81,16 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="../site_libs/bootstrap/bootstrap-6fa3a3a215baab0a79705e6d9247c621.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -114,13 +116,12 @@ div.csl-indent {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><link href="style.css" rel="stylesheet" type="text/css">
-<!-- Google tag (gtag.js) --><script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-59758608-3"></script><script>
+}</script><!-- Google tag (gtag.js) --><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-WEXJ5LCRDJ"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
   gtag('js', new Date());
 
-  gtag('config', 'UA-59758608-3');
+  gtag('config', 'G-WEXJ5LCRDJ');
 </script><script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
 const typesetMath = (el) => {
   if (window.MathJax) {
@@ -148,7 +149,7 @@ window.Quarto = {
 };
 </script><link rel="stylesheet" href="../style.css">
 </head>
-<body class="nav-sidebar floating slimcontent">
+<body class="nav-sidebar floating slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
@@ -245,25 +246,25 @@ window.Quarto = {
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/02-VectorDataBasics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Vector Data Handling with <code>sf</code></span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Vector Data Basics with <code>sf</code></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/03-SpatialInteractionVectorVector.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial Interactions of Vector Data: Subsetting and Joining</span></span></a>
+  <a href="../chapters/03-RasterDataBasics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Raster Data Basics with <code>terra</code></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/04-RasterDataBasics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Raster Data Handling</span></span></a>
+  <a href="../chapters/04-SpatialInteractionVectorVector.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Spatial Interaction: Vector-Vector</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapters/05-SpatialInteractionVectorRaster.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Spatial Interactions of Vector and Raster Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Spatial Interaction: Vector-Raster</span></span></a>
   </div>
 </li>
       </ul>
@@ -280,19 +281,19 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/06-stars.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/07-stars.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Spatiotemporal Raster Data Handling with <code>stars</code></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/07-CreateMaps-ggplot.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/08-CreateMaps-ggplot.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Creating Maps using <code>ggplot2</code></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/08-DownloadSpatialData.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/09-DownloadSpatialData.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Download and process spatial datasets from within R</span></span></a>
   </div>
 </li>
@@ -310,7 +311,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/09-SpeedThingsUp.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/10-SpeedThingsUp.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Extraction Speed Considerations</span></span></a>
   </div>
 </li>
@@ -949,35 +950,20 @@ yield_i = \beta_0 + \beta_1 N_i + \beta_2 N_i^2 + \beta_3 N_i \cdot EC_i + \beta
 <span>  <span class="va">patchwork</span> <span class="co"># arrange multiple plots</span></span>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<ul>
-<li>Run the following code to define the theme for map:</li>
-</ul>
-<div class="cell">
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">theme_for_map</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu">theme</span><span class="op">(</span></span>
-<span>    axis.ticks <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    axis.text <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    axis.line <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    panel.border <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    panel.grid <span class="op">=</span> <span class="fu">element_line</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"transparent"</span><span class="op">)</span>,</span>
-<span>    panel.background <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    plot.background <span class="op">=</span> <span class="fu">element_rect</span><span class="op">(</span>fill <span class="op">=</span> <span class="st">"transparent"</span>, color <span class="op">=</span> <span class="st">"transparent"</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section><section id="project-demonstration-1" class="level3 page-columns page-full" data-number="1.2.2"><h3 data-number="1.2.2" class="anchored" data-anchor-id="project-demonstration-1">
 <span class="header-section-number">1.2.2</span> Project Demonstration</h3>
 <p>We have already run a whole-field randomized nitrogen experiment on a 80-acre field. Let’s import the trial design data</p>
 <div class="cell">
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read the trial design data ---#</span></span>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read the trial design data ---#</span></span>
 <span><span class="va">trial_design_16</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"Data/trial_design.rds"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><a href="#fig-trial-fig" class="quarto-xref">Figure&nbsp;<span>1.4</span></a> is the map of the trial design generated using <code>ggplot2</code> package.</p>
 <div class="cell">
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- map of trial design ---#</span></span>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- map of trial design ---#</span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">trial_design_16</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">NRATE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_brewer</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"N"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-trial-fig" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-trial-fig-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -992,7 +978,7 @@ Figure&nbsp;1.4: The Experimental Design of the Randomize Nitrogen Trial
 <hr>
 <p>We have collected yield, as-applied NH3, and EC data. Let’s read in these datasets:<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn5"><p><sup>5</sup>&nbsp;Here we are demonstrating that R can read spatial data in different formats. R can read spatial data of many other formats. Here, we are reading a shapefile (.shp) and GeoPackage file (.gpkg).</p></div></div><div class="cell">
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read yield data (sf data saved as rds) ---#</span></span>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read yield data (sf data saved as rds) ---#</span></span>
 <span><span class="va">yield</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"Data/yield.rds"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- read NH3 data (GeoPackage data) ---#</span></span>
@@ -1003,13 +989,13 @@ Figure&nbsp;1.4: The Experimental Design of the Randomize Nitrogen Trial
 </div>
 <p><a href="#fig-Demo2-show-the-map" class="quarto-xref">Figure&nbsp;<span>1.5</span></a> shows the spatial distribution of the three variables. A map of each variable was made first, and then they are combined into one figure using the <code>patchwork</code> package<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a>.</p>
 <div class="no-row-height column-margin column-container"><div id="fn6"><p><sup>6</sup>&nbsp;Here is its <a href="https://github.com/thomasp85/patchwork">Github page</a>. See the bottom of the page to find vignettes.</p></div></div><div class="cell">
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- yield map ---#</span></span>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- yield map ---#</span></span>
 <span><span class="va">g_yield</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">trial_design_16</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">yield</span>, <span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">yield</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_distiller</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Yield"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- NH3 map ---#</span></span>
 <span><span class="va">g_NH3</span> <span class="op">&lt;-</span></span>
@@ -1017,7 +1003,7 @@ Figure&nbsp;1.4: The Experimental Design of the Randomize Nitrogen Trial
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">trial_design_16</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">NH3_data</span>, <span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">aa_NH3</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_distiller</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"NH3"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- NH3 map ---#</span></span>
 <span><span class="va">g_ec</span> <span class="op">&lt;-</span></span>
@@ -1025,7 +1011,7 @@ Figure&nbsp;1.4: The Experimental Design of the Randomize Nitrogen Trial
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">trial_design_16</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">ec</span>, <span class="fu">aes</span><span class="op">(</span>color <span class="op">=</span> <span class="va">ec</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_color_distiller</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"EC"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- stack the figures vertically and display (enabled by the patchwork package) ---#</span></span>
 <span><span class="va">g_yield</span> <span class="op">/</span> <span class="va">g_NH3</span> <span class="op">/</span> <span class="va">g_ec</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1044,7 +1030,7 @@ Figure&nbsp;1.5: Spatial distribution of yield, NH3, and EC
 <p>Instead of using plot as the observation unit, we would like to create subplots inside each of the plots and make them the unit of analysis because it would avoid masking the within-plot spatial heterogeneity of EC. Here, we divide each plot into six subplots.</p>
 <p>The following function generate subplots by supplying a trial design and the number of subplots you would like to create within each plot:</p>
 <div class="cell">
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gen_subplots</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">plot</span>, <span class="va">num_sub</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gen_subplots</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">plot</span>, <span class="va">num_sub</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="co">#--- extract geometry information ---#</span></span>
 <span>  <span class="va">geom_mat</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html">st_geometry</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
@@ -1088,7 +1074,7 @@ Figure&nbsp;1.5: Spatial distribution of yield, NH3, and EC
 </div>
 <p>Let’s run the function to create six subplots within each of the experimental plots.</p>
 <div class="cell">
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- generate subplots ---#</span></span>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- generate subplots ---#</span></span>
 <span><span class="va">subplots</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span></span>
 <span>    <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">trial_design_16</span><span class="op">)</span>,</span>
@@ -1098,10 +1084,10 @@ Figure&nbsp;1.5: Spatial distribution of yield, NH3, and EC
 </div>
 <p><a href="#fig-map-subgrid" class="quarto-xref">Figure&nbsp;<span>1.6</span></a> is a map of the subplots generated.</p>
 <div class="cell">
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- here is what subplots look like ---#</span></span>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- here is what subplots look like ---#</span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">subplots</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-map-subgrid" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-map-subgrid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -1116,7 +1102,7 @@ Figure&nbsp;1.6: Map of the subplots
 <hr>
 <p>We now identify the mean value of corn yield, nitrogen rate, and EC for each of the subplots using <code><a href="https://r-spatial.github.io/sf/reference/aggregate.sf.html">sf::aggregate()</a></code> and <code><a href="https://r-spatial.github.io/sf/reference/st_join.html">sf::st_join()</a></code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
 <span>  <span class="va">reg_data</span> <span class="op">&lt;-</span> <span class="va">subplots</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="co">#--- yield ---#</span></span>
 <span>    <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_join.html">st_join</a></span><span class="op">(</span><span class="va">.</span>, <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span><span class="op">(</span><span class="va">yield</span>, <span class="va">.</span>, <span class="va">mean</span><span class="op">)</span>, join <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="va"><a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html">st_equals</a></span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -1147,23 +1133,23 @@ First 10 features:
 </div>
 <p>Here are the visualization of the subplot-level data (<a href="#fig-Demo2-subplot-fig" class="quarto-xref">Figure&nbsp;<span>1.7</span></a>):</p>
 <div class="cell">
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_sub_yield</span> <span class="op">&lt;-</span></span>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">g_sub_yield</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">reg_data</span>, <span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">yield</span><span class="op">)</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_distiller</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Yield"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">g_sub_NH3</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">reg_data</span>, <span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">aa_NH3</span><span class="op">)</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_distiller</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"NH3"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">g_sub_ec</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">reg_data</span>, <span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">ec</span><span class="op">)</span>, color <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_distiller</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"EC"</span>, palette <span class="op">=</span> <span class="st">"OrRd"</span>, direction <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="va">theme_for_map</span></span>
+<span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">g_sub_yield</span> <span class="op">/</span> <span class="va">g_sub_NH3</span> <span class="op">/</span> <span class="va">g_sub_ec</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1180,7 +1166,7 @@ Figure&nbsp;1.7: Spatial distribution of subplot-level yield, NH3, and EC
 <hr>
 <p>Let’s estimate the model and see the results:</p>
 <div class="cell">
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
 <span><span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html">feols</a></span><span class="op">(</span><span class="va">yield</span> <span class="op">~</span> <span class="va">aa_NH3</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">aa_NH3</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">aa_NH3</span> <span class="op">*</span> <span class="va">ec</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">aa_NH3</span><span class="op">^</span><span class="fl">2</span> <span class="op">*</span> <span class="va">ec</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">reg_data</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1286,7 +1272,7 @@ CS_i = \alpha + \beta_1 PrN_{i} + \beta_2 PrC_{i} + v_i
 <li>Run the following code to install or load (if already installed) the <code>pacman</code> package, and then install or load (if already installed) the listed package inside the <code><a href="https://rdrr.io/pkg/pacman/man/p_load.html">pacman::p_load()</a></code> function.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
 <span><span class="fu">pacman</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span><span class="op">(</span></span>
 <span>  <span class="va">sf</span>, <span class="co"># vector data operations</span></span>
 <span>  <span class="va">terra</span>, <span class="co"># raster data operations</span></span>
@@ -1307,14 +1293,14 @@ CS_i = \alpha + \beta_1 PrN_{i} + \beta_2 PrC_{i} + v_i
 <span class="header-section-number">1.3.2</span> Project Demonstration</h3>
 <p>The geographic focus of this project is Iowas. Let’s get Iowa state border (see <a href="#fig-IA-map" class="quarto-xref">Figure&nbsp;<span>1.8</span></a> for its map).</p>
 <div class="cell">
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- IA state boundary ---#</span></span>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- IA state boundary ---#</span></span>
 <span><span class="va">IA_boundary</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="fu">tigris</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tigris/man/counties.html">counties</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">"Iowa"</span>, cb <span class="op">=</span> <span class="cn">TRUE</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 <!--end of column-margin-->
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- map IA state border ---#</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- map IA state border ---#</span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="va">IA_boundary</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1331,7 +1317,7 @@ Figure&nbsp;1.8: Iowa state boundary
 </div>
 </div><div id="fn7"><p><sup>7</sup>&nbsp;We by no means are saying that this is the right geographical unit of analysis. This is just about demonstrating how R can be used for analysis done at the higher spatial resolution than county.</p></div></div><p>The unit of analysis is artificial grids that we create over Iowa. The grids are regularly-sized rectangles except around the edge of the Iowa state border<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a>. So, let’s create grids and remove those that do not overlap much with Iowa (<a href="#fig-Demo-3-IA-grids-map" class="quarto-xref">Figure&nbsp;<span>1.9</span></a> shows what the generated grids look like).</p>
 <div class="cell">
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- create regular grids (40 cells by 40 columns) over IA ---#</span></span>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- create regular grids (40 cells by 40 columns) over IA ---#</span></span>
 <span><span class="va">IA_grids</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">IA_boundary</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="co">#--- create grids ---#</span></span>
@@ -1349,7 +1335,7 @@ Figure&nbsp;1.8: Iowa state boundary
 <!--end of column-margin-->
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- plot the grids over the IA state border ---#</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- plot the grids over the IA state border ---#</span></span>
 <span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">IA_boundary</span>, color <span class="op">=</span> <span class="st">"red"</span>, linewidth <span class="op">=</span> <span class="fl">1.1</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1369,7 +1355,7 @@ Figure&nbsp;1.9: Map of regular grids generated over IA
 </div></div><hr>
 <p>Let’s work on crop share data. You can download CDL data using the <code><a href="https://rdrr.io/pkg/CropScapeR/man/GetCDLData.html">CropScapeR::GetCDLData()</a></code> function.</p>
 <div class="cell">
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- download the CDL data for IA in 2015 ---#</span></span>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- download the CDL data for IA in 2015 ---#</span></span>
 <span><span class="op">(</span></span>
 <span>  <span class="va">cdl_IA_2015</span> <span class="op">&lt;-</span> <span class="fu">CropScapeR</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/CropScapeR/man/GetCDLData.html">GetCDLData</a></span><span class="op">(</span>aoi <span class="op">=</span> <span class="fl">19</span>, year <span class="op">=</span> <span class="fl">2015</span>, type <span class="op">=</span> <span class="st">"f"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1377,7 +1363,7 @@ Figure&nbsp;1.9: Map of regular grids generated over IA
 <p>The cells (30 meter by 30 meter) of the imported raster layer take a value ranging from 0 to 255. Corn and soybean are represented by 1 and 5, respectively.</p>
 <p><a href="#fig-overlap-cdl-grid" class="quarto-xref">Figure&nbsp;<span>1.10</span></a> shows the map of one of the IA grids and the CDL cells it overlaps with.</p>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">temp_grid</span> <span class="op">&lt;-</span> <span class="va">IA_grids</span><span class="op">[</span><span class="fl">100</span>, <span class="op">]</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb44"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">temp_grid</span> <span class="op">&lt;-</span> <span class="va">IA_grids</span><span class="op">[</span><span class="fl">100</span>, <span class="op">]</span></span>
 <span></span>
 <span><span class="va">extent_grid</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">temp_grid</span> <span class="op">%&gt;%</span></span>
@@ -1405,7 +1391,7 @@ Figure&nbsp;1.10: Spatial overlap of an IA grid and CDL layer
 <p>We would like to extract all the cell values within the red border.</p>
 <p>We use <code><a href="https://isciences.gitlab.io/exactextractr/reference/exact_extract.html">exactextractr::exact_extract()</a></code> to identify which cells of the CDL raster layer fall within each of the IA grids and extract land use type values. We then find the share of corn and soybean for each of the grids.</p>
 <div class="cell">
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- reproject grids to the CRS of the CDL data ---#</span></span>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- reproject grids to the CRS of the CDL data ---#</span></span>
 <span><span class="va">IA_grids_rp_cdl</span> <span class="op">&lt;-</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">IA_grids</span>, <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/crs.html">crs</a></span><span class="op">(</span><span class="va">IA_cdl_2015</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- extract crop type values and find frequencies ---#</span></span>
@@ -1422,7 +1408,7 @@ Figure&nbsp;1.10: Spatial overlap of an IA grid and CDL layer
 </div>
 <p>We then find the corn to soy ratio for each of the IA grids.</p>
 <div class="cell">
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- find corn/soy ratio ---#</span></span>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- find corn/soy ratio ---#</span></span>
 <span><span class="va">corn_soy</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">cdl_extracted</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="co">#--- long to wide ---#</span></span>
@@ -1435,7 +1421,7 @@ Figure&nbsp;1.10: Spatial overlap of an IA grid and CDL layer
 <hr>
 <p>We are still missing daily precipitation data at the moment. We have decided to use daily weather data from PRISM. Daily PRISM data is a raster data with the cell size of 4 km by 4 km. <a href="#fig-Demo-3-show-prism-data" class="quarto-xref">Figure&nbsp;<span>1.11</span></a> presents precipitation data downloaded for April 1, 2010. It covers the entire contiguous U.S.</p>
 <div class="cell">
-<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">prism_ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"Data/prism_ex.rds"</span><span class="op">)</span></span>
+<details class="code-fold"><summary>Code</summary><div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">prism_ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"Data/prism_ex.rds"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">prism_ex</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details><div class="cell-output-display">
@@ -1452,7 +1438,7 @@ Figure&nbsp;1.11: Map of PRISM raster data layer
 <p>Let’s now download PRISM data (You do not have to run this code to get the data. It is included in the data folder for replication <a href="https://www.dropbox.com/sh/rtbs4ji21c9uiy9/AADYpHAWhUxMittAptuq-Apaa?dl=0">here</a>). This can be done using the <code>get_prism_dailys()</code> function from the <code>prism</code> package.<a href="#fn8" class="footnote-ref" id="fnref8" role="doc-noteref"><sup>8</sup></a></p>
 <!-- not to be seen -->
 <div class="no-row-height column-margin column-container"><div id="fn8"><p><sup>8</sup>&nbsp;<a href="https://github.com/ropensci/prism">prism Github page</a></p></div></div><div class="cell">
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>prism.path <span class="op">=</span> <span class="st">"Data/PRISM"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>prism.path <span class="op">=</span> <span class="st">"Data/PRISM"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">prism</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/prism/reference/get_prism_data.html">get_prism_dailys</a></span><span class="op">(</span></span>
 <span>  type <span class="op">=</span> <span class="st">"ppt"</span>,</span>
@@ -1466,7 +1452,7 @@ Figure&nbsp;1.11: Map of PRISM raster data layer
 <div class="no-row-height column-margin column-container"><div id="fn9"><p><sup>9</sup>&nbsp;For this project, monthly PRISM data could have been used, which can be downloaded using the <code><a href="https://docs.ropensci.org/prism/reference/get_prism_data.html">prism::get_prism_monthlys()</a></code> function. But, in many applications, daily data is necessary, so how to download and process them is illustrated here.</p></div></div><hr>
 <p>We now try to extract precipitation value by day for each of the IA grids by geographically overlaying IA grids onto the PRISM data layer and identify which PRISM cells each of the IA grid encompass. <a href="#fn10" class="footnote-ref" id="fnref10" role="doc-noteref"><sup>10</sup></a>.</p>
 <div class="no-row-height column-margin column-container"><div id="fn10"><p><sup>10</sup>&nbsp;Be cautious about using <code><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">sf::st_buffer()</a></code> for spatial objects in geographic coordinates (latitude, longitude) in practice. Significant distortion will be introduced to the buffer due to the fact that one degree in latitude and longitude means different distances at the latitude of IA. Here, I am just creating a buffer to extract PRISM cells to display on the map.</p></div></div><div class="cell">
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read a PRISM dataset ---#</span></span>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read a PRISM dataset ---#</span></span>
 <span><span class="va">prism_whole</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="st">"Data/PRISM/PRISM_ppt_stable_4kmD2_20140401_bil/PRISM_ppt_stable_4kmD2_20140401_bil.bil"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- align the CRS ---#</span></span>
@@ -1478,7 +1464,7 @@ Figure&nbsp;1.11: Map of PRISM raster data layer
 </div>
 <p><a href="#fig-Demo-3-prism-crop" class="quarto-xref">Figure&nbsp;<span>1.12</span></a> shows how the first IA grid (in red) overlaps with the PRISM cells. As you can see, some PRISM grids are fully inside the analysis grid, while others are partially inside it. So, when assigning precipitation values to grids, we will use the coverage-weighted mean of precipitations.</p>
 <div class="cell">
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- map them ---#</span></span>
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- map them ---#</span></span>
 <span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">tidyterra</span><span class="fu">::</span><span class="fu"><a href="https://dieghernan.github.io/tidyterra/reference/geom_spatraster.html">geom_spatraster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">PRISM_1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_viridis_c</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Precipitation"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1496,9 +1482,9 @@ Figure&nbsp;1.12: Spatial overlap of an IA grid over PRISM cells
 </div>
 </div>
 <p>Unlike the CDL layer, we have 183 raster layers to process. Fortunately, we can process many raster files at the same time very quickly by first “stacking” many raster files first and then applying the <code><a href="https://isciences.gitlab.io/exactextractr/reference/exact_extract.html">exactextractr::exact_extract()</a></code> function. Using <code><a href="https://future.apply.futureverse.org/reference/future_lapply.html">future.apply::future_lapply()</a></code>, we let <span class="math inline">\(6\)</span> cores take care of this task with each processing 31 files, except one of them handling only 28 files.<a href="#fn11" class="footnote-ref" id="fnref11" role="doc-noteref"><sup>11</sup></a></p>
-<div class="no-row-height column-margin column-container"><div id="fn11"><p><sup>11</sup>&nbsp;Parallelization of extracting values from many raster layers for polygons are discussed in much more detail in <a href="09-SpeedThingsUp.html" class="quarto-xref"><span>Chapter 9</span></a>.</p></div></div><p>We first get all the paths to the PRISM files.</p>
+<div class="no-row-height column-margin column-container"><div id="fn11"><p><sup>11</sup>&nbsp;Parallelization of extracting values from many raster layers for polygons are discussed in much more detail in <a href="10-SpeedThingsUp.html" class="quarto-xref"><span>Chapter 9</span></a>.</p></div></div><p>We first get all the paths to the PRISM files.</p>
 <div class="cell">
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- get all the dates ---#</span></span>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- get all the dates ---#</span></span>
 <span><span class="va">dates_ls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2014-04-01"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html">as.Date</a></span><span class="op">(</span><span class="st">"2014-09-30"</span><span class="op">)</span>, <span class="st">"days"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#--- remove hyphen ---#</span></span>
@@ -1522,7 +1508,7 @@ Figure&nbsp;1.12: Spatial overlap of an IA grid over PRISM cells
 </div>
 <p>We now prepare for parallelized extractions and then implement them using <code>future_apply()</code> (you can have a look at <a href="A1-ParallelComputing.html" class="quarto-xref"><span>Appendix A</span></a> to familiarize yourself with parallel computation using the <code>future.apply</code> package).</p>
 <div class="cell">
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- define the number of cores to use ---#</span></span>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- define the number of cores to use ---#</span></span>
 <span><span class="va">num_core</span> <span class="op">&lt;-</span> <span class="fl">6</span></span>
 <span></span>
 <span><span class="co">#--- prepare some parameters for parallelization ---#</span></span>
@@ -1537,7 +1523,7 @@ Figure&nbsp;1.12: Spatial overlap of an IA grid over PRISM cells
 </div>
 <p>Here is the function that we run in parallel over 6 cores.</p>
 <div class="cell">
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- define the function to extract PRISM values by block of files ---#</span></span>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- define the function to extract PRISM values by block of files ---#</span></span>
 <span><span class="va">extract_by_block</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">i</span>, <span class="va">files_per_core</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="co">#--- files processed by core  ---#</span></span>
@@ -1569,7 +1555,7 @@ Figure&nbsp;1.12: Spatial overlap of an IA grid over PRISM cells
 </div>
 <p>Now, let’s run the function in parallel and calculate precipitation by period.</p>
 <div class="cell">
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- run the function ---#</span></span>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- run the function ---#</span></span>
 <span><span class="va">precip_by_period</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">future.apply</span><span class="fu">::</span><span class="fu"><a href="https://future.apply.futureverse.org/reference/future_lapply.html">future_lapply</a></span><span class="op">(</span></span>
 <span>    <span class="fl">1</span><span class="op">:</span><span class="va">num_core</span>,</span>
@@ -1592,7 +1578,7 @@ Figure&nbsp;1.12: Spatial overlap of an IA grid over PRISM cells
 <hr>
 <p>Let’s merge them and run regression.<a href="#fn12" class="footnote-ref" id="fnref12" role="doc-noteref"><sup>12</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn12"><p><sup>12</sup>&nbsp;We can match on <code>grid_id</code> from <code>corn_soy</code> and <code>ID</code> from “precip_by_period” because <code>grid_id</code> is identical with the row number and ID variables were created so that the ID value of <span class="math inline">\(i\)</span> corresponds to <span class="math inline">\(i\)</span> th row of <code>IA_grids</code>.</p></div></div><div class="cell">
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- crop share ---#</span></span>
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- crop share ---#</span></span>
 <span><span class="va">reg_data</span> <span class="op">&lt;-</span> <span class="va">corn_soy</span><span class="op">[</span><span class="va">precip_by_period</span>, on <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>grid_id <span class="op">=</span> <span class="st">"ID"</span><span class="op">)</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co">#--- OLS ---#</span></span>
@@ -1682,7 +1668,7 @@ RMSE: 0.741986   Adj. R2: 0.056195</code></pre>
 <li>Run the following code to install or load (if already installed) the <code>pacman</code> package, and then install or load (if already installed) the listed package inside the <code><a href="https://rdrr.io/pkg/pacman/man/p_load.html">pacman::p_load()</a></code> function.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
 <span><span class="fu">pacman</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span><span class="op">(</span></span>
 <span>  <span class="va">tidyUSDA</span>, <span class="co"># access USDA NASS data</span></span>
 <span>  <span class="va">sf</span>, <span class="co"># vector data operations</span></span>
@@ -1695,7 +1681,7 @@ RMSE: 0.741986   Adj. R2: 0.056195</code></pre>
 <li>Run the following code to define the theme for map:</li>
 </ul>
 <div class="cell">
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">theme_for_map</span> <span class="op">&lt;-</span></span>
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">theme_for_map</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span></span>
 <span>    axis.ticks <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>    axis.text <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
@@ -1711,7 +1697,7 @@ RMSE: 0.741986   Adj. R2: 0.056195</code></pre>
 <span class="header-section-number">1.4.2</span> Project Demonstration</h3>
 <p>We first download corn planted acreage data for 2018 from USDA NASS QuickStat service using <code>tidyUSDA</code> package<a href="#fn13" class="footnote-ref" id="fnref13" role="doc-noteref"><sup>13</sup></a>.</p>
 <div class="no-row-height column-margin column-container"><div id="fn13"><p><sup>13</sup>&nbsp;In order to actually download the data, you need to obtain the API key <a href="https://quickstats.nass.usda.gov/api">here</a>. Once the API key was obtained, it was stored using <code>keyring::set_key()</code>, which was named “usda_nass_qs_api”. In the code to the left, the API key was retrieved using <code>keyring::key_get("usda_nass_qs_api")</code> in the code. For your replication, replace <code>key_get("usda_nass_qs_api")</code> with your own API key.</p></div></div><div class="cell">
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
 <span>  <span class="va">IL_corn_planted</span> <span class="op">&lt;-</span></span>
 <span>    <span class="fu">getQuickstat</span><span class="op">(</span></span>
 <span>      <span class="co">#--- use your own API key here fore replication ---#</span></span>
@@ -1761,7 +1747,7 @@ First 10 features:
 </div>
 <p>A nice thing about this function is that the data is downloaded as an <code>sf</code> object with county geometry with <code>geometry = TRUE</code>. So, you can immediately plot it (<a href="#fig-map-il-corn-acreage" class="quarto-xref">Figure&nbsp;<span>1.13</span></a>) and use it for later spatial interactions without having to merge the downloaded data to an independent county boundary data.</p>
 <div class="cell">
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">IL_corn_planted</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">IL_corn_planted</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">Value</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">scale_fill_distiller</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Planted Acreage (1000 acres)"</span>, palette <span class="op">=</span> <span class="st">"YlOrRd"</span>, trans <span class="op">=</span> <span class="st">"reverse"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1780,13 +1766,13 @@ Figure&nbsp;1.13: Map of Con Planted Acreage in Illinois in 2018
 <hr>
 <p>Let’s import the U.S. railroad data and reproject to the CRS of <code>IL_corn_planted</code>:</p>
 <div class="cell">
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rail_roads</span> <span class="op">&lt;-</span></span>
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rail_roads</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="st">"Data/tl_2015_us_rails.shp"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="co">#--- reproject to the CRS of IL_corn_planted ---#</span></span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="fu">st_crs</span><span class="op">(</span><span class="va">IL_corn_planted</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `tl_2015_us_rails' from data source 
-  `/Users/tmieno2/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/tl_2015_us_rails.shp' 
+  `/Users/taromieno/Library/CloudStorage/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/tl_2015_us_rails.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 180958 features and 3 fields
 Geometry type: MULTILINESTRING
@@ -1797,7 +1783,7 @@ Geodetic CRS:  NAD83</code></pre>
 </div>
 <p><a href="#fig-Demo5-rail-plot" class="quarto-xref">Figure&nbsp;<span>1.14</span></a> shows is what it looks like:</p>
 <div class="cell">
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">rail_roads</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="va">rail_roads</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="va">theme_for_map</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1813,10 +1799,10 @@ Figure&nbsp;1.14: Map of Railroads
 </div>
 <p>We now crop it to the Illinois state border (<a href="#fig-Demo5-rail-IL-plot" class="quarto-xref">Figure&nbsp;<span>1.15</span></a>):</p>
 <div class="cell">
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rail_roads_IL</span> <span class="op">&lt;-</span> <span class="va">rail_roads</span><span class="op">[</span><span class="va">IL_corn_planted</span>, <span class="op">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rail_roads_IL</span> <span class="op">&lt;-</span> <span class="va">rail_roads</span><span class="op">[</span><span class="va">IL_corn_planted</span>, <span class="op">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">rail_roads_IL</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="va">theme_for_map</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1832,11 +1818,11 @@ Figure&nbsp;1.15: Map of railroads in Illinois
 </div>
 <p>Let’s now find railroads for each county, where cross-county railroads will be chopped into pieces so each piece fits completely within a single county, using <code>st_intersection()</code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rails_IL_segmented</span> <span class="op">&lt;-</span> <span class="fu">st_intersection</span><span class="op">(</span><span class="va">rail_roads_IL</span>, <span class="va">IL_corn_planted</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rails_IL_segmented</span> <span class="op">&lt;-</span> <span class="fu">st_intersection</span><span class="op">(</span><span class="va">rail_roads_IL</span>, <span class="va">IL_corn_planted</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here are the railroads for Richland County:</p>
 <div class="cell">
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">IL_corn_planted</span>, <span class="va">NAME</span> <span class="op">==</span> <span class="st">"Richland"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">rails_IL_segmented</span>, <span class="va">NAME</span> <span class="op">==</span> <span class="st">"Richland"</span><span class="op">)</span>,</span>
@@ -1853,7 +1839,7 @@ Figure&nbsp;1.15: Map of railroads in Illinois
 </div>
 <p>We now calculate the travel distance (Great-circle distance) of each railroad piece using <code>st_length()</code> and then sum them up by county to find total railroad length by county.</p>
 <div class="cell">
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
+<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
 <span>  <span class="va">rail_length_county</span> <span class="op">&lt;-</span></span>
 <span>    <span class="fu">mutate</span><span class="op">(</span></span>
 <span>      <span class="va">rails_IL_segmented</span>,</span>
@@ -1886,10 +1872,10 @@ Figure&nbsp;1.15: Map of railroads in Illinois
 <hr>
 <p>We merge the railroad length data to the corn planted acreage data and estimate the model.</p>
 <div class="cell">
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">reg_data</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">IL_corn_planted</span>, <span class="va">rail_length_county</span>, by <span class="op">=</span> <span class="st">"county_code"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">reg_data</span> <span class="op">&lt;-</span> <span class="fu">left_join</span><span class="op">(</span><span class="va">IL_corn_planted</span>, <span class="va">rail_length_county</span>, by <span class="op">=</span> <span class="st">"county_code"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
 <span><span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html">feols</a></span><span class="op">(</span><span class="va">Value</span> <span class="op">~</span> <span class="va">length_in_m</span>, data <span class="op">=</span> <span class="va">reg_data</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1942,7 +1928,7 @@ RMSE: 68,193.4   Adj. R2: 0.034174</code></pre>
 <li>Run the following code to install or load (if already installed) the <code>pacman</code> package, and then install or load (if already installed) the listed package inside the <code><a href="https://rdrr.io/pkg/pacman/man/p_load.html">pacman::p_load()</a></code> function.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
 <span><span class="fu">pacman</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span><span class="op">(</span></span>
 <span>  <span class="va">daymetr</span>, <span class="co"># get Daymet data</span></span>
 <span>  <span class="va">sf</span>, <span class="co"># vector data operations</span></span>
@@ -1958,7 +1944,7 @@ RMSE: 68,193.4   Adj. R2: 0.034174</code></pre>
 <span class="header-section-number">1.5.2</span> Project Demonstration</h3>
 <p>We have already collected annual groundwater pumping data by irrigation wells in 2010 and 2011 in Kansas from the Water Information Management &amp; Analysis System (WIMAS) database. Let’s read in the groundwater use data.</p>
 <div class="cell">
-<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read in the data ---#</span></span>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- read in the data ---#</span></span>
 <span><span class="op">(</span></span>
 <span>  <span class="va">gw_KS_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span><span class="op">(</span><span class="st">"Data/gw_KS_sf.rds"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1984,7 +1970,7 @@ First 10 features:
 </div>
 <p>We have 28553 wells in total, and each well has records of groundwater pumping (<code>af_used</code>) for years 2010 and 2011.</p>
 <div class="cell">
-<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">KS_counties</span> <span class="op">&lt;-</span> <span class="fu">tigris</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tigris/man/counties.html">counties</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">"Kansas"</span>, cb<span class="op">=</span> <span class="cn">TRUE</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">KS_counties</span> <span class="op">&lt;-</span> <span class="fu">tigris</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tigris/man/counties.html">counties</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">"Kansas"</span>, cb<span class="op">=</span> <span class="cn">TRUE</span>, progress_bar <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><a href="#fig-well-dist" class="quarto-xref">Figure&nbsp;<span>1.16</span></a> shows the spatial distribution of the wells.</p>
 
@@ -1996,7 +1982,7 @@ First 10 features:
 -->
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="cell">
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">KS_counties</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_sf</span><span class="op">(</span>data <span class="op">=</span> <span class="va">gw_KS_sf</span>, size <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2013,8 +1999,8 @@ Figure&nbsp;1.16: Spatial distribution of the wells in Kansas
 </div>
 </div></div><hr>
 <p>We now need to get monthly precipitation and maximum temperature data. We have decided that we use <a href="https://daymet.ornl.gov/">Daymet</a> weather data. Here we use the <code>download_daymet()</code> function from the <code>daymetr</code> package<a href="#fn14" class="footnote-ref" id="fnref14" role="doc-noteref"><sup>14</sup></a> that allows us to download all the weather variables for a specified geographic location and time period<a href="#fn15" class="footnote-ref" id="fnref15" role="doc-noteref"><sup>15</sup></a>. We write a wrapper function that downloads Daymet data and then processes it to find monthly total precipitation and mean maximum temperature<a href="#fn16" class="footnote-ref" id="fnref16" role="doc-noteref"><sup>16</sup></a>. We then loop over the 56225 wells, which is parallelized using the <code><a href="https://future.apply.futureverse.org/reference/future_apply.html">future.apply::future_apply()</a></code> function<a href="#fn17" class="footnote-ref" id="fnref17" role="doc-noteref"><sup>17</sup></a>. This process takes about half an hour on my Mac with parallelization on 18 cores. The data is available in the data repository for this course (named as “all_daymet.rds”).</p>
-<div class="no-row-height column-margin column-container"><div id="fn14"><p><sup>14</sup>&nbsp;<a href="https://cran.r-project.org/web/packages/daymetr/vignettes/daymetr-vignette.html">daymetr vignette</a></p></div><div id="fn15"><p><sup>15</sup>&nbsp;See <a href="08-DownloadSpatialData.html#sec-daymetr" class="quarto-xref"><span>Section 8.4</span></a> for a fuller explanation of how to use the <code>daymetr</code> package.</p></div><div id="fn16"><p><sup>16</sup>&nbsp;This may not be ideal for a real research project because the original raw data is not kept. It is often the case that your econometric plan changes on the course of your project (e.g., using other weather variables or using different temporal aggregation of weather variables instead of monthly aggregation). When this happens, you need to download the same data all over again.</p></div><div id="fn17"><p><sup>17</sup>&nbsp;For parallelized computation, see <a href="A1-ParallelComputing.html" class="quarto-xref"><span>Appendix A</span></a></p></div></div><div class="cell">
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- get the geographic coordinates of the wells ---#</span></span>
+<div class="no-row-height column-margin column-container"><div id="fn14"><p><sup>14</sup>&nbsp;<a href="https://cran.r-project.org/web/packages/daymetr/vignettes/daymetr-vignette.html">daymetr vignette</a></p></div><div id="fn15"><p><sup>15</sup>&nbsp;See <a href="09-DownloadSpatialData.html#sec-daymetr" class="quarto-xref"><span>Section 8.4</span></a> for a fuller explanation of how to use the <code>daymetr</code> package.</p></div><div id="fn16"><p><sup>16</sup>&nbsp;This may not be ideal for a real research project because the original raw data is not kept. It is often the case that your econometric plan changes on the course of your project (e.g., using other weather variables or using different temporal aggregation of weather variables instead of monthly aggregation). When this happens, you need to download the same data all over again.</p></div><div id="fn17"><p><sup>17</sup>&nbsp;For parallelized computation, see <a href="A1-ParallelComputing.html" class="quarto-xref"><span>Appendix A</span></a></p></div></div><div class="cell">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- get the geographic coordinates of the wells ---#</span></span>
 <span><span class="va">well_locations</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">gw_KS_sf</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span>by <span class="op">=</span> <span class="st">"well_id"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
@@ -2063,7 +2049,7 @@ Figure&nbsp;1.16: Spatial distribution of the wells in Kansas
 </div>
 <p>Here is what one run (for the first well) of <code>get_daymet()</code> returns</p>
 <div class="cell">
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- one run ---#</span></span>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- one run ---#</span></span>
 <span><span class="op">(</span></span>
 <span>  <span class="va">returned_data</span> <span class="op">&lt;-</span> <span class="fu">get_daymet</span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="op">]</span></span>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -2086,7 +2072,7 @@ Figure&nbsp;1.16: Spatial distribution of the wells in Kansas
 </div>
 <p>We get the number of cores you can use by <code><a href="https://rdrr.io/pkg/RhpcBLASctl/man/RhpcBLASctl-package.html">RhpcBLASctl::get_num_procs()</a></code> and parallelize the loop over wells using <code><a href="https://future.apply.futureverse.org/reference/future_lapply.html">future.apply::future_lapply()</a></code>.<a href="#fn18" class="footnote-ref" id="fnref18" role="doc-noteref"><sup>18</sup></a></p>
 <div class="no-row-height column-margin column-container"><div id="fn18"><p><sup>18</sup>&nbsp;For Mac users, <code><a href="https://rdrr.io/r/parallel/mclapply.html">parallel::mclapply()</a></code> is a good alternative.</p></div></div><div class="cell">
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- prepare for parallelization ---#</span></span>
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- prepare for parallelization ---#</span></span>
 <span><span class="va">num_cores</span> <span class="op">&lt;-</span> <span class="fu">RhpcBLASctl</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RhpcBLASctl/man/RhpcBLASctl-package.html">get_num_procs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span> <span class="co"># number of cores</span></span>
 <span><span class="fu">plan</span><span class="op">(</span><span class="va">multicore</span>, workers <span class="op">=</span> <span class="va">num_cores</span><span class="op">)</span> <span class="co"># set up cores</span></span>
 <span></span>
@@ -2120,7 +2106,7 @@ Figure&nbsp;1.16: Spatial distribution of the wells in Kansas
 <hr>
 <p>Before merging the Daymet data, we need to reshape the data into a wide format to get monthly precipitation and maximum temperature as columns.</p>
 <div class="cell">
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- long to wide ---#</span></span>
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- long to wide ---#</span></span>
 <span><span class="va">daymet_to_merge</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">all_daymet</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/dcast.data.table.html">dcast</a></span><span class="op">(</span></span>
@@ -2162,7 +2148,7 @@ Figure&nbsp;1.16: Spatial distribution of the wells in Kansas
 </div>
 <p>Now, let’s merge the weather data to the groundwater pumping dataset.</p>
 <div class="cell">
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
 <span>  <span class="va">reg_data</span> <span class="op">&lt;-</span></span>
 <span>    <span class="fu">data.table</span><span class="op">(</span><span class="va">gw_KS_sf</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>    <span class="co">#--- keep only the relevant variables ---#</span></span>
@@ -2202,7 +2188,7 @@ Figure&nbsp;1.16: Spatial distribution of the wells in Kansas
 <hr>
 <p>Let’s run regression and display the results.</p>
 <div class="cell">
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- run FE ---#</span></span>
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#--- run FE ---#</span></span>
 <span><span class="op">(</span></span>
 <span><span class="va">reg_results</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">fixest</span><span class="fu">::</span><span class="fu"><a href="https://lrberge.github.io/fixest/reference/feols.html">feols</a></span><span class="op">(</span></span>
@@ -2270,7 +2256,7 @@ RMSE: 33.0     Adj. R2: 0.882825
 </li>
 <li>simply a spatial object (reduce the number of points representing it)
 <ul>
-<li>use <code><a href="https://rdrr.io/pkg/rmapshaper/man/ms_simplify.html">rmapshaper::ms_simplify()</a></code>
+<li>use <code><a href="http://andyteucher.ca/rmapshaper/reference/ms_simplify.html">rmapshaper::ms_simplify()</a></code>
 </li>
 </ul>
 </li>
@@ -2340,7 +2326,7 @@ RMSE: 33.0     Adj. R2: 0.882825
 <p><strong>Preparation for replication</strong></p>
 <p>Run the following code to install or load (if already installed) the <code>pacman</code> package, and then install or load (if already installed) the listed package inside the <code><a href="https://rdrr.io/pkg/pacman/man/p_load.html">pacman::p_load()</a></code> function.</p>
 <div class="cell">
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/trinker/pacman">"pacman"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"pacman"</span><span class="op">)</span></span>
 <span><span class="fu">pacman</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/pacman/man/p_load.html">p_load</a></span><span class="op">(</span></span>
 <span>  <span class="va">sf</span>, <span class="co"># vector data operations</span></span>
 <span>  <span class="va">tidyverse</span>, <span class="co"># data wrangling</span></span>
@@ -2356,12 +2342,12 @@ RMSE: 33.0     Adj. R2: 0.882825
 <p>We first read all the GIS data we will be using in this demonstration and then re-project them to epsg:3857, which is Pseudo-mercator.</p>
 <p><strong>coast line</strong></p>
 <div class="cell">
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">coast</span> <span class="op">&lt;-</span></span>
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">coast</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="st">"Data/nunn_2008/10m-coastline/10m_coastline.shp"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">st_transform</span><span class="op">(</span><span class="fl">3857</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `10m_coastline' from data source 
-  `/Users/tmieno2/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/nunn_2008/10m-coastline/10m_coastline.shp' 
+  `/Users/taromieno/Library/CloudStorage/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/nunn_2008/10m-coastline/10m_coastline.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 4177 features and 3 fields
 Geometry type: MULTILINESTRING
@@ -2373,12 +2359,12 @@ Geodetic CRS:  WGS 84</code></pre>
 <hr>
 <p><strong>African countries</strong></p>
 <div class="cell">
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries</span> <span class="op">&lt;-</span></span>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="st">"Data/nunn_2008/gadm36_africa/gadm36_africa.shp"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">st_transform</span><span class="op">(</span><span class="fl">3857</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `gadm36_africa' from data source 
-  `/Users/tmieno2/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/nunn_2008/gadm36_africa/gadm36_africa.shp' 
+  `/Users/taromieno/Library/CloudStorage/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/nunn_2008/gadm36_africa/gadm36_africa.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 54 features and 2 fields
 Geometry type: MULTIPOLYGON
@@ -2390,12 +2376,12 @@ Geodetic CRS:  WGS 84</code></pre>
 <hr>
 <p><strong>ethnic regions</strong></p>
 <div class="cell">
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ethnic_regions</span> <span class="op">&lt;-</span></span>
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">ethnic_regions</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html">st_read</a></span><span class="op">(</span><span class="st">"Data/nunn_2008/Murdock_shapefile/borders_tribes.shp"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">st_transform</span><span class="op">(</span><span class="fl">3857</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `borders_tribes' from data source 
-  `/Users/tmieno2/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/nunn_2008/Murdock_shapefile/borders_tribes.shp' 
+  `/Users/taromieno/Library/CloudStorage/Dropbox/TeachingUNL/R-as-GIS-for-Scientists/chapters/Data/nunn_2008/Murdock_shapefile/borders_tribes.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 843 features and 4 fields
 Geometry type: MULTIPOLYGON
@@ -2403,17 +2389,17 @@ Dimension:     XY
 Bounding box:  xmin: -25.35875 ymin: -34.82223 xmax: 63.50018 ymax: 37.53944
 Geodetic CRS:  WGS 84</code></pre>
 </div>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># lat/long for slave trade centers</span></span>
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># lat/long for slave trade centers</span></span>
 <span><span class="va">trade_centers</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"Data/nunn_2008/nunn2008.csv"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="calculate-the-distance-to-the-nearest-trade-center" class="level4 page-columns page-full" data-number="1.6.2.1"><h4 data-number="1.6.2.1" class="anchored" data-anchor-id="calculate-the-distance-to-the-nearest-trade-center">
 <span class="header-section-number">1.6.2.1</span> Calculate the distance to the nearest trade center</h4>
-<p>We first simplify geometries of the African countries using <code><a href="https://rdrr.io/pkg/rmapshaper/man/ms_simplify.html">rmapshaper::ms_simplify()</a></code>, so the code run faster, while maintaining borders between countries<a href="#fn19" class="footnote-ref" id="fnref19" role="doc-noteref"><sup>19</sup></a>. As comparison, <code><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">sf::st_simplify()</a></code> does not ensure borders between countries remain (see this by running <code>countries_simp_sf &lt;- sf::st_simplify(countries)</code> and <code>plot(countries_simp_sf$geometry)</code>).</p>
+<p>We first simplify geometries of the African countries using <code><a href="http://andyteucher.ca/rmapshaper/reference/ms_simplify.html">rmapshaper::ms_simplify()</a></code>, so the code run faster, while maintaining borders between countries<a href="#fn19" class="footnote-ref" id="fnref19" role="doc-noteref"><sup>19</sup></a>. As comparison, <code><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">sf::st_simplify()</a></code> does not ensure borders between countries remain (see this by running <code>countries_simp_sf &lt;- sf::st_simplify(countries)</code> and <code>plot(countries_simp_sf$geometry)</code>).</p>
 <div class="no-row-height column-margin column-container"><div id="fn19"><p><sup>19</sup>&nbsp;The <code>keep</code> option allows you to determine the degree of simplification, with <code>keep = 1</code> being remains the same, <code>keep = 0.001</code> is quite drastic. The default value is 0.05.</p></div></div><div class="cell">
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries_simp</span> <span class="op">&lt;-</span> <span class="fu">rmapshaper</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/rmapshaper/man/ms_simplify.html">ms_simplify</a></span><span class="op">(</span><span class="va">countries</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries_simp</span> <span class="op">&lt;-</span> <span class="fu">rmapshaper</span><span class="fu">::</span><span class="fu"><a href="http://andyteucher.ca/rmapshaper/reference/ms_simplify.html">ms_simplify</a></span><span class="op">(</span><span class="va">countries</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="op">(</span></span>
 <span>  <span class="va">g_countries</span> <span class="op">&lt;-</span></span>
 <span>    <span class="fu">ggplot</span><span class="op">(</span>data <span class="op">=</span> <span class="va">countries_simp</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -2428,15 +2414,12 @@ Geodetic CRS:  WGS 84</code></pre>
 </div>
 <p>We now finds the centroid of each country using <code>st_centroid()</code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries_centroid</span> <span class="op">&lt;-</span> <span class="fu">st_centroid</span><span class="op">(</span><span class="va">countries</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">countries_centroid</span> <span class="op">&lt;-</span> <span class="fu">st_centroid</span><span class="op">(</span><span class="va">countries</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The red points represent the centroids.</p>
 <div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="01-Demonstration_files/figure-html/centroids-africa-nunn08-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NULL</code></pre>
 </div>
 </div>
 <p>Now, for the centroid of each country, we find its closest point on the coast line using <code>sf::st_nrearest_points()</code>. <code>sf::st_nearest_points(x, y)</code> loops through each geometry in <code>x</code> and returns the closest point in each feature of <code>y</code>. So, we first union the coast lines so we only get the single closest point on the coast.</p>
@@ -2766,7 +2749,7 @@ Projected CRS: WGS 84 / Pseudo-Mercator
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster 
-dimensions  : 2160, 4320, 1  (nrow, ncol, nlyr)
+size        : 2160, 4320, 1  (nrow, ncol, nlyr)
 resolution  : 0.08333333, 0.08333333  (x, y)
 extent      : -180.0042, 179.9958, -89.99583, 90.00417  (xmin, xmax, ymin, ymax)
 coord. ref. : lon/lat WGS 84 (EPSG:4326) 
@@ -3132,7 +3115,7 @@ Geodetic CRS:  WGS 84</code></pre>
 <span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster 
-dimensions  : 91, 180, 2  (nrow, ncol, nlyr)
+size        : 91, 180, 2  (nrow, ncol, nlyr)
 resolution  : 2, 2  (x, y)
 extent      : -181, 179, -91, 91  (xmin, xmax, ymin, ymax)
 coord. ref. : lon/lat WGS 84 
@@ -3277,290 +3260,293 @@ Nunn, Nathan, and Diego Puga. 2012. <span>“Ruggedness: The Blessing of Bad Geo
 </div>
 </div>
 </section></section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-  const viewSource = window.document.getElementById('quarto-view-source') ||
-                     window.document.getElementById('quarto-code-tools-source');
-  if (viewSource) {
-    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
-    viewSource.addEventListener("click", function(e) {
-      if (sourceUrl) {
-        // rstudio viewer pane
-        if (/\bcapabilities=\b/.test(window.location)) {
-          window.open(sourceUrl);
-        } else {
-          window.location.href = sourceUrl;
-        }
-      } else {
-        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
-        modal.show();
-      }
-      return false;
-    });
-  }
-  function toggleCodeHandler(show) {
-    return function(e) {
-      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-      for (let i=0; i<detailsSrc.length; i++) {
-        const details = detailsSrc[i].parentElement;
-        if (show) {
-          details.open = true;
-        } else {
-          details.removeAttribute("open");
-        }
-      }
-      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
-      const fromCls = show ? "hidden" : "unhidden";
-      const toCls = show ? "unhidden" : "hidden";
-      for (let i=0; i<cellCodeDivs.length; i++) {
-        const codeDiv = cellCodeDivs[i];
-        if (codeDiv.classList.contains(fromCls)) {
-          codeDiv.classList.remove(fromCls);
-          codeDiv.classList.add(toCls);
-        } 
-      }
-      return false;
-    }
-  }
-  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
-  if (hideAllCode) {
-    hideAllCode.addEventListener("click", toggleCodeHandler(false));
-  }
-  const showAllCode = window.document.getElementById("quarto-show-all-code");
-  if (showAllCode) {
-    showAllCode.addEventListener("click", toggleCodeHandler(true));
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/tmieno2\.github\.io\/R-as-GIS-for-Economists\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
+      return false;
     }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
         }
-        return container.innerHTML
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/tmieno2\.github\.io\/R-as-GIS-for-Economists\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      // TODO in 1.5, we should make sure this works without a callout special case
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -3568,207 +3554,183 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      // Attach click handler to the DT
-      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-      for (const annoteDlNode of annoteDls) {
-        annoteDlNode.addEventListener('click', (event) => {
-          const clickedEl = event.target;
-          if (clickedEl !== selectedAnnoteEl) {
-            unselectCodeLines();
-            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-            if (activeEl) {
-              activeEl.classList.remove('code-annotation-active');
-            }
-            selectCodeLines(clickedEl);
-            clickedEl.classList.add('code-annotation-active');
-          } else {
-            // Unselect the line
-            unselectCodeLines();
-            clickedEl.classList.remove('code-annotation-active');
-          }
-        });
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="sourceCode" id="cb161" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb161-1"><a href="#cb161-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># R as GIS: Demonstrations {#sec-demo}</span></span>
 <span id="cb161-2"><a href="#cb161-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb161-3"><a href="#cb161-3" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ch01-setwd, eval = FALSE, echo = FALSE}</span></span>
-<span id="cb161-4"><a href="#cb161-4" aria-hidden="true" tabindex="-1"></a><span class="in">setwd(here::here("chapters"))</span></span>
+<span id="cb161-4"><a href="#cb161-4" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"chapters"</span>))</span>
 <span id="cb161-5"><a href="#cb161-5" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb161-6"><a href="#cb161-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb161-7"><a href="#cb161-7" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, include = FALSE, cache = FALSE}</span></span>
-<span id="cb161-8"><a href="#cb161-8" aria-hidden="true" tabindex="-1"></a><span class="in">#--- load packages ---#</span></span>
-<span id="cb161-9"><a href="#cb161-9" aria-hidden="true" tabindex="-1"></a><span class="in">library(data.table)</span></span>
-<span id="cb161-10"><a href="#cb161-10" aria-hidden="true" tabindex="-1"></a><span class="in">library(here)</span></span>
-<span id="cb161-11"><a href="#cb161-11" aria-hidden="true" tabindex="-1"></a><span class="in">library(stringr)</span></span>
-<span id="cb161-12"><a href="#cb161-12" aria-hidden="true" tabindex="-1"></a><span class="in">library(sf)</span></span>
-<span id="cb161-13"><a href="#cb161-13" aria-hidden="true" tabindex="-1"></a><span class="in">library(ggplot2)</span></span>
-<span id="cb161-14"><a href="#cb161-14" aria-hidden="true" tabindex="-1"></a><span class="in">library(raster)</span></span>
-<span id="cb161-15"><a href="#cb161-15" aria-hidden="true" tabindex="-1"></a><span class="in">library(tmap)</span></span>
-<span id="cb161-16"><a href="#cb161-16" aria-hidden="true" tabindex="-1"></a><span class="in">library(future.apply)</span></span>
-<span id="cb161-17"><a href="#cb161-17" aria-hidden="true" tabindex="-1"></a><span class="in">library(lubridate)</span></span>
-<span id="cb161-18"><a href="#cb161-18" aria-hidden="true" tabindex="-1"></a><span class="in">library(fixest)</span></span>
-<span id="cb161-19"><a href="#cb161-19" aria-hidden="true" tabindex="-1"></a><span class="in">library(tidyverse)</span></span>
+<span id="cb161-8"><a href="#cb161-8" aria-hidden="true" tabindex="-1"></a><span class="co">#--- load packages ---#</span></span>
+<span id="cb161-9"><a href="#cb161-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb161-10"><a href="#cb161-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb161-11"><a href="#cb161-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb161-12"><a href="#cb161-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb161-13"><a href="#cb161-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb161-14"><a href="#cb161-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(raster)</span>
+<span id="cb161-15"><a href="#cb161-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tmap)</span>
+<span id="cb161-16"><a href="#cb161-16" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(future.apply)</span>
+<span id="cb161-17"><a href="#cb161-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb161-18"><a href="#cb161-18" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fixest)</span>
+<span id="cb161-19"><a href="#cb161-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb161-20"><a href="#cb161-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb161-21"><a href="#cb161-21" aria-hidden="true" tabindex="-1"></a><span class="in">#--- set seed ---#</span></span>
-<span id="cb161-22"><a href="#cb161-22" aria-hidden="true" tabindex="-1"></a><span class="in">set.seed(2473498)</span></span>
+<span id="cb161-21"><a href="#cb161-21" aria-hidden="true" tabindex="-1"></a><span class="co">#--- set seed ---#</span></span>
+<span id="cb161-22"><a href="#cb161-22" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2473498</span>)</span>
 <span id="cb161-23"><a href="#cb161-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb161-24"><a href="#cb161-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb161-25"><a href="#cb161-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## Before you start {-}</span></span>
